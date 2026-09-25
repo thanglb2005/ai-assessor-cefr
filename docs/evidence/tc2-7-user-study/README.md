@@ -1,0 +1,17 @@
+# TC2.7 — Thực nghiệm người dùng
+
+**Nguồn tiêu chí:** rubric PDF tại docs/rubric/. Trạng thái của folder: PENDING
+
+## Hồ sơ cần có
+
+Protocol/consent, kịch bản tác vụ, danh sách người tham gia ẩn danh, dữ liệu và metric đo, thay đổi sau phản hồi.
+
+## Minh chứng hiện có
+
+Chưa có artifact tại chỗ.
+
+## Còn thiếu / cần xác minh
+
+Chưa có thực nghiệm người dùng thật; fixture synthetic/demo không thay thế tiêu chí này.
+
+Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Không sao chép số liệu hoặc ghi PASS nếu chưa có phép đo.

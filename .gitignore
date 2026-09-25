@@ -1,0 +1,40 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+
+# Python build and test outputs
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+.venv/
+
+# Local data, models and generated media
+data/
+models/
+checkpoints/
+*.sqlite
+*.sqlite3
+*.db
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.safetensors
+*.pt
+*.pth
+
+# Editor and OS files
+.DS_Store
+.idea/
+.vscode/
