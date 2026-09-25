@@ -6,8 +6,8 @@ Task dưới đây là **bản nháp để review**, chưa phát prompt hoặc c
 
 | Task ID / owner | FR/AC và Test ID | Phạm vi file dự kiến | Đầu ra kiểm chứng |
 | --- | --- | --- | --- |
-| M05-TASK-001 / Sang | M05-FR-001, M05-FR-002, M05-AC-001 · M05-TEST-001, M05-TEST-002, M05-TEST-004 | Score schema/refusal path + tests | Model chưa xác minh tương thích hoặc thiếu evidence thì NOT_EVALUATED |
-| M05-TASK-002 / Sang | M05-FR-001, M05-AC-002 · M05-TEST-003, M05-TEST-006 | Viết mới model loader/predict từ artifact Ridge đã tái kiểm, có điều kiện | Chạy khi quyền/tương thích/rubric được duyệt; nếu không BLOCKED |
+| M05-TASK-001 / Sang | M05-FR-001, M05-FR-002, M05-AC-001 · M05-TEST-001, M05-TEST-002, M05-TEST-004 | Score schema/refusal path + tests | Chỉ overall + năm coverage; model chưa tương thích hoặc thiếu evidence thì NOT_EVALUATED |
+| M05-TASK-002 / Sang | M05-FR-001, M05-AC-002 · M05-TEST-003, M05-TEST-006 | Viết mới model loader/predict từ artifact Ridge đã tái kiểm, có điều kiện | Overall chạy khi quyền và tương thích artifact được duyệt; nếu không BLOCKED |
 | M05-TASK-003 / Sang | M05-FR-002, M05-AC-002 · M05-TEST-005 | Experiment manifest/evaluation, có điều kiện | Metric thật hoặc NOT_RUN với lý do |
 
 ## Handoff và điều kiện hoàn tất

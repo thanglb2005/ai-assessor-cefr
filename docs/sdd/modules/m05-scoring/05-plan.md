@@ -8,12 +8,12 @@
 
 - Chốt output schema và refusal path; dùng [scoring audit](../../../sources/scoring-audit.md) để xác định ứng viên Ridge/DeBERTa do nhóm tạo và các gap. Không chuyển code cũ.
 - Thiết kế model loader chỉ nhận artifact có manifest/hash/config và đúng `unit_of_inference`, feature order, ASR/VAD; tách predict overall, band mapping và review policy. DeBERTa là nhánh tích hợp riêng, không mặc định W2.
-- Nếu quyền dữ liệu/rubric được duyệt, tái kiểm Ridge artifact hoặc tái chạy huấn luyện/đánh giá với split theo speaker và lưu provenance mới; nếu chưa, chỉ hoàn thành đường NOT_EVALUATED. Năm criterion score cần nhãn riêng.
+- Ưu tiên tích hợp mới Ridge v2 do nhóm đã huấn luyện cho overall estimate sau khi kiểm quyền, hash và tương thích pipeline; chạy test/smoke mới và lưu provenance. Nếu artifact không khớp, trả `NOT_EVALUATED`. Năm criterion score độc lập cần rubric/nhãn riêng, hiện chưa có.
 
 ## Phụ thuộc và bàn giao
 
 - M04 FeatureSet và M06 Report cần thống nhất criterion coverage/evidence IDs.
-- Giảng viên/owner cần duyệt rubric; data owner xác nhận quyền dùng nhãn/audio/model đã tạo. Model JSON cũ là ứng viên lịch sử, không là evidence của app mới trước kiểm tương thích/chạy lại.
+- Data owner xác nhận quyền dùng model/nhãn/audio; giảng viên cần duyệt rubric trước khi công bố năm điểm tiêu chí riêng. Ridge v2 là artifact đã có của nhóm, nhưng test/metric bản tham chiếu không thay kiểm tra của app mới.
 
 ## Required checks và review
 
@@ -29,7 +29,7 @@
 
 ## Definition of Ready (điều kiện phát prompt)
 
-- Rubric/model/data status có bằng chứng hoặc task chỉ giới hạn refusal path.
+- Quyền và tương thích Ridge v2 được xác minh cho task phát overall; task refusal path có thể triển khai độc lập. Rubric/nhãn riêng là gate của điểm tiêu chí độc lập.
 - Band mapping/review thresholds được quyết định; nếu OPEN thì không phát prompt score thật.
 - Phase 01/03/04/05 đúng version được duyệt.
 

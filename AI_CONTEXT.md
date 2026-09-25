@@ -13,4 +13,4 @@ Mục tiêu dự kiến là một hệ thống hỗ trợ đánh giá bài nói 
 - Báo cáo tuần 1 bản gốc: `docs/reports/week-01/bao-cao-tuan-01.docx`.
 - Rubric đánh giá đồ án: `docs/rubric/`.
 
-Repo `../aiassessor-cefr` là phiên bản trước do chính chủ dự án phát triển; repo mới viết lại mã nguồn, không clone implementation. Hai đề cương gốc của nhóm đã được lưu tại `docs/sources/` có checksum. Metric, approval và test result của bản trước không tự chuyển thành bằng chứng của bản dựng mới. SDD W2 hiện là bản nháp Phase 01; chưa có mã nguồn, Git baseline, prompt triển khai hoặc lệnh test ổn định cho repo mới.
+Repo `../ai-assessor-cefr-thamchie` là phiên bản trước do chính chủ dự án phát triển; repo mới viết lại mã nguồn, không clone implementation. Hai đề cương gốc của nhóm đã được lưu tại `docs/sources/` có checksum. Metric, approval và test result của bản trước không tự chuyển thành bằng chứng của bản dựng mới. SDD W2 hiện là bản nháp Phase 01; chưa có mã nguồn, Git baseline, prompt triển khai hoặc lệnh test ổn định cho repo mới.

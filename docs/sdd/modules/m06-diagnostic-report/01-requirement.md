@@ -32,10 +32,11 @@
 | --- | --- |
 | M06-AC-001 | Không có evidence hợp lệ: báo cáo ghi thiếu bằng chứng, không có nhận xét khẳng định. |
 | M06-AC-002 | Fixture có pause/word timestamp: evidence link đến đúng mốc và source version; `teacher_verified` mặc định false. |
+| M06-AC-003 | Với M05 hợp lệ, report chỉ có một overall score/band ước lượng, năm coverage/evidence theo tiêu chí và `Interaction=null/insufficient_evidence`; không có năm điểm lặp. |
 
 ## W2 scope note (Ranh giới tuần 2)
 
-W2 tạo báo cáo chẩn đoán cho một bài với ref hợp lệ và trạng thái chưa duyệt; M05 sở hữu điểm, M07 sở hữu quyết định của giảng viên, M06 chỉ kết xuất và hiển thị.
+W2 tạo báo cáo chẩn đoán cho một bài với ref hợp lệ và trạng thái chưa duyệt; M05 sở hữu một điểm/band overall, M07 sở hữu quyết định của giảng viên, M06 chỉ kết xuất overall cùng coverage của năm tiêu chí.
 
 ## Điều kiện chung và câu hỏi mở
 

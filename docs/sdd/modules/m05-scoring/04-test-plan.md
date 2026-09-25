@@ -11,7 +11,7 @@ Test ở đây là **ca dự kiến**, chưa được chạy. Fixture tạo bở
 | M05-TEST-003 | M05-FR-001 / M05-AC-002 | Unit | Ridge artifact có manifest/hash và pipeline tương thích, cùng input hai lần | Kết quả và provenance tái lập trên code mới; ghi rõ nguồn artifact |
 | M05-TEST-004 | M05-FR-002 / M05-AC-001 | Boundary | Input thiếu/NaN/stale hoặc model hash sai | Không fallback sang band; reason/review đúng |
 | M05-TEST-005 | M05-FR-002 / M05-AC-002 | Research evidence | Có manifest/speaker split/metric script được duyệt | Chỉ lúc đó mới báo metric; chưa có thì NOT_RUN |
-| M05-TEST-006 | M05-FR-001 / M05-AC-002 | Unit + integration | Model unit/feature order/ASR/VAD không khớp hoặc chỉ có overall label | Từ chối model sai; không sinh năm điểm criterion từ coverage |
+| M05-TEST-006 | M05-FR-001 / M05-AC-002 | Unit + integration | Model unit/feature order/ASR/VAD không khớp hoặc chỉ có overall label | Từ chối model sai; output hợp lệ chỉ có một overall score/band và năm coverage, không có score/band trong CriterionProfile |
 
 ## Chính sách chạy và bằng chứng
 

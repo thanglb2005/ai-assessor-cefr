@@ -9,4 +9,4 @@ Dự án đang ở giai đoạn lập kế hoạch. W1 (14–18/09/2026) đã ho
 - [Tổng kết W1](docs/reports/week-01/tong-ket-w1.md) và [báo cáo Word](docs/reports/week-01/bao-cao-tuan-01.docx)
 - [Rubric đồ án](docs/rubric/Rubric_Do_An_Mon_Hoc_CNPM_sinhvien.docx.pdf)
 
-Các Requirement hiện là bản nháp chờ người dùng duyệt. Repo ../aiassessor-cefr chỉ dùng làm nguồn tham khảo; không kế thừa trạng thái hoàn thành hay metric của nó.
+Các Requirement hiện là bản nháp chờ người dùng duyệt. Repo ../ai-assessor-cefr-thamchie chỉ dùng làm nguồn tham khảo; không kế thừa trạng thái hoàn thành hay metric của nó.

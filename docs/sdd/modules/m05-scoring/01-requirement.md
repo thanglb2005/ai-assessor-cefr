@@ -31,11 +31,11 @@
 | ID | Bằng chứng phải kiểm tra |
 | --- | --- |
 | M05-AC-001 | Fixture thiếu evidence không nhận score; `Interaction` luôn `insufficient_evidence` trong task độc thoại. |
-| M05-AC-002 | Nếu có model artifact và config được duyệt, cùng input tạo output tái lập; nếu chưa có thì `NOT_EVALUATED`. Metric chỉ ghi khi có manifest/split/evidence hợp lệ. |
+| M05-AC-002 | Nếu artifact/config hợp lệ, cùng input tạo một overall estimate tái lập cùng năm coverage; output không có score/band riêng từng tiêu chí. Nếu chưa đủ điều kiện thì `NOT_EVALUATED`. Metric chỉ ghi khi có manifest/split/evidence hợp lệ. |
 
 ## W2 scope note (Ranh giới tuần 2)
 
-W2 xây contract, đường từ chối và provenance; [scorer/model do nhóm làm ở phiên bản trước](../../../sources/scoring-audit.md) là ứng viên cần tái kiểm, không phải mã/metric tự chuyển sang. Điểm overall chỉ phát nếu artifact và pipeline mới tương thích, quyền dùng và giới hạn được duyệt; điểm riêng năm tiêu chí cần nhãn/rubric phù hợp. Nếu thiếu, trả NOT_EVALUATED.
+W2 xây contract, đường từ chối và provenance dựa trên [model và đường chấm overall đã chạy trong bản tham chiếu của nhóm](../../../sources/scoring-audit.md). Mặc định khảo sát `ridge_resp_v2` cho một response; khi đưa vào code mới phải kiểm hash, feature order, ASR/VAD, inference unit và quyền dữ liệu. Rubric Speaking/nhãn riêng năm tiêu chí hiện chưa có theo xác nhận chủ dự án; bản mới chỉ hiển thị overall score/band và coverage từng tiêu chí theo quyết định chủ dự án. Không biến metric bản tham chiếu thành metric bản mới.
 
 ## Điều kiện chung và câu hỏi mở
 

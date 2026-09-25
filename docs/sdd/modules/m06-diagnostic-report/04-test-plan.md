@@ -11,6 +11,7 @@ Test ở đây là **ca dự kiến**, chưa được chạy. Fixture tạo bở
 | M06-TEST-003 | M06-FR-001 / M06-AC-001 | Boundary | Ref khác response/ngoài duration/stale version | Bỏ comment và ghi reason, không bịa ref |
 | M06-TEST-004 | M06-FR-002 / M06-AC-002 | Unit + API | Assessment NOT_EVALUATED, không review action | Không có band; teacher_verified false |
 | M06-TEST-005 | M06-FR-002 / M06-AC-002 | Integration W3 | M07 ghi review action hợp lệ | Report hiển thị AI result và teacher final/audit ref tách biệt |
+| M06-TEST-006 | M06-FR-002 / M06-AC-003 | Unit + API | M05 trả một overall estimate và coverage đủ năm tiêu chí | Report có một overall score/band, năm coverage, Interaction null/reason; không có năm score lặp |
 
 ## Chính sách chạy và bằng chứng
 

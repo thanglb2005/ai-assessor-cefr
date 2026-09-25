@@ -7,7 +7,7 @@ Task dưới đây là **bản nháp để review**, chưa phát prompt hoặc c
 | Task ID / owner | FR/AC và Test ID | Phạm vi file dự kiến | Đầu ra kiểm chứng |
 | --- | --- | --- | --- |
 | M06-TASK-001 / Nguyên | M06-FR-001, M06-AC-001, M06-AC-002 · M06-TEST-001, M06-TEST-002, M06-TEST-003 | report evidence validator + tests | Không tạo comment nếu ref sai/thiếu |
-| M06-TASK-002 / Nguyên | M06-FR-002, M06-AC-002 · M06-TEST-004 | report builder + presentation contract | Báo cáo tách provisional/final; không band giả |
+| M06-TASK-002 / Nguyên | M06-FR-002, M06-AC-002, M06-AC-003 · M06-TEST-004, M06-TEST-006 | report builder + presentation contract | Chỉ overall + coverage; tách provisional/final, không band giả |
 | M06-TASK-003 / Nguyên | M06-FR-002, M06-AC-002 · M06-TEST-005 | M07 integration W3, chưa phát prompt W2 | Duyệt thật mới đổi verification state |
 
 ## Handoff và điều kiện hoàn tất

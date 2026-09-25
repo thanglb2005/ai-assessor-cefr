@@ -10,13 +10,13 @@
 | --- | --- | --- |
 | ReportInput | Response/QC/Transcript/FeatureSet/Assessment refs có cùng response ID và version; ReviewDecision nullable | M01–M05/M07 → M06 |
 | EvidenceRef | evidence ID, source artifact/version, mốc thời gian/word ref nullable, criterion liên quan | M03/M04 → M06 |
-| DiagnosticReport | response ID, status, criterion estimates nullable, comments/evidence refs, limitations, generated_at, versions | M06 → M01 UI |
+| DiagnosticReport | response ID, status, overall estimate nullable, năm criterion coverage/evidence (không score/band riêng), Interaction null/reason, comments/evidence refs, limitations, generated_at, versions | M06 → M01 UI |
 | VerificationState | `teacher_verified=false` trước action M07; true chỉ khi có review audit ref thật | M07/M08 → M06 |
 
 ## Hành vi có thể kiểm tra
 
 - Chỉ phát comment/priority khi EvidenceRef tồn tại, thuộc cùng response và phù hợp criterion; text template có version, không dùng LLM tự do W2.
-- Nếu M05 `NOT_EVALUATED`, báo cáo hiển thị “chưa đủ điều kiện ước lượng” kèm reason, vẫn có thể hiển thị QC/ASR diagnostic được phép.
+- Nếu M05 `NOT_EVALUATED`, báo cáo hiển thị “chưa đủ điều kiện ước lượng” kèm reason, vẫn có thể hiển thị QC/ASR diagnostic được phép. Khi M05 hợp lệ, chỉ hiển thị overall score/band và coverage/evidence năm tiêu chí; không hiển thị năm điểm lặp.
 - Evidence time ref không vượt audio duration; liên kết nguồn phiên bản chính xác, không tạo timestamp từ lời nhận xét.
 - Tách estimated AI result khỏi teacher final result; chưa có M07 action thì giữ provisional và `teacher_verified=false`.
 
@@ -37,7 +37,7 @@
 | Requirement | Acceptance Criteria | Cách quan sát |
 | --- | --- | --- |
 | M06-FR-001 | M06-AC-001, M06-AC-002 | Comment có evidence ref hợp lệ và đúng source version |
-| M06-FR-002 | M06-AC-002 | AI/provisional khác final; teacher_verified mặc định false |
+| M06-FR-002 | M06-AC-002, M06-AC-003 | AI/provisional khác final; chỉ overall score/band + coverage, teacher_verified mặc định false |
 
 ## Quyết định còn mở
 
