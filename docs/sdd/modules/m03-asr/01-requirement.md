@@ -10,7 +10,7 @@
 | RESEARCH MODE | Đề xuất `RUN`; người dùng quyết định trong Phase 01 |
 | TARGET | W2 |
 | RELATED SCOPES | M02 `PASS/REVIEW`, model local nếu được phép |
-| SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx); quyết định W2 là bản mới, không kế thừa code/approval cũ |
+| SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx); SDD hiện hành quyết định phạm vi, contract và approval của module |
 | CODE TARGET | `src/aicefr/asr/` — đề xuất, chưa tạo |
 
 ## Requirement (Yêu cầu)
@@ -19,7 +19,7 @@
 
 **Trong phạm vi:** `AsrEngine` test double chỉ cho kiểm thử và adapter local cho smoke; transcript, timestamp nếu có, model/config version; phát hiện lỗi và nghi ngờ ASR.
 
-**Ngoài phạm vi W2–W3:** Tải model/người học lên cloud; xem bản fake là kết quả thật; cam kết word timestamp nếu engine không cung cấp.
+**Ngoài phạm vi W2–W3:** Tải model/dữ liệu người học lên cloud; dùng test double làm kết quả sản phẩm; cam kết word timestamp nếu engine không cung cấp.
 
 | ID | Functional Requirement (Yêu cầu chức năng) |
 | --- | --- |

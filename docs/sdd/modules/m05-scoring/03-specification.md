@@ -16,7 +16,7 @@
 ## Hành vi có thể kiểm tra
 
 - Chỉ dùng 5 tiêu chí của W1 làm **phạm vi nháp**; giữ `Interaction=null` với reason `insufficient_evidence`; overall chỉ từ model đã tái kiểm, không từ một proxy đơn lẻ.
-- Bản tham chiếu dùng Ridge v2 cho overall response và có năm `CriterionScore` cùng gán một overall; `confidence` của mỗi dòng là coverage, chưa phải năm điểm độc lập. Chỉ tái dùng artifact sau khi chủ dự án duyệt và kiểm feature order, ASR/VAD, task/unit, license, hash; nếu thiếu, trả `NOT_EVALUATED` và không tạo band.
+- Implementation đã khảo sát dùng Ridge v2 cho overall response và có năm `CriterionScore` cùng nhận một overall; `confidence` của mỗi dòng là coverage, chưa phải năm điểm độc lập. Chỉ dùng artifact sau khi chủ dự án duyệt và kiểm feature order, ASR/VAD, task/unit, license, hash; nếu thiếu, trả `NOT_EVALUATED` và không tạo band.
 - Nếu baseline Ridge được duyệt, overall estimate phải tất định với cùng input/config, thể hiện estimated/provisional, model version và giới hạn corpus. Chỉ xuất một overall score/band; năm CriterionProfile xuất coverage/evidence, không có score/band riêng.
 - Near-boundary/OOD/low confidence chỉ kích hoạt `REVIEW_REQUIRED` theo ngưỡng có version; không gán xác suất hoặc confidence nếu chưa hiệu chỉnh.
 
@@ -24,7 +24,7 @@
 
 - Model file thiếu/hash sai hoặc parser lỗi: fail closed, không fallback sang band mặc định.
 - FeatureSet thiếu/stale/NaN hoặc criterion coverage không đủ: null + reason.
-- Model/band-map không phù hợp task/unit/feature pipeline: `NOT_EVALUATED`; thiếu rubric tiêu chí không được biến thành năm điểm riêng. Metric dev lịch sử chỉ ghi ở tài liệu nguồn, không hiện như kết quả bản dựng mới.
+- Model/band-map không phù hợp task/unit/feature pipeline: `NOT_EVALUATED`; thiếu rubric tiêu chí không được biến thành năm điểm riêng. Metric dev lịch sử chỉ ghi ở tài liệu nguồn, không hiện như kết quả dự án.
 
 ## Quyền, riêng tư và giao diện
 
@@ -42,8 +42,8 @@
 ## Quyết định còn mở
 
 - Rubric Speaking được giảng viên duyệt và năm nhãn criterion hiện chưa có theo xác nhận chủ dự án; cần kế hoạch xây/duyệt nếu muốn kết luận riêng từng tiêu chí. Corpus Ridge có nhãn overall.
-- Đường tích hợp lại Ridge v2 từ bản tham chiếu và điều kiện quyền/compatibility nào được chốt? Bốn weight DeBERTa nằm ngoài Git tại kho model của Thắng; tích hợp vào W2 hay giữ nhánh nghiên cứu?
+- Điều kiện quyền/compatibility nào cần chốt để tích hợp Ridge v2 có provenance? Bốn weight DeBERTa nằm ngoài Git tại kho model của Thắng; tích hợp vào W2 hay giữ nhánh nghiên cứu?
 - Nếu artifact chưa qua kiểm tương thích, W2 chấp nhận report `NOT_EVALUATED` thay band hay điều chỉnh thời hạn?
-- Có giữ band thresholds có version trong Ridge v2 cho overall estimate thử nghiệm sau kiểm tương thích không? Ngưỡng review/calibration mới cần được quyết định.
+- Có giữ band thresholds có version trong Ridge v2 cho overall estimate thử nghiệm sau kiểm tương thích không? Ngưỡng review/calibration cần được quyết định.
 
 **CODEX CHECK RESULT:** DRAFT — đã đối chiếu FR/AC và ranh giới M05; chưa có verdict Phase 01, hợp đồng liên module và dữ liệu W2 cần review. **User verdict Phase 03:** PENDING.

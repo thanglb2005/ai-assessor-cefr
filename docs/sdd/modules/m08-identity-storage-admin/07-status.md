@@ -15,6 +15,6 @@
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
 - [Prompt Log](prompts/prompt-log.md): chưa phát prompt.
-- [Evidence Manifest](evidence/evidence-manifest.md): chưa có implementation/test evidence của repo mới.
+- [Evidence Manifest](evidence/evidence-manifest.md): chưa có implementation/test evidence của repo dự án.
 - [Review Records](reviews/review-log.md): chưa có Phase 07 review.
 - [Kế hoạch W2](../../../plan/week-02.md); [nguồn tài liệu](../../../sources/README.md).

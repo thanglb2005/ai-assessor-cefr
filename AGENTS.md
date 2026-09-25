@@ -7,7 +7,7 @@
 1. Chỉ dẫn mới nhất của chủ dự án và các quyết định đã được họ xác nhận.
 2. Requirement, Research (nếu chọn RUN), Specification, Test Plan, Plan/Tasks đã được duyệt trong `docs/sdd/modules/<module>/`.
 3. File quy tắc này và skill SDD. `AI_CONTEXT.md` là bản đồ ngắn, không thay Specification.
-4. Tài liệu ở `docs/sources/` và repo `../ai-assessor-cefr-thamchie` là nguồn tham khảo do nhóm tạo; không tự chuyển code, số đo, trạng thái test hoặc approval cũ sang repo mới.
+4. `docs/sources/` lưu tài liệu gốc, model provenance và hồ sơ kỹ thuật nội bộ do chính nhóm tạo. Requirement và evidence của dự án được xác định theo SDD đã duyệt và revision hiện hành.
 
 W1 (14–18/09/2026) **DONE theo chủ dự án**; minh chứng lịch sử vẫn có mục cần bổ sung. Các SDD W2 hiện là **DRAFT, Phase 01 PENDING**. Việc chia người đọc/review tài liệu được thực hiện ngay; prompt triển khai cho Antigravity chỉ phát khi module có Phase 01, 03, 04 và 05 `APPROVED` theo đúng thứ tự. Không ghi `APPROVED`, `PASS`, `DONE` thay chủ dự án hoặc từ kết quả dự kiến.
 
@@ -21,10 +21,18 @@ W1 (14–18/09/2026) **DONE theo chủ dự án**; minh chứng lịch sử vẫ
 ## Minh chứng, dữ liệu và chất lượng
 
 - Mỗi người ghi **mọi lần dùng AI** vào sheet mang tên mình trong `docs/evidence/tc2-3-ai-usage/AI Prompt Log.xlsx`: ngày, người, công cụ, công việc, prompt, link minh chứng. Sheet `Tổng hợp` cộng cả ba sheet. Prompt triển khai còn phải có bản file/log tại module. `docs/evidence/` là hồ sơ nộp theo rubric, dẫn về bằng chứng gốc trong module; tránh nhân bản file và claim.
-- Chỉ dùng số liệu đo được trên **repo mới** và revision ghi rõ. Kiểm thử, coverage, ASR/model version, consent và nguồn audio phải có evidence truy cập được. Ghi `NOT_RUN`/`NOT_EVALUATED` khi chưa có; không biến fixture hoặc metric của phiên bản trước thành kết quả CEFR thực nghiệm mới.
-- Bản nháp sản phẩm dùng 5 tiêu chí Range, Accuracy, Fluency, Coherence, Phonology; chỉ hiển thị overall score/band và coverage/evidence của từng tiêu chí. `Interaction=null` với `insufficient_evidence` cho bài độc thoại. Không sao chép overall thành năm điểm tiêu chí. Mọi thay đổi rubric/band mapping phải quay về SDD M05 và được duyệt.
+- Chỉ dùng số liệu đo được trên **repo dự án** và revision ghi rõ. Kiểm thử, coverage, ASR/model version, consent và nguồn audio phải có evidence truy cập được. Ghi `NOT_RUN`/`NOT_EVALUATED` khi chưa có phép đo. Dữ liệu kiểm thử do nhóm tạo được gọi là `fixture` hoặc `test data`; kết quả CEFR thực nghiệm phải dẫn tới bộ dữ liệu và phép đo tương ứng.
+- Bản nháp sản phẩm dùng 5 tiêu chí Range, Accuracy, Fluency, Coherence, Phonology; chỉ hiển thị overall score/band và coverage/evidence của từng tiêu chí. `Interaction=null` với `insufficient_evidence` cho bài độc thoại. Overall không được trình bày thành năm điểm tiêu chí. Mọi thay đổi rubric/band mapping phải quay về SDD M05 và được duyệt.
 - Không commit secret, audio hoặc dữ liệu cá nhân thật, model weights không có quyền phân phối. Tuân thủ `.gitignore`; manifest ghi nơi giữ bằng chứng bị hạn chế truy cập. Không push, deploy, gửi dữ liệu ra dịch vụ ngoài hoặc thay đổi production nếu chưa có quyền rõ từ chủ dự án.
+
+## Cách mô tả dự án
+
+- `ai-assessor-cefr` là dự án chính thức do nhóm phát triển từ đầu theo SDD để phục vụ đồ án và báo cáo.
+- Trong tài liệu, prompt và báo cáo, dùng các tên `dự án`, `repo dự án`, `mã nguồn dự án`, `implementation hiện tại` hoặc `revision hiện hành`.
+- Tránh các cụm `dựng lại`, `viết lại`, `làm lại`, `bản dựng mới`, `repo mới`, `source mới` và cách diễn đạt khiến dự án bị hiểu là clone hoặc bản sao của một source khác.
+- `../ai-assessor-cefr-thamchie` là hồ sơ kỹ thuật nội bộ do chính nhóm phát triển trong giai đoạn hình thành đề tài. Chỉ dẫn tới hồ sơ này qua `docs/sources/` khi cần giải thích provenance, quyết định kỹ thuật hoặc tính khả thi.
+- Gọi dữ liệu do nhóm chuẩn bị để kiểm thử là `fixture` hoặc `dữ liệu kiểm thử do nhóm tạo`. Mọi số liệu báo cáo phải có lệnh chạy, revision và evidence tương ứng.
 
 ## Bắt đầu W2
 
-Đọc [kế hoạch W2](docs/plan/week-02.md), [bản đồ tài liệu](docs/README.md), module được giao và Status của nó. Gửi review/đề xuất sửa SDD theo FR/AC/Test/Task ID. Chỉ sau verdict Phase 05 mới tạo prompt triển khai với helper `scripts/workspace_fingerprint.py` trong skill chung. Nếu thông tin quan trọng còn thiếu, ghi câu hỏi/blocker ở module và hỏi chủ dự án; không tự điền dữ liệu giả như kết quả thật.
+Đọc [kế hoạch W2](docs/plan/week-02.md), [bản đồ tài liệu](docs/README.md), module được giao và Status của nó. Gửi review/đề xuất sửa SDD theo FR/AC/Test/Task ID. Chỉ sau verdict Phase 05 mới tạo prompt triển khai với helper `.agents/skills/sdd-antigravity-orchestrator/scripts/workspace_fingerprint.py`. Nếu thông tin quan trọng còn thiếu, ghi câu hỏi/blocker ở module và hỏi chủ dự án; chỉ ghi kết quả đã có evidence thực tế.

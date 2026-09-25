@@ -16,6 +16,6 @@ Phiếu đăng ký đề tài GV/SV, phân công thành viên, sổ tiến độ
 
 ## Còn thiếu / cần xác minh
 
-Chưa có phiếu đăng ký, chữ ký/xác nhận GVHD, bản cam kết metric hoặc link remote/commit thuộc W1. Git của repo mới chỉ bắt đầu ngày 25/09/2026. W1 DONE theo người dùng nhưng chưa thay hồ sơ ký duyệt.
+Chưa có phiếu đăng ký, chữ ký/xác nhận GVHD, bản cam kết metric hoặc link remote/commit thuộc W1. Git của repo dự án chỉ bắt đầu ngày 25/09/2026. W1 DONE theo người dùng nhưng chưa thay hồ sơ ký duyệt.
 
-Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Không sao chép số liệu hoặc ghi PASS nếu chưa có phép đo.
+Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Chỉ ghi số liệu và trạng thái PASS khi có phép đo cùng evidence tương ứng.

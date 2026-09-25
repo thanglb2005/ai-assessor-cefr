@@ -4,7 +4,7 @@
 
 ## Hồ sơ cần có
 
-Source, commit/diff, danh sách chức năng đã cam kết, demo/build trên repo mới và đối chiếu khối lượng theo phân công.
+Source, commit/diff, danh sách chức năng đã cam kết, demo/build trên repo dự án và đối chiếu khối lượng theo phân công.
 
 ## Minh chứng hiện có
 
@@ -18,4 +18,4 @@ Source, commit/diff, danh sách chức năng đã cam kết, demo/build trên re
 
 Repo đích chưa có src hay build/test evidence; giờ công W1 chỉ là ước tính, không là số giờ đo thực.
 
-Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Không sao chép số liệu hoặc ghi PASS nếu chưa có phép đo.
+Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Chỉ ghi số liệu và trạng thái PASS khi có phép đo cùng evidence tương ứng.

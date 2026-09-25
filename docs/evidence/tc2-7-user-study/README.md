@@ -12,6 +12,6 @@ Chưa có artifact tại chỗ.
 
 ## Còn thiếu / cần xác minh
 
-Chưa có thực nghiệm người dùng thật; fixture synthetic/demo không thay thế tiêu chí này.
+Chưa có thực nghiệm người dùng; fixture và dữ liệu kiểm thử do nhóm tạo không thay thế tiêu chí này.
 
-Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Không sao chép số liệu hoặc ghi PASS nếu chưa có phép đo.
+Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Chỉ ghi số liệu và trạng thái PASS khi có phép đo cùng evidence tương ứng.

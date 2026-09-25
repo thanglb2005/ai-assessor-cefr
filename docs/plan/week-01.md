@@ -10,9 +10,9 @@
 
 - [Tổng kết W1 và ước tính 60 giờ công](../reports/week-01/tong-ket-w1.md): 20 giờ/người là **giả định** 4 giờ/ngày × 5 ngày, không phải timesheet.
 - [Báo cáo Word gốc](../reports/week-01/bao-cao-tuan-01.docx): 1 file; [ảnh sơ đồ lớp](../design/week-01/class-diagram-light.png): 2 biến thể (bản sáng và bản tối); 3 ảnh use case trong [thư mục figures](../reports/week-01/figures/).
-- Repo, Jira và AI rules là đầu ra bạn xác nhận; URL/commit/tệp gốc W1 chưa nằm trong thư mục mới. Git của thư mục dựng lại được khởi tạo ngày 25/09/2026, không dùng làm bằng chứng commit trong W1. Các claim đo lường của dự án mẫu không được tính là metric W1 của repo mới.
+- Repo, Jira và AI rules là đầu ra bạn xác nhận; URL/commit/tệp gốc W1 chưa nằm trong thư mục dự án. Git của thư mục dự án được khởi tạo ngày 25/09/2026, không dùng làm bằng chứng commit trong W1. Các claim đo lường của dự án mẫu không được tính là metric W1 của repo dự án.
 
-**Gate W1:** DONE theo người dùng. Approval các phase SDD của repo mới được theo dõi riêng trong Status từng module, không suy ra từ gate tiến độ tuần.
+**Gate W1:** DONE theo người dùng. Approval các phase SDD của repo dự án được theo dõi riêng trong Status từng module, không suy ra từ gate tiến độ tuần.
 
 **Đối chiếu minh chứng:** Báo cáo Word và các hình có file thực; phân công/tiến độ là xác nhận của chủ dự án; URL Jira, commit W1, bản rule AI có nguồn gốc W1 và xác nhận GVHD chưa được cung cấp để kiểm chứng. [Quy tắc chung hiện tại](../../AGENTS.md) và [skill chung](../../.agents/skills/sdd-antigravity-orchestrator/SKILL.md) được đóng gói ngày 25/09 cho bàn giao W2, không dùng làm bằng chứng rằng file rule này đã tồn tại trong W1.
 

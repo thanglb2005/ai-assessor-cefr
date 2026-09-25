@@ -12,6 +12,6 @@ Chưa có artifact tại chỗ.
 
 ## Còn thiếu / cần xác minh
 
-Chưa có minh chứng kết quả nổi bật; không suy ra từ metric của phiên bản trước.
+Chưa có minh chứng kết quả nổi bật trên revision hiện hành.
 
-Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Không sao chép số liệu hoặc ghi PASS nếu chưa có phép đo.
+Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Chỉ ghi số liệu và trạng thái PASS khi có phép đo cùng evidence tương ứng.

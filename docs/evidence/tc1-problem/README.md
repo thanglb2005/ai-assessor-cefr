@@ -16,4 +16,4 @@ Bối cảnh, người dùng, khảo sát/phỏng vấn có nguồn, so sánh gi
 
 Chưa có khảo sát/phỏng vấn, KPI đã ký duyệt hoặc số liệu thực địa xác minh. Claim trong báo cáo Word cần đối chiếu nguồn.
 
-Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Không sao chép số liệu hoặc ghi PASS nếu chưa có phép đo.
+Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Chỉ ghi số liệu và trạng thái PASS khi có phép đo cùng evidence tương ứng.

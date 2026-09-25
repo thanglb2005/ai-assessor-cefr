@@ -1,8 +1,8 @@
 # AI Assessor CEFR — context cấp dự án
 
-**Trạng thái:** W1 (14–18/09/2026) đã hoàn thành theo xác nhận của người dùng; phạm vi/SDD của repo mới đang chờ duyệt cho W2–W3.
+**Trạng thái:** W1 (14–18/09/2026) đã hoàn thành theo xác nhận của chủ dự án; SDD của các module đang chờ duyệt để triển khai W2–W3.
 
-Mục tiêu dự kiến là một hệ thống hỗ trợ đánh giá bài nói tiếng Anh độc thoại A2–B2 cho sinh viên đại học Việt Nam, phục vụ học tập và giảng viên duyệt. Mọi band/điểm là ước lượng; không cấp chứng chỉ hay tự quyết định đậu/rớt. Chủ dự án đã chọn 5 tiêu chí trong báo cáo tuần 1 làm bản nháp W2. Output mới chỉ hiển thị overall score/band và coverage của từng tiêu chí; `Interaction=null` với lý do thiếu bằng chứng từ độc thoại. Rubric Speaking có phê duyệt học thuật vẫn chưa có trong nguồn đã kiểm tra.
+Mục tiêu dự kiến là một hệ thống hỗ trợ đánh giá bài nói tiếng Anh độc thoại A2–B2 cho sinh viên đại học Việt Nam, phục vụ học tập và giảng viên duyệt. Mọi band/điểm là ước lượng; không cấp chứng chỉ hay tự quyết định đậu/rớt. Chủ dự án đã chọn 5 tiêu chí trong báo cáo tuần 1 làm bản nháp W2. Output W2 chỉ hiển thị overall score/band và coverage của từng tiêu chí; `Interaction=null` với lý do thiếu bằng chứng từ độc thoại. Rubric Speaking có phê duyệt học thuật vẫn chưa có trong nguồn đã kiểm tra.
 
 - Quy tắc chung: [`AGENTS.md`](AGENTS.md); skill dùng chung: [`.agents/skills/sdd-antigravity-orchestrator/SKILL.md`](.agents/skills/sdd-antigravity-orchestrator/SKILL.md).
 - Bản đồ tài liệu: [`docs/README.md`](docs/README.md); [nguồn đề tài do nhóm tạo](docs/sources/README.md).
@@ -14,4 +14,4 @@ Mục tiêu dự kiến là một hệ thống hỗ trợ đánh giá bài nói 
 - Báo cáo tuần 1 bản gốc: `docs/reports/week-01/bao-cao-tuan-01.docx`.
 - Rubric đánh giá đồ án: `docs/rubric/`.
 
-Repo `../ai-assessor-cefr-thamchie` là phiên bản trước do chính chủ dự án phát triển; repo mới viết lại mã nguồn, không clone implementation. Hai đề cương gốc của nhóm đã được lưu tại `docs/sources/` có checksum. Metric, approval và test result của bản trước không tự chuyển thành bằng chứng của bản dựng mới. SDD W2 hiện là bản nháp Phase 01; chưa có mã nguồn, prompt triển khai hoặc lệnh test ổn định cho repo mới. Git baseline đã được tạo; test 442 ca của bản tham chiếu không là test của repo mới.
+`ai-assessor-cefr` là dự án chính thức do nhóm phát triển từ đầu theo SDD. `docs/sources/` lưu đề cương, model provenance và hồ sơ kỹ thuật nội bộ do nhóm tạo trong quá trình hình thành đề tài; mỗi nguồn quan trọng có checksum hoặc đường dẫn xuất xứ. SDD W2 hiện ở Phase 01 DRAFT; mã nguồn và test của các module chưa được triển khai. Kết quả 442 test trong hồ sơ kỹ thuật nội bộ ghi nhận phạm vi kiểm thử của nền tảng đã nghiên cứu, còn kết quả của dự án sẽ được đo trên revision hiện hành và lưu trong evidence của từng module.

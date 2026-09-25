@@ -12,15 +12,15 @@
 
 | Nguồn | Fact có thể dùng | Giới hạn |
 | --- | --- | --- |
-| [Đề cương và báo cáo W1 của nhóm](../../../sources/README.md) | Dự án cần transcript có provenance phục vụ chẩn đoán bài nói | Không phải phép đo WER hoặc quyết định model của repo mới |
+| [Đề cương và báo cáo W1 của nhóm](../../../sources/README.md) | Dự án cần transcript có provenance phục vụ chẩn đoán bài nói | Không phải phép đo WER hoặc quyết định model của repo dự án |
 | [Tài liệu chính thức faster-whisper](https://github.com/SYSTRAN/faster-whisper/blob/master/README.md) | Có tùy chọn word timestamps và ví dụ CPU/GPU; inference bắt đầu khi duyệt generator segment | Chưa xác nhận model, license weight, RAM/tốc độ trên máy nhóm; không khẳng định phù hợp trước smoke |
-| Khảo sát read-only repo tiền nhiệm, xem [code survey](../../../sources/code-survey.md) | Trước đây có ASR adapter và test; giúp nhận diện boundary/failure cần test | Không mang code/config/model hoặc kết quả cũ sang |
+| [Khảo sát nền tảng kỹ thuật nội bộ](../../../sources/code-survey.md) | Nhóm đã kiểm chứng ASR adapter và test; giúp nhận diện boundary/failure cần đặc tả | Implementation và evidence của M03 tuân theo SDD cùng revision hiện hành |
 
 ## Adaptation Map
 
 | Hạng mục | Quyết định bản nháp | Lý do |
 | --- | --- | --- |
-| Adapter/port local ASR | ADAPT ý tưởng boundary, viết implementation mới | Dễ thay engine và test failure path; không phụ thuộc cấu trúc cũ |
+| Adapter local ASR | Thiết kế boundary theo contract M02/M03 | Dễ thay engine và kiểm thử failure path |
 | Word timestamps | OPEN | Chỉ dùng nếu output engine thực có; M06 có thể dùng segment-level theo contract được duyệt |
 | Model tải tự động | REJECT làm mặc định | Cần quyền, license, checksum và kiểm soát đường mạng |
 | Test double | ADOPT cho unit test duy nhất | Không là bằng chứng ASR hay điểm CEFR |

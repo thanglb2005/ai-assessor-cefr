@@ -21,4 +21,4 @@ Requirement/Specification, use case, class diagram, ma trận truy vết FR–AC
 
 8 module đã có Requirement, Specification, Test Plan, Plan và Tasks **bản nháp W2** với FR/AC/Test ID; chưa có user verdict theo phase và chưa đối chiếu xong sơ đồ với báo cáo Word. Có file nháp không đồng nghĩa SDD đã được duyệt.
 
-Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Không sao chép số liệu hoặc ghi PASS nếu chưa có phép đo.
+Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Chỉ ghi số liệu và trạng thái PASS khi có phép đo cùng evidence tương ứng.

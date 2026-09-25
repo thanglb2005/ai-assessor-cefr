@@ -10,7 +10,7 @@
 | RESEARCH MODE | Đề xuất `RUN`; người dùng quyết định trong Phase 01 |
 | TARGET | W2–W3 |
 | RELATED SCOPES | M04 FeatureSet, rubric/construct được xác nhận |
-| SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx); quyết định W2 là bản mới, không kế thừa code/approval cũ |
+| SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx); SDD hiện hành quyết định phạm vi, contract và approval của module |
 | CODE TARGET | `src/aicefr/scoring/` — đề xuất, chưa tạo |
 
 ## Requirement (Yêu cầu)
@@ -35,7 +35,7 @@
 
 ## W2 scope note (Ranh giới tuần 2)
 
-W2 xây contract, đường từ chối và provenance dựa trên [model và đường chấm overall đã chạy trong bản tham chiếu của nhóm](../../../sources/scoring-audit.md). Mặc định khảo sát `ridge_resp_v2` cho một response; khi đưa vào code mới phải kiểm hash, feature order, ASR/VAD, inference unit và quyền dữ liệu. Rubric Speaking/nhãn riêng năm tiêu chí hiện chưa có theo xác nhận chủ dự án; bản mới chỉ hiển thị overall score/band và coverage từng tiêu chí theo quyết định chủ dự án. Không biến metric bản tham chiếu thành metric bản mới.
+W2 xây contract, đường từ chối và provenance dựa trên [model và đường chấm overall do nhóm đã kiểm chứng](../../../sources/scoring-audit.md). `ridge_resp_v2` là ứng viên cho unit of inference một response; trước khi tích hợp cần kiểm hash, feature order, ASR/VAD, inference unit và quyền dữ liệu. Rubric Speaking/nhãn riêng cho năm tiêu chí hiện chưa có trong nguồn đã khảo sát; sản phẩm chỉ hiển thị overall score/band và coverage từng tiêu chí theo quyết định chủ dự án. Metric báo cáo phải gắn với dataset, protocol và revision hiện hành.
 
 ## Điều kiện chung và câu hỏi mở
 

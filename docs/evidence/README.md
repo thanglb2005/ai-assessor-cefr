@@ -25,7 +25,7 @@
 | 1 | Phiếu đăng ký GV/SV và phân công | [00-process](00-process/README.md) | Phân công W1 có; phiếu ký chưa có |
 | 2 | Sổ tiến độ hằng tuần có xác nhận GVHD | [00-process](00-process/README.md) | Báo cáo W1 có; xác nhận GVHD chưa có |
 | 3 | Cam kết sản phẩm cuối + metric có chữ ký | [00-process](00-process/README.md) | PENDING |
-| 4 | Link Git và lịch sử commit, quyền hội đồng | [TC2.2](tc2-2-product/README.md) / [TC2.4](tc2-4-code-quality/README.md) | PENDING trong repo mới |
+| 4 | Link Git và lịch sử commit, quyền hội đồng | [TC2.2](tc2-2-product/README.md) / [TC2.4](tc2-4-code-quality/README.md) | PENDING trong repo dự án |
 | 5 | AI Usage Log hoặc cam kết không dùng AI | [TC2.3](tc2-3-ai-usage/README.md) | Log bắt đầu cho công việc Codex hiện tại; Antigravity chưa có prompt |
 | 6 | SRS/SDD và sơ đồ | [TC2.1](tc2-1-requirements-design/README.md) | Báo cáo/sơ đồ W1 có; SDD module còn DRAFT |
 | 7 | Static analysis, secret scan, convention | [TC2.4](tc2-4-code-quality/README.md) | PENDING |

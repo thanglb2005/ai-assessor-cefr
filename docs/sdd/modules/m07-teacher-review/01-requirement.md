@@ -10,7 +10,7 @@
 | RESEARCH MODE | Đề xuất `SKIP`; người dùng quyết định trong Phase 01 |
 | TARGET | W2 chuẩn bị contract; W3 triển khai |
 | RELATED SCOPES | M05 score/reason, M06 diagnostic report, M08 account/DB |
-| SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx); quyết định W2 là bản mới, không kế thừa code/approval cũ |
+| SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx); SDD hiện hành quyết định phạm vi, contract và approval của module |
 | CODE TARGET | `src/aicefr/review/`, `src/aicefr/api/review.py` — đề xuất, chưa tạo |
 
 ## Requirement (Yêu cầu)

@@ -9,14 +9,14 @@ Test ở đây là **ca dự kiến**, chưa được chạy. Fixture tạo bở
 | M01-TEST-001 | M01-FR-001 / M01-AC-001 | API integration | Student có consent nộp file hợp lệ | Tạo một Response `QUEUED` với owner từ session |
 | M01-TEST-002 | M01-FR-001 / M01-AC-001 | API integration | Thiếu consent hoặc role khác student | Không có Response/blob mới; trả lỗi quyền |
 | M01-TEST-003 | M01-FR-002 / M01-AC-002 | API integration | Owner A truy cập response của B | Không lộ status/report của B |
-| M01-TEST-004 | M01-FR-002 / M01-AC-002 | Unit + API | Pipeline chuyển sang `REVIEW_REQUIRED` rồi `FAILED` | UI/API giữ đúng trạng thái và không gắn score giả |
+| M01-TEST-004 | M01-FR-002 / M01-AC-002 | Unit + API | Pipeline chuyển sang `REVIEW_REQUIRED` rồi `FAILED` | UI/API giữ đúng trạng thái và không gắn score khi thiếu evidence |
 | M01-TEST-005 | M01-FR-001 / M01-AC-001 | Boundary | File rỗng/sai định dạng/quá giới hạn cấu hình | Từ chối trước tạo Response; reason rõ |
 
 ## Chính sách chạy và bằng chứng
 
 - Tạo test cùng task triển khai; ưu tiên unit test cho logic thuần, integration test cho boundary I/O, và kiểm tra UI/API khi hành vi nhìn thấy được.
-- Lệnh dự kiến sau khi repo mới có `pyproject.toml`: `python3 -m pytest -q tests/` và `python3 -m pytest --cov=aicefr --cov-report=term-missing`; tên test/path cuối cùng ghi trong task đã duyệt. **Hiện trạng: NOT_RUN**, vì repo mới chưa có mã nguồn/test.
-- Coverage là chỉ báo để xem nhánh quan trọng chưa kiểm; không gán phần trăm đạt giả. Chính sách threshold/no-regression sẽ được chốt ở Phase 04/05 sau khi có stack và baseline đo được.
+- Lệnh dự kiến sau khi repo dự án có `pyproject.toml`: `python3 -m pytest -q tests/` và `python3 -m pytest --cov=aicefr --cov-report=term-missing`; tên test/path cuối cùng ghi trong task đã duyệt. **Hiện trạng: NOT_RUN**, vì repo dự án chưa có mã nguồn/test.
+- Coverage là chỉ báo để tìm nhánh quan trọng chưa được kiểm thử. Chính sách threshold/no-regression chỉ được chốt ở Phase 04/05 sau khi có stack và baseline đo được.
 - Bằng chứng Phase 06/08: command, thời điểm, exit code, số test, phần skipped/fail, coverage report nếu áp dụng, revision/fingerprint, file trong `evidence/`. Browser QA nếu có phải ghi môi trường và ảnh/trạng thái thực.
 - Test với audio có quyền sử dụng là smoke/integration riêng; không đưa audio, transcript chứa PII hoặc secret vào Git/log. Chưa có data/consent/approval thì đánh dấu `NOT_RUN` thay vì tạo kết quả thay thế.
 

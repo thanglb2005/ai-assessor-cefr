@@ -1,6 +1,6 @@
 # M03 — Evidence Manifest (danh mục bằng chứng)
 
-**Hiện trạng:** chưa có implementation/test evidence của repo mới. Báo cáo và hình W1 cấp dự án nằm ở docs/reports/week-01/ và docs/design/week-01/.
+**Hiện trạng:** chưa có implementation/test evidence của repo dự án. Báo cáo và hình W1 cấp dự án nằm ở docs/reports/week-01/ và docs/design/week-01/.
 
 | Evidence ID | Prompt ID / Task ID | Phase | Base/Head revision, fingerprint | Loại / file hoặc link | Check và kết quả thực tế | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- |

@@ -15,7 +15,7 @@
 
 ## Hành vi có thể kiểm tra
 
-- Mỗi feature có công thức, đơn vị, nguồn và điều kiện hợp lệ ghi trong implementation/test; không dùng metric chỉ vì có trong repo cũ.
+- Mỗi feature có công thức, đơn vị, nguồn và điều kiện hợp lệ ghi trong implementation/test; metric được dùng phải có quyết định SDD và ca kiểm thử tương ứng.
 - Nếu transcript lỗi hoặc timestamp thiếu, feature phụ thuộc đó là null + missing_reason; không impute 0/mean.
 - Không đổi word count/speaking rate thành điểm Range/Fluency/Accuracy/Phonology; đó là tín hiệu hỗ trợ, chưa đại diện toàn construct.
 - FeatureSet mang input artifact hash/version để không trộn output từ transcript/QC khác lần.

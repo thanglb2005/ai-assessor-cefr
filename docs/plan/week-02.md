@@ -1,14 +1,14 @@
 # W2 — 21–25/09/2026 — kế hoạch và đối chiếu
 
-**Trạng thái tại 25/09/2026:** chưa xác minh kết quả trong repo mới; thư mục đích chưa có source code. Mốc cuối tuần này là mục tiêu kế hoạch, không được ghi DONE nếu thiếu diff/test/evidence.
+**Trạng thái tại 25/09/2026:** chưa xác minh kết quả trong repo dự án; thư mục đích chưa có source code. Mốc cuối tuần này là mục tiêu kế hoạch, không được ghi DONE nếu thiếu diff/test/evidence.
 
 ## Bàn giao để chia việc cho nhóm
 
 Cả ba người dùng [AGENTS.md](../../AGENTS.md) và **cùng một bản** [skill SDD trong repo](../../.agents/skills/sdd-antigravity-orchestrator/SKILL.md); Antigravity đọc [điểm vào](../../ANTIGRAVITY.md). Bắt đầu bằng `AI_CONTEXT.md`, kế hoạch này, `01-requirement.md` và `07-status.md` của module mình nhận. Mỗi người xác nhận owner và gửi các điểm cần sửa theo FR/AC/Test/Task ID.
 
 - **Thắng:** nhận review M08/M02, tổng hợp contract, dependency và quy ước Git/CI; trao đổi contract cần dùng với Sang, Nguyên.
-- **Sang:** nhận review M03/M04/M05, ghi nguồn model/audio, kiểm tra các điều kiện đo lường và refusal path; không coi model tham chiếu là đã chạy trong repo mới.
-- **Nguyên:** nhận review M01/M06, chuẩn bị M07 cho W3, đối chiếu use case/báo cáo W1 với flow mới và phản hồi contract nhận từ M08/M05.
+- **Sang:** nhận review M03/M04/M05, ghi nguồn model/audio, kiểm tra các điều kiện đo lường và refusal path; tích hợp model phải có test và evidence trên revision hiện hành.
+- **Nguyên:** nhận review M01/M06, chuẩn bị M07 cho W3, đối chiếu use case/báo cáo W1 với flow hiện hành và phản hồi contract nhận từ M08/M05.
 
 **Sẵn sàng giao việc:** có thể chia việc đọc, góp ý và hoàn thiện SDD theo module ngay. Owner/task dưới đây vẫn là đề xuất cho đến khi nhóm xác nhận. Chưa giao prompt implement: 8/8 Status đang Phase 01 `DRAFT/PENDING`; trước mỗi prompt cần verdict Phase 01 → 03 → 04 → 05 của chủ dự án và baseline/fingerprint. Ghi mọi prompt AI vào [sheet đúng người](../evidence/tc2-3-ai-usage/AI%20Prompt%20Log.xlsx).
 
@@ -23,9 +23,9 @@ Cả ba người dùng [AGENTS.md](../../AGENTS.md) và **cùng một bản** [s
 1. Soạn bản nháp 5 tiêu chí độc thoại theo lựa chọn chủ dự án; review Requirement, Research nếu RUN, Specification, Test Plan rồi Plan/Tasks theo checkpoint trước implementation.
 2. Thắng phát hành contract có kiểu, reason code và schema/storage tối thiểu. Sang/Nguyên review phần họ dùng; mỗi người giữ vùng source riêng.
 3. M02 → M03 → M04 → M05 → M06 được nối bằng artifact có version. Unit/integration test dùng fixture do nhóm tạo; smoke ASR local dùng audio có quyền sử dụng và kết quả thật. M08/M01 cung cấp nộp bài và trạng thái.
-4. Chạy test cho audio lỗi, ASR fail, missing feature, score refusal, owner access và evidence refs. Ghi lệnh/kết quả thật, không dùng kết quả test phiên bản trước.
+4. Chạy test cho audio lỗi, ASR fail, missing feature, score refusal, owner access và evidence refs. Ghi lệnh, revision và kết quả vào evidence của module.
 
-**Gate cuối W2 (chưa đạt/chưa xác minh):** code mới + test thật cho upload/quyền/QC/ASR/features/report. Một audio có quyền sử dụng chạy offline qua ASR local với model/version/smoke record; nếu chưa có model/audio, ghi `NOT_RUN` và gate còn thiếu. M05 có thể phát **overall band ước lượng** từ Ridge v2 do nhóm đã tạo sau khi kiểm quyền, hash, feature/ASR/VAD và unit trên code mới; nếu không đạt thì report ghi `NOT_EVALUATED`. Báo cáo chỉ hiển thị overall score/band và coverage/evidence của năm tiêu chí, không sao chép overall thành năm điểm. `teacher_verified=false` trước hành động M07 thật. Fixture test không phải dữ liệu thực nghiệm CEFR.
+**Gate cuối W2 (chưa đạt/chưa xác minh):** code của dự án + test thật cho upload/quyền/QC/ASR/features/report. Một audio có quyền sử dụng chạy offline qua ASR local với model/version/smoke record; nếu chưa có model/audio, ghi `NOT_RUN` và gate còn thiếu. M05 có thể phát **overall band ước lượng** từ Ridge v2 do nhóm đã tạo sau khi kiểm quyền, hash, feature/ASR/VAD và unit trên code của dự án; nếu không đạt thì report ghi `NOT_EVALUATED`. Báo cáo chỉ hiển thị overall score/band và coverage/evidence của năm tiêu chí; overall không được trình bày thành năm điểm. `teacher_verified=false` trước hành động M07 thật. Fixture test không phải dữ liệu thực nghiệm CEFR.
 
 ## Task W2 theo người (bản nháp, chưa phải công việc đã hoàn tất)
 
@@ -40,11 +40,11 @@ Cả ba người dùng [AGENTS.md](../../AGENTS.md) và **cùng một bản** [s
 ## Prompt log và evidence cần có
 
 - Mỗi prompt Antigravity được lưu trước khi gửi tại docs/sdd/modules/MODULE/prompts/; ghi Prompt ID, Task ID, base revision/fingerprint và link trong Prompt Log cùng module.
-- Raw report, diff/commit, command output/test, ảnh QA nếu có được lưu hoặc dẫn chiếu tại evidence/ cùng module. Status module trỏ tới bản mới nhất.
-- Nếu W2 đã làm ở workspace khác, đưa về repo mới bằng diff/commit và evidence truy cập được rồi mới cập nhật gate. Không chỉ dùng lời tóm tắt.
+- Raw report, diff/commit, command output/test, ảnh QA nếu có được lưu hoặc dẫn chiếu tại evidence/ cùng module. Status module trỏ tới revision mới nhất.
+- Chỉ cập nhật gate W2 sau khi implementation, diff/commit và evidence truy cập được đã có trong repo dự án.
 
 ## Rủi ro
 
-W2 đến hạn 25/09 nhưng source của repo mới vẫn trống tại thời điểm lập file này. Nếu chưa có implementation ở nơi khác, cần giảm scope của W3 còn vertical slice tối thiểu hoặc đổi hạn 02/10; không đánh dấu W2 hoàn thành theo lịch.
+W2 đến hạn 25/09 nhưng source của repo dự án vẫn trống tại thời điểm lập file này. Nếu chưa có implementation, cần giảm scope của W3 còn vertical slice tối thiểu hoặc đổi hạn 02/10; không đánh dấu W2 hoàn thành theo lịch.
 
 Tự rà soát tài liệu: [week-02-sdd-review.md](week-02-sdd-review.md). Hồ sơ tổng hợp theo rubric: [docs/evidence/](../evidence/README.md). Khi có artifact mới, cập nhật manifest TC tương ứng và dẫn về evidence module.

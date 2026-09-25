@@ -10,7 +10,7 @@
 | RESEARCH MODE | Đề xuất `SKIP`; người dùng quyết định trong Phase 01 |
 | TARGET | W2 |
 | RELATED SCOPES | M02 QC, M03 transcript/timestamp |
-| SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx); quyết định W2 là bản mới, không kế thừa code/approval cũ |
+| SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx); SDD hiện hành quyết định phạm vi, contract và approval của module |
 | CODE TARGET | `src/aicefr/features/` — đề xuất, chưa tạo |
 
 ## Requirement (Yêu cầu)
