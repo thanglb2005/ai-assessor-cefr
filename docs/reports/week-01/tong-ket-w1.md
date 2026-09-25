@@ -7,7 +7,7 @@
 | Thành viên | Phần việc W1 do người dùng xác nhận | Minh chứng hiện có trong thư mục mới |
 | --- | --- | --- |
 | Thắng | Tạo repo; phân chia module; lên plan; dựng quy trình SDD | Cây 8 module SDD và kế hoạch hiện tại phản ánh phần việc; link/commit repo W1 chưa được cung cấp; Git của thư mục dựng lại được khởi tạo ngày 25/09/2026 |
-| Sang | Nghiên cứu rubric; tạo dự án Jira; vẽ diagram; lập rule cho AI | Rubric PDF/text và hai biến thể ảnh sơ đồ lớp đã có; link Jira và tệp rule AI W1 chưa được cung cấp |
+| Sang | Nghiên cứu rubric; tạo dự án Jira; vẽ diagram; lập rule cho AI | Rubric PDF gốc và hai biến thể ảnh sơ đồ lớp đã có; link Jira và tệp rule AI W1 chưa được cung cấp |
 | Nguyên | Nghiên cứu Requirement/Specification; vẽ các sơ đồ use case; viết báo cáo tuần 1 | Báo cáo Word và ba ảnh use case nhúng đã có |
 
 Các tệp hình nhúng trong Word được đối chiếu theo hash với phiên bản trước do nhóm thực hiện: ba use case và một sơ đồ lớp cũ. Hai ảnh sơ đồ lớp của nhóm nằm ở docs/design/week-01/ và khác hình lớp nhúng trong Word. Việc ai tạo từng biến thể hình không được suy ra chỉ từ tên file.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Điều phối SDD Codex–Antigravity"
+  short_description: "SDD theo scope, Codex lead và review PR có evidence"
+  default_prompt: "Hãy dùng $sdd-antigravity-orchestrator để xác định scope theo feature/module và điều phối Phase 01–09 với Codex làm lead, Antigravity làm implementer."

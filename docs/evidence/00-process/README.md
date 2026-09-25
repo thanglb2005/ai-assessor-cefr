@@ -12,9 +12,10 @@ Phiếu đăng ký đề tài GV/SV, phân công thành viên, sổ tiến độ
 | --- | --- | --- |
 | Tổng kết W1 | [Tổng kết W1](../../reports/week-01/tong-ket-w1.md) | Tài liệu đầu vào/đã có; cần kiểm tra nội dung trước nghiệm thu |
 | Kế hoạch W1 | [Kế hoạch W1](../../plan/week-01.md) | Tài liệu đầu vào/đã có; cần kiểm tra nội dung trước nghiệm thu |
+| Quy tắc bàn giao W2 | [AGENTS.md](../../../AGENTS.md) và [skill chung](../../../.agents/skills/sdd-antigravity-orchestrator/SKILL.md) | Đã tạo cho W2; không phải minh chứng file rule W1 |
 
 ## Còn thiếu / cần xác minh
 
-Chưa có phiếu đăng ký, chữ ký/xác nhận GVHD, bản cam kết metric hoặc link/commit Git trong thư mục mới. W1 DONE theo người dùng nhưng chưa thay hồ sơ ký duyệt.
+Chưa có phiếu đăng ký, chữ ký/xác nhận GVHD, bản cam kết metric hoặc link remote/commit thuộc W1. Git của repo mới chỉ bắt đầu ngày 25/09/2026. W1 DONE theo người dùng nhưng chưa thay hồ sơ ký duyệt.
 
 Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Không sao chép số liệu hoặc ghi PASS nếu chưa có phép đo.

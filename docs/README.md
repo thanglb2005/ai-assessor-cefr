@@ -2,6 +2,7 @@
 
 | Nơi lưu | Nội dung | Quy tắc |
 | --- | --- | --- |
+| `../AGENTS.md`, `../ANTIGRAVITY.md`, `../.agents/skills/sdd-antigravity-orchestrator/` | Một bộ quy tắc/skill SDD dùng chung cho cả ba người và điểm vào Antigravity | Dùng bản trong repo, không dựa vào skill cài riêng trên từng máy |
 | `plan/three-week-roadmap.md` | Tổng quan 3 tuần và các quyết định còn mở | Dẫn tới ba kế hoạch tuần riêng |
 | `plan/week-01.md`, `week-02.md`, `week-03.md` | Kế hoạch/record theo tuần | W1 DONE; W2 chưa xác minh; W3 DRAFT |
 | `sdd/modules/<slug>/` | SDD độc lập theo 8 module M01–M08 | Mỗi module có Prompt Log, Evidence Manifest, Review Records và Status local |

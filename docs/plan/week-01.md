@@ -14,4 +14,6 @@
 
 **Gate W1:** DONE theo người dùng. Approval các phase SDD của repo mới được theo dõi riêng trong Status từng module, không suy ra từ gate tiến độ tuần.
 
+**Đối chiếu minh chứng:** Báo cáo Word và các hình có file thực; phân công/tiến độ là xác nhận của chủ dự án; URL Jira, commit W1, bản rule AI có nguồn gốc W1 và xác nhận GVHD chưa được cung cấp để kiểm chứng. [Quy tắc chung hiện tại](../../AGENTS.md) và [skill chung](../../.agents/skills/sdd-antigravity-orchestrator/SKILL.md) được đóng gói ngày 25/09 cho bàn giao W2, không dùng làm bằng chứng rằng file rule này đã tồn tại trong W1.
+
 **Evidence W1:** báo cáo Word, ảnh class diagram, bốn hình báo cáo và tổng kết W1 ở các đường dẫn trên. Minh chứng Jira/AI rules/repo chỉ thêm đường dẫn khi có artifact thật.

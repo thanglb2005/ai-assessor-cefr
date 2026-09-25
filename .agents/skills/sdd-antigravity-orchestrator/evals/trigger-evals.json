@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "eval_set_version": "2026-09-07.1",
+  "skill_name": "sdd-antigravity-orchestrator",
+  "queries": [
+    {
+      "id": "TRG-001",
+      "query": "repo mới tinh á, codex lead giúp t viết spec plan rồi ra prompt cho antigravity code nha",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Yêu cầu rõ mô hình Codex lead và Antigravity implement từ repo mới"
+    },
+    {
+      "id": "TRG-002",
+      "query": "Dự án React đã chạy production, thêm thanh toán; Codex quản lý SDD và review, Antigravity triển khai từng task",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Phát triển existing repo theo workflow hai model và rủi ro cao"
+    },
+    {
+      "id": "TRG-003",
+      "query": "antigravity gửi report completed này rồi, xem actual diff giúp và viết prompt sửa nếu chưa đạt AC",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Review report và correction prompt thuộc handoff SDD"
+    },
+    {
+      "id": "TRG-004",
+      "query": "lấy tech stack với UI auth từ app cũ của tôi làm reference cho app mới, codex ra toàn bộ prompt để antigravity làm",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Tham khảo source để xây target qua Antigravity"
+    },
+    {
+      "id": "TRG-005",
+      "query": "tới Phase 09 nghiệm thu rồi, dùng Chrome DevTools MCP cho Antigravity chạy browser QA và Codex tổng hợp acceptance",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Nghiệm thu Phase 09 và browser QA trong workflow"
+    },
+    {
+      "id": "TRG-006",
+      "query": "bài này nhỏ thôi dùng SDD fast path, vẫn phải có UT coverage evidence rồi giao antigravity code",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Yêu cầu Fast Path nhưng vẫn điều phối hai model"
+    },
+    {
+      "id": "TRG-007",
+      "query": "đọc status hiện tại, tiếp tục đúng phase đã approved và phát hành task tiếp theo cho antigravity",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Context recovery và task issuance thuộc Skill"
+    },
+    {
+      "id": "TRG-008",
+      "query": "review PR 1977 chỉ lấy diff trên github, report tiếng việt theo critical major minor ở REVIEWs/review-1977-v1.md",
+      "should_trigger": true,
+      "expected_mode": "REMOTE_PR_REVIEW",
+      "near_miss": false,
+      "rationale": "Yêu cầu rõ remote PR review và output contract"
+    },
+    {
+      "id": "TRG-009",
+      "query": "check giùm 3 merge request này, mỗi MR tách riêng issue và evidence, đừng lấy local workspace diff",
+      "should_trigger": true,
+      "expected_mode": "REMOTE_PR_REVIEW",
+      "near_miss": false,
+      "rationale": "Review nhiều remote merge request theo mode PR"
+    },
+    {
+      "id": "TRG-010",
+      "query": "làm feature có pipeline spec verify plan verify task code review UT, codex lead còn antigravity implement",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Pipeline evidence và vai trò hai model được chỉ định"
+    },
+    {
+      "id": "TRG-011",
+      "query": "repo đã có docs/sdd theo feature/module rồi, thêm feature mới thì tạo folder riêng theo requirement research spec test-plan plan rồi giao antigravity implement",
+      "should_trigger": true,
+      "expected_mode": "SDD_ORCHESTRATION",
+      "near_miss": false,
+      "rationale": "Yêu cầu rõ scope-first SDD, artifact local và điều phối Antigravity"
+    },
+    {
+      "id": "NO-001",
+      "query": "SDD là gì vậy, giải thích cho tôi trong 5 dòng dễ hiểu",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": true,
+      "rationale": "Chỉ hỏi kiến thức SDD, không vận hành dự án"
+    },
+    {
+      "id": "NO-002",
+      "query": "Codex sửa trực tiếp lỗi TypeScript trong src/main.tsx rồi chạy test giúp tôi",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": true,
+      "rationale": "Người dùng yêu cầu Codex trực tiếp implement"
+    },
+    {
+      "id": "NO-003",
+      "query": "viết commit message ngắn cho diff hiện tại, conventional commits nha",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": false,
+      "rationale": "Tác vụ một bước không cần SDD hoặc PR review"
+    },
+    {
+      "id": "NO-004",
+      "query": "hướng dẫn tôi mở tab Network trong Chrome DevTools và lọc request fetch",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": true,
+      "rationale": "Chỉ hỏi cách dùng công cụ browser"
+    },
+    {
+      "id": "NO-005",
+      "query": "so sánh React hooks với Vue composables, nêu ưu nhược điểm",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": false,
+      "rationale": "Câu hỏi công nghệ không phải workflow dự án"
+    },
+    {
+      "id": "NO-006",
+      "query": "review đoạn function này trong chat và giải thích bug, không cần xem repo hay sửa code",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": true,
+      "rationale": "Review code rời rạc, không phải PR remote hay handoff"
+    },
+    {
+      "id": "NO-007",
+      "query": "review toàn bộ staged diff local của tôi trước khi commit, chưa có PR đâu",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": true,
+      "rationale": "Local diff review không phải REMOTE_PR_ONLY"
+    },
+    {
+      "id": "NO-008",
+      "query": "viết cho tôi một bản specification của chức năng đăng nhập, không cần code hay antigravity",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": true,
+      "rationale": "Specification độc lập không có context workflow hai model"
+    },
+    {
+      "id": "NO-009",
+      "query": "phân tích screenshot app này xem spacing và màu có đẹp không, chỉ nhận xét UI thôi",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": true,
+      "rationale": "Phân tích UI đơn lẻ không dùng reference để điều phối dự án"
+    },
+    {
+      "id": "NO-010",
+      "query": "thêm unit test cho utils/date.ts và trực tiếp sửa file test giúp tôi",
+      "should_trigger": false,
+      "expected_mode": "NONE",
+      "near_miss": true,
+      "rationale": "Yêu cầu Codex implement trực tiếp dù có nhắc Unit Test"
+    }
+  ]
+}

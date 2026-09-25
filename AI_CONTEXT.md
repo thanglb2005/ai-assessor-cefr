@@ -4,6 +4,7 @@
 
 Mục tiêu dự kiến là một hệ thống hỗ trợ đánh giá bài nói tiếng Anh độc thoại A2–B2 cho sinh viên đại học Việt Nam, phục vụ học tập và giảng viên duyệt. Mọi band/điểm là ước lượng; không cấp chứng chỉ hay tự quyết định đậu/rớt. Chủ dự án đã chọn 5 tiêu chí trong báo cáo tuần 1 làm bản nháp W2. Output mới chỉ hiển thị overall score/band và coverage của từng tiêu chí; `Interaction=null` với lý do thiếu bằng chứng từ độc thoại. Rubric Speaking có phê duyệt học thuật vẫn chưa có trong nguồn đã kiểm tra.
 
+- Quy tắc chung: [`AGENTS.md`](AGENTS.md); skill dùng chung: [`.agents/skills/sdd-antigravity-orchestrator/SKILL.md`](.agents/skills/sdd-antigravity-orchestrator/SKILL.md).
 - Bản đồ tài liệu: [`docs/README.md`](docs/README.md); [nguồn đề tài do nhóm tạo](docs/sources/README.md).
 - Tổng quan ba tuần: [`docs/plan/three-week-roadmap.md`](docs/plan/three-week-roadmap.md); file từng tuần nằm trong docs/plan/week-01.md, week-02.md, week-03.md.
 - Chỉ mục prompt/evidence theo module: [`docs/sdd/prompt-log.md`](docs/sdd/prompt-log.md).

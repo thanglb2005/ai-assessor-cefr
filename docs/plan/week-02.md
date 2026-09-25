@@ -2,6 +2,16 @@
 
 **Trạng thái tại 25/09/2026:** chưa xác minh kết quả trong repo mới; thư mục đích chưa có source code. Mốc cuối tuần này là mục tiêu kế hoạch, không được ghi DONE nếu thiếu diff/test/evidence.
 
+## Bàn giao để chia việc cho nhóm
+
+Cả ba người dùng [AGENTS.md](../../AGENTS.md) và **cùng một bản** [skill SDD trong repo](../../.agents/skills/sdd-antigravity-orchestrator/SKILL.md); Antigravity đọc [điểm vào](../../ANTIGRAVITY.md). Bắt đầu bằng `AI_CONTEXT.md`, kế hoạch này, `01-requirement.md` và `07-status.md` của module mình nhận. Mỗi người xác nhận owner và gửi các điểm cần sửa theo FR/AC/Test/Task ID.
+
+- **Thắng:** nhận review M08/M02, tổng hợp contract, dependency và quy ước Git/CI; trao đổi contract cần dùng với Sang, Nguyên.
+- **Sang:** nhận review M03/M04/M05, ghi nguồn model/audio, kiểm tra các điều kiện đo lường và refusal path; không coi model tham chiếu là đã chạy trong repo mới.
+- **Nguyên:** nhận review M01/M06, chuẩn bị M07 cho W3, đối chiếu use case/báo cáo W1 với flow mới và phản hồi contract nhận từ M08/M05.
+
+**Sẵn sàng giao việc:** có thể chia việc đọc, góp ý và hoàn thiện SDD theo module ngay. Owner/task dưới đây vẫn là đề xuất cho đến khi nhóm xác nhận. Chưa giao prompt implement: 8/8 Status đang Phase 01 `DRAFT/PENDING`; trước mỗi prompt cần verdict Phase 01 → 03 → 04 → 05 của chủ dự án và baseline/fingerprint. Ghi mọi prompt AI vào [sheet đúng người](../evidence/tc2-3-ai-usage/AI%20Prompt%20Log.xlsx).
+
 ## Phân công đề xuất
 
 | Thắng | Sang | Nguyên |
