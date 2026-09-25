@@ -9,19 +9,19 @@
 | `evidence/` | Hồ sơ minh chứng theo rubric và checklist 12 mục | Dẫn tới artifact gốc, không nhân đôi số liệu |
 | `design/week-01/` | Hai bản hình sơ đồ lớp do nhóm đưa vào | Dùng bản sáng để review; bản tối là biến thể trình bày |
 | `reports/week-01/` | Tổng kết W1, báo cáo Word gốc và 4 hình nhúng đối chiếu với bản tiền nhiệm do nhóm làm | Giữ Word nguyên bản; hình lưu riêng để dẫn chiếu |
-| `rubric/` | PDF rubric gốc và text trích xuất để tìm kiếm | PDF là bản đối chiếu chính; text chỉ hỗ trợ tra cứu |
-| `sources/` | Hai đề cương DOCX gốc của nhóm, checksum và code survey read-only | Nguồn học thuật/lịch sử; không chuyển mã nguồn cũ |
+| `rubric/` | PDF rubric gốc | Giữ một nguồn chuẩn, PDF có thể tìm kiếm văn bản |
+| `sources/` | Hai đề cương DOCX gốc của nhóm, checksum, khảo sát model và kết quả kiểm tra tham chiếu | Nguồn học thuật/lịch sử; không chuyển mã nguồn cũ |
 
 ## Nguồn và tình trạng
 
 - `reports/week-01/bao-cao-tuan-01.docx` là tài liệu **đã có trước** khi khởi tạo cấu trúc này, chưa được mình sửa nội dung hay xác nhận các claim trong đó.
 - Bốn ảnh trong `reports/week-01/figures/` khớp byte-for-byte với image1–image4 nhúng trong báo cáo Word W1. Chúng được lưu từ bản tham chiếu của nhóm trước lần cập nhật ngày 25/09. Hiện `../ai-assessor-cefr-thamchie/docs/sdd/images/02_class.png` đã khác bản nhúng W1 (SHA-256 hiện tại `c86c4bc0a2c9b310569924e9afe0b9fad7674d0c210534afeae600d0c0534ae8`); giữ nguyên ảnh W1 để báo cáo không sai nguồn.
 - `design/week-01/class-diagram-light.png` và `class-diagram-dark.png` là hai ảnh có sẵn ở root dự án mới, chỉ đổi nơi lưu/tên. Chúng **khác** hình `reports/week-01/figures/02_class.png` nhúng trong Word; không tự nhận file `.drawio` của phiên bản trước do nhóm thực hiện là nguồn sửa của hai ảnh mới.
-- `rubric/Rubric_Do_An_Mon_Hoc_CNPM_sinhvien.docx.pdf` và `rubric/rubric_text_trich_xuat.txt` được chép từ `../ai-assessor-cefr-thamchie/docs/rubric/`.
+- `rubric/Rubric_Do_An_Mon_Hoc_CNPM_sinhvien.docx.pdf` là PDF gốc được chép từ `../ai-assessor-cefr-thamchie/docs/rubric/`; bản text trích xuất một dòng đã bỏ vì PDF có thể tìm kiếm trực tiếp.
 
 ## Tài liệu cũ cần quyết định trước khi chép thêm
 
-Đề xuất **không chuyển nguyên bộ** `markdown/`, `artifacts/derived/`, notebook, các roadmap 7/10/12/15 tuần và bản SRS/SDD cũ. Chúng có nhiều phiên bản, mốc thời gian khác và claim chưa kiểm định; SDD mới phải theo từng module. Khi cần đối chiếu một quyết định hay hình cụ thể, dẫn chiếu file gốc do nhóm tạo trong `../ai-assessor-cefr-thamchie/` và đưa phần đã chọn vào Requirement/Research của module tương ứng. Quyết định giữ thêm SRS/SDD cũ hoặc đề cương cần người dùng xác nhận.
+Đề xuất **không chuyển nguyên bộ** `markdown/`, `artifacts/derived/`, notebook, các roadmap 7/10/12/15 tuần và bản SRS/SDD cũ. Chúng có nhiều phiên bản, mốc thời gian khác và claim chưa kiểm định; SDD mới phải theo từng module. Khi cần đối chiếu một quyết định hay hình cụ thể, dẫn chiếu file gốc do nhóm tạo trong `../ai-assessor-cefr-thamchie/` và đưa phần đã chọn vào Requirement/Research của module tương ứng. Các bản SRS/SDD cũ khác chưa được chép; chỉ thêm nếu có nhu cầu đối chiếu cụ thể.
 
 Trước khi sử dụng báo cáo tuần 1 làm căn cứ nghiệm thu, cần rà soát các ví dụ số đo/ca sử dụng, tuyên bố pháp lý, độ chính xác mô hình và trạng thái phê duyệt. Tài liệu cũ có chỗ mô tả 6 tiêu chí/Task C, trong khi báo cáo mới mô tả độc thoại 5 tiêu chí. Xem câu hỏi mở trong kế hoạch.
 
@@ -29,7 +29,7 @@ Trước khi sử dụng báo cáo tuần 1 làm căn cứ nghiệm thu, cần r
 
 | Nguồn trong phiên bản trước | Đề xuất | Lý do |
 | --- | --- | --- |
-| docs/rubric/ | Đã chép PDF + text tra cứu | Tiêu chí đánh giá của đồ án |
+| docs/rubric/ | Đã chép PDF gốc | Tiêu chí đánh giá của đồ án |
 | docs/sdd/images/01a*, 01b*, 01c*, 02_class.png | Đã chép 4 hình vào reports/week-01/figures/ | Bốn hình nhúng thật trong báo cáo Word mới, đã kiểm tra hash |
 | docs/srs/SRS.md, docs/sdd/SDD.md | Chưa chép; tham khảo khi soạn module | Bản cũ có 41 FR/12 tuần và approval không áp dụng cho repo mới; nếu cần giữ thì đặt dưới reference/legacy/ có nhãn rõ |
 | markdown/week_01/01_glossary.md, 16_data_management_plan.md, 21_week1_decision_log.md | Chưa chép; trích phần được duyệt vào scope mới | Có ích nhưng nhiều quyết định còn PROPOSED hoặc phải chỉnh theo phạm vi độc thoại |

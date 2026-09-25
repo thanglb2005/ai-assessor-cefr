@@ -1,6 +1,6 @@
 # Nguồn tài liệu của đề tài
 
-Dự án `ai-assessor-cefr` được **xây lại từ đầu**. Repo `../ai-assessor-cefr-thamchie` là phiên bản trước do chủ dự án thực hiện, không phải một sản phẩm bên thứ ba hay nguồn code được clone vào dự án mới. Hai đề cương DOCX do nhóm sở hữu được lưu nguyên bản dưới `original-documents/`; báo cáo fine-tune lịch sử của Thắng nằm dưới `prior-project-reports/`. Mỗi tài liệu có checksum để đối chiếu xuất xứ. Không chuyển mã nguồn, model artifact, test result, metric hoặc trạng thái phê duyệt từ repo cũ sang repo mới.
+Dự án `ai-assessor-cefr` được **xây lại từ đầu**. Repo `../ai-assessor-cefr-thamchie` là phiên bản trước do chủ dự án thực hiện, không phải một sản phẩm bên thứ ba hay nguồn code được clone vào dự án mới. Hai đề cương DOCX do nhóm sở hữu được lưu nguyên bản dưới `original-documents/`; báo cáo fine-tune lịch sử của Thắng nằm dưới `prior-project-reports/`. Mỗi tài liệu có checksum để đối chiếu xuất xứ. Không chuyển mã nguồn, model artifact hoặc trạng thái phê duyệt sang implementation mới; kết quả test/metric của bản tham chiếu chỉ được ghi có xuất xứ tại đây, không tính là kết quả repo mới.
 
 | ID | Tài liệu nguồn | Vai trò tại dự án mới | Trạng thái sử dụng |
 | --- | --- | --- | --- |
@@ -11,7 +11,7 @@ Dự án `ai-assessor-cefr` được **xây lại từ đầu**. Repo `../ai-ass
 | SRC-05 | [CEFR Companion Volume 2020, Appendix 3](https://rm.coe.int/cefr-companion-volume-with-new-descriptors-2020/16809ea0d4) | Nguồn chuẩn để khảo sát qualitative features của spoken language | Đã xác định trên website Council of Europe ngày 25/09/2026; nhóm vẫn cần diễn giải/rubric theo task và review học thuật |
 | SRC-06 | [Báo cáo fine-tune DeBERTa do Thắng viết](prior-project-reports/deberta_cefr_finetune_thang.md) · SHA-256 `27b17e3519f5a648d9acff354bf1887493904a00bdbdee6b80d255d5f94c0a46` | Bằng chứng lịch sử về nhánh transcript; xem [kiểm tra chấm điểm](scoring-audit.md) | Kết quả dev của phiên bản trước; weight nằm ngoài Git, model chưa tích hợp vào app mới |
 
-[Khảo sát read-only code tiền nhiệm](code-survey.md), [kiểm tra scorer/model hiện tại](scoring-audit.md) và [kết quả chạy test bản tham chiếu](reference-validation.md) ghi nguồn tại một nơi. Chúng không là kết quả test hay yêu cầu sản phẩm của repo mới.
+[Khảo sát chức năng và kết quả chạy test bản tham chiếu](code-survey.md) cùng [kiểm tra scorer/model hiện tại](scoring-audit.md) ghi nguồn tại một nơi. Chúng không là kết quả test hay yêu cầu sản phẩm của repo mới.
 
 Hai DOCX được lưu byte-for-byte từ `../ai-assessor-cefr-thamchie/artifacts/source/documents/`. File `Dinh_huong_chi_tiet_10_tuan...docx`, `Phan_tich_va_huong_lam...docx`, ba presentation, SRS/SDD cũ và `markdown/` cũ vẫn ở repo tiền nhiệm để tránh nhiều bản gần trùng. Khi cần khảo sát lịch sử, dùng bản gốc tại đó và ghi quyết định áp dụng trong SDD của module; không viện dẫn đường dẫn code cũ làm yêu cầu sản phẩm.
 

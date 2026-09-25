@@ -17,8 +17,9 @@
 
 1. M06 từng có tên dễ nhầm với thư mục hồ sơ rubric. Đã đổi thành `m06-diagnostic-report`; `docs/evidence/` tiếp tục dành cho minh chứng nộp đồ án.
 2. QD-04 của phiên bản trước bỏ `Interaction` khỏi output; chủ dự án quyết định cho bản mới giữ `Interaction=null` và reason `insufficient_evidence` khi chỉ có bài nói độc thoại. Đã cập nhật M05 và roadmap theo quyết định này.
-3. Ứng dụng tham chiếu có Ridge scorer cho điểm tổng thể một response và model DeBERTa đã fine-tune ở kho riêng; [442 test của bản tham chiếu đã chạy đạt](../sources/reference-validation.md), không thay test repo mới. Bản tham chiếu mới kiểm tra có năm `CriterionScore`, song code gán cùng overall vào cả năm; chưa có năm model/nhãn riêng để kiểm định năm điểm độc lập. Đã sửa M05 để đánh giá artifact cũ như ứng viên có điều kiện, không phủ nhận kết quả lịch sử hoặc nhận metric đó là kết quả repo mới.
+3. Ứng dụng tham chiếu có Ridge scorer cho điểm tổng thể một response và model DeBERTa đã fine-tune ở kho riêng; [442 test của bản tham chiếu đã chạy đạt](../sources/code-survey.md), không thay test repo mới. Bản tham chiếu mới kiểm tra có năm `CriterionScore`, song code gán cùng overall vào cả năm; chưa có năm model/nhãn riêng để kiểm định năm điểm độc lập. Đã sửa M05 để đánh giá artifact cũ như ứng viên có điều kiện, không phủ nhận kết quả lịch sử hoặc nhận metric đó là kết quả repo mới.
 4. Một số Plan còn ghi Git chưa khởi tạo và bảng trace dùng ID viết tắt. Đã cập nhật trạng thái Git và viết đủ ID để kiểm tra tự động.
+5. Rà soát cấu trúc tài liệu: đã gộp kết quả chạy test tham chiếu vào `docs/sources/code-survey.md` và bỏ bản text rubric một dòng vì PDF gốc có thể tìm kiếm. Giữ các hình nhúng W1, hai biến thể class diagram, workbook Prompt Log, hồ sơ theo rubric và log/evidence riêng từng module vì chúng có vai trò khác nhau.
 
 ## Việc còn mở trước khi phát prompt triển khai
 
