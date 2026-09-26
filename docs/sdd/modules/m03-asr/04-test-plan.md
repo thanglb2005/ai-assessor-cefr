@@ -1,23 +1,72 @@
 # M03 — 04 Test Plan (Kế hoạch kiểm thử)
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M03 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **v0.2 · 26/09/2026 · chờ Phase 04 verdict.** Dựa trên [Specification v0.2 APPROVED](03-specification.md). Mọi test ở đây là **ca dự kiến, chưa chạy** — repo dự án chưa có mã nguồn. Không thêm hành vi ngoài Specification.
 
-Test ở đây là **ca dự kiến**, chưa được chạy. Fixture tạo bởi nhóm chỉ kiểm tra logic; không thay âm thanh người dùng hoặc dữ liệu kiểm định CEFR.
+## Fixture và nguyên tắc
 
-| Test ID | FR/AC | Level | Tình huống | Kỳ vọng |
+- **Unit:** `FakeAsrEngine` trả `Word` dựng sẵn (không import `faster_whisper`/`torch`); không mạng, không đồng hồ thật, không ngẫu nhiên. Fixture do nhóm tự tạo, không phải audio người học.
+- **Smoke:** marker `smoke`, cần weight `whisper-small` đã tải có chủ đích (M03-D-002) và audio có quyền dùng đặt **ngoài repo** (đường dẫn qua biến môi trường). Thiếu một trong hai → `NOT_RUN`, không thay bằng kết quả giả.
+- Tên test theo mẫu `test_<chủ thể>_<tình huống>_<kỳ vọng>`, cấu trúc Arrange–Act–Assert.
+
+## FR/AC → Test
+
+| Test ID | FR / AC | Level | Tình huống | Kỳ vọng |
 | --- | --- | --- | --- | --- |
-| M03-TEST-001 | M03-FR-001 / M03-AC-001 | Unit | Test double tạo transcript từ input kiểm thử | Output tất định, marker test_only và version |
-| M03-TEST-002 | M03-FR-002 / M03-AC-001 | Unit | Engine raise exception/timeout | ASR_FAILED, không có transcript OK/score |
-| M03-TEST-003 | M03-FR-001 / M03-AC-002 | Integration smoke | Local model + audio có quyền sử dụng | Ghi model/version/config, output và command thực hoặc NOT_RUN |
-| M03-TEST-004 | M03-FR-001 / M03-AC-001 | Unit | Engine chỉ trả segment timestamp | Word timestamps null, reason rõ |
-| M03-TEST-005 | M03-FR-002 / M03-AC-001 | Boundary | Transcript rỗng/word timing ngoài duration | UNRELIABLE/FAILED, không phát artifact hợp lệ |
+| M03-TEST-001 | FR-001 / AC-001 | Unit | Fake engine trả 3 word đủ timestamp/prob | `status=OK`; `words` giữ nguyên thứ tự và filler; có `asr_model`, `engine`, `engine_version`, `decode_config_version="asr-decode-v1"`, `audio_sha256`; `test_only=true` |
+| M03-TEST-002 | FR-001 / AC-001 | Unit | Một word không có probability | Word đó `prob is None` (không phải `0.0`); các word khác giữ giá trị — regression REF-03 |
+| M03-TEST-003 | FR-002 / AC-001 | Unit (failure) | Engine raise exception; engine timeout | `status=ASR_FAILED`, reason `ASR_FAILED`, `words` rỗng |
+| M03-TEST-004 | FR-002 / AC-001 | Unit (invalid) | Bốn biến thể timestamp: `start<0`; `end<start`; word sau bắt đầu trước word trước; `end > duration` | Mỗi biến thể → `ASR_FAILED`; không trả words |
+| M03-TEST-005 | FR-002 / AC-001 | Unit | QC `REJECT` | `status=NOT_RUN`; spy xác nhận engine **không** được gọi |
+| M03-TEST-006 | FR-001 / AC-002 | Unit (failure) | Thư mục model không tồn tại | `NOT_RUN` + `ASR_FAILED`; không có lời gọi tải (loader giả ghi nhận 0 lần tải) |
+| M03-TEST-007 | FR-002 / AC-001 | Unit (boundary) | Transcript rỗng khi QC `PASS` | `UNRELIABLE` + `ASR_EMPTY_TRANSCRIPT` |
+| M03-TEST-008 | FR-002 / AC-001 | Unit (boundary) | Lặp một token 6 lần / 7 lần liên tiếp | 6 → `OK`; 7 → `UNRELIABLE` + `ASR_HALLUCINATION` |
+| M03-TEST-009 | FR-002 / AC-001 | Unit (boundary) | 60 từ, một token chiếm đúng 0,35 / 0,367 (22/60); 59 từ với token chiếm 0,5 | 0,35 → không cờ; 22/60 → cờ; 59 từ → không áp luật |
+| M03-TEST-010 | FR-002 / AC-001 | Unit (boundary) | Cụm 3 từ lặp 2 / 3 lần | 2 → không cờ; 3 → cờ |
+| M03-TEST-011 | FR-002 / AC-001 | Unit (boundary) | 4 / 5 từ cuối có `prob < 0.05` | 4 → không cờ; 5 → cờ |
+| M03-TEST-012 | FR-002 / AC-001 | Unit (boundary) | 3 / 4 từ liên tiếp dài `< 0.05 s` | 3 → không cờ; 4 → cờ |
+| M03-TEST-013 | FR-003 / AC-003 | Unit | Weight được ánh xạ về `whisper-small`, `trained_with.asr_model="whisper-small"` | `asr_model="whisper-small"`; không có `ASR_VERSION_MISMATCH` |
+| M03-TEST-014 | FR-003 / AC-003 | Unit (regression) | Weight tên `whisper-small.en` (không có trong bảng ánh xạ) | `asr_model=None` + `ASR_VERSION_MISMATCH`; `status` không đổi — regression F-04 (so chuỗi con) |
+| M03-TEST-015 | FR-003 / AC-003 | Unit | Weight ánh xạ về `whisper-medium`, artifact đòi `whisper-small` | `ASR_VERSION_MISMATCH`; `status=OK` giữ nguyên |
+| M03-TEST-016 | FR-001 / AC-001 | Unit (privacy) | Transcript fixture chứa chuỗi `SECRET-NAME-123`; chạy với `caplog` | Không bản ghi log nào chứa chuỗi đó; log có `response_id` và status |
+| M03-TEST-S1 | FR-001 / AC-002 | **Smoke** | faster-whisper `small` trên audio có quyền dùng, **tắt mạng** | Ghi evidence: tên weight, nguồn, license, SHA-256, `engine_version`, decode config, máy (OS/CPU/RAM), thời gian xử lý, `status`. Mạng tắt mà vẫn chạy được |
+| M03-TEST-S2 | Rủi ro Spec (Research I-01) | **Smoke — quan sát** | Cùng lượt S1: tính `asr_conf_mean` | **Ghi lại** giá trị và so với khoảng huấn luyện [0,691 ; 0,950]. Không phải tiêu chí pass/fail của M03; nếu nằm ngoài khoảng chấp nhận OOD thì báo owner M05 |
 
-## Chính sách chạy và bằng chứng
+## Bao phủ theo loại
 
-- Tạo test cùng task triển khai; ưu tiên unit test cho logic thuần, integration test cho boundary I/O, và kiểm tra UI/API khi hành vi nhìn thấy được.
-- Lệnh dự kiến sau khi repo dự án có `pyproject.toml`: `python3 -m pytest -q tests/` và `python3 -m pytest --cov=aicefr --cov-report=term-missing`; tên test/path cuối cùng ghi trong task đã duyệt. **Hiện trạng: NOT_RUN**, vì repo dự án chưa có mã nguồn/test.
-- Coverage là chỉ báo để tìm nhánh quan trọng chưa được kiểm thử. Chính sách threshold/no-regression chỉ được chốt ở Phase 04/05 sau khi có stack và baseline đo được.
-- Bằng chứng Phase 06/08: command, thời điểm, exit code, số test, phần skipped/fail, coverage report nếu áp dụng, revision/fingerprint, file trong `evidence/`. Browser QA nếu có phải ghi môi trường và ảnh/trạng thái thực.
-- Test với audio có quyền sử dụng là smoke/integration riêng; không đưa audio, transcript chứa PII hoặc secret vào Git/log. Chưa có data/consent/approval thì đánh dấu `NOT_RUN` thay vì tạo kết quả thay thế.
+| Loại | Test |
+| --- | --- |
+| Success | 001, 013, S1 |
+| Invalid | 004, 005 |
+| Boundary | 007–012 |
+| Failure / recovery | 003, 006 (phục hồi = owner tải model có chủ đích rồi chạy lại S1) |
+| Regression | 002 (REF-03), 014 (F-04) |
+| Privacy | 016 |
+| Browser/manual | N/A — M03 không có giao diện |
 
-**CODEX CHECK RESULT:** DRAFT — mỗi AC có ca kiểm tra; lệnh và coverage policy còn chờ stack. **User verdict Phase 04:** PENDING.
+## Lệnh và coverage
+
+| Mục | Giá trị |
+| --- | --- |
+| Unit | `python3 -m pytest -q -m "not smoke" tests/asr` |
+| Coverage | `python3 -m pytest -q -m "not smoke" --cov=aicefr.asr --cov-branch --cov-report=term-missing tests/asr` |
+| Smoke | `AICEFR_SMOKE_AUDIO=<đường dẫn ngoài repo> python3 -m pytest -q -m smoke tests/smoke/test_asr_smoke.py` |
+| UT applicability | **YES** cho ánh xạ identifier, kiểm timestamp, bộ phát hiện hallucination, xử lý `prob`. **NO** cho lời gọi thật vào faster-whisper — thay bằng smoke S1 |
+| Coverage policy | Theo quyết định chung **TP-D-001** (xem cuối file) |
+| Hiện trạng | `NOT_RUN` — repo chưa có `pyproject.toml`, `tests/`, `pytest-cov`; đường dẫn test chốt ở Phase 05 theo skeleton của Thắng |
+
+## Evidence Phase 06/08
+
+Command, thời điểm, exit code, số test pass/fail/skip, coverage report, revision; với smoke thêm các trường của S1. Không đưa audio, transcript hay weight vào Git/log.
+
+## Quyết định cần user — TP-D-001 (chung M03/M04/M05)
+
+Coverage đo bằng `pytest-cov` (coverage.py), **bật branch**, phạm vi = code thay đổi của `aicefr.asr`, `aicefr.features`, `aicefr.scoring`. **Khuyến nghị:** line ≥ 90 % và branch ≥ 85 % trên phần logic thuần; loại trừ hai adapter gọi thư viện nặng (faster-whisper, Silero) khỏi ngưỡng vì được kiểm bằng smoke; ngoài con số, mọi dòng trong bảng FR/AC → Test phải có test tương ứng. Lý do: ba module quyết định việc có phát band hay không, nhánh từ chối là nơi lỗi nguy hiểm nhất.
+
+**CODEX CHECK RESULT:** mỗi FR/AC có test; đủ success/invalid/boundary/failure/regression; UT applicability và alternative evidence (smoke) rõ; không thêm requirement. Chờ TP-D-001. **User verdict Phase 04:** PENDING.
+
+## Lịch sử phiên bản
+
+| Phiên bản | Ngày | Thay đổi |
+| --- | --- | --- |
+| v0.1 | 25/09/2026 | Bản nháp đầu (5 ca) |
+| v0.2 | 26/09/2026 | Theo Spec v0.2: 16 unit + 2 smoke, ca biên cho từng luật hallucination, regression REF-03/F-04 |
