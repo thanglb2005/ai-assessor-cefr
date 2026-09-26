@@ -1,10 +1,10 @@
 # M03 — Review Records
 
-**Hiện trạng:** Phase 07 attempt A1 xong, chờ user verdict.
+**Hiện trạng:** Phase 07 attempt A1 **APPROVED** 26/09/2026 (Sang).
 
 | Review ID | Prompt ID / Task ID | Base/Head revision | Diff/evidence đã kiểm tra | Finding và resolution | User verdict |
 | --- | --- | --- | --- | --- | --- |
-| 07-M03-A1 | M03-TASK-003, 004, 001 (SCRUM-18, 19, 20); Claude implement theo yêu cầu chủ dự án (không qua prompt Antigravity) | base `main` `ecb835f` → correction PR `[Phase 07]` | toàn bộ `src/aicefr/asr/*, tests/asr/*`; evidence module; chạy lại test/lint | FINDING-07-A1-01, FINDING-07-A1-02, FINDING-07-A1-03, FINDING-07-A1-07 — xem dưới | PENDING |
+| 07-M03-A1 | M03-TASK-003, 004, 001 (SCRUM-18, 19, 20); Claude implement theo yêu cầu chủ dự án (không qua prompt Antigravity) | base `main` `ecb835f` → correction PR `[Phase 07]` | toàn bộ `src/aicefr/asr/*, tests/asr/*`; evidence module; chạy lại test/lint | FINDING-07-A1-01, FINDING-07-A1-02, FINDING-07-A1-03, FINDING-07-A1-07 — xem dưới | APPROVED 26/09/2026 (Sang) |
 
 ## Review Record 07-M03-A1
 
@@ -58,7 +58,7 @@ LOCATION: asr/service.py (QC REJECT) → scoring/scorer.py bước 3
 OBSERVED EVIDENCE: QC `REJECT` → Transcript `NOT_RUN`, reasons rỗng → Assessment `NOT_EVALUATED` không kèm reason nào.
 RISK/FAILED AC: M06 không có lý do để hiển thị. Spec M03 chưa định reason cho nhánh này; mã lỗi QC thuộc M02.
 REQUIRED CHANGE: Follow-up: owner M02 (Thắng) công bố reason code QC trong contract, M03 chép sang Transcript.
-STATUS: OPEN — follow-up, không chặn nghiệm thu
+STATUS: ACCEPTED_RISK — chủ dự án chấp nhận để làm follow-up (26/09/2026)
 RESOLUTION EVIDENCE: —
 ```
 ```text
@@ -73,7 +73,7 @@ STATUS: RESOLVED
 RESOLUTION EVIDENCE: M03-TEST-009 vẫn pass.
 ```
 
-## Khác Test Plan — cần chủ dự án chấp nhận khi ghi verdict
+## Khác Test Plan — chủ dự án đã chấp nhận (26/09/2026)
 
 - D1: luật "cụm 3–10 từ lặp ≥ 3 lần" hiện thực là lặp **liền nhau** (lặp rời rạc sẽ gắn cờ nhầm lời nói bình thường).
 

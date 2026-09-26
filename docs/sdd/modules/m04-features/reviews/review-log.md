@@ -1,10 +1,10 @@
 # M04 — Review Records
 
-**Hiện trạng:** Phase 07 attempt A1 xong, chờ user verdict.
+**Hiện trạng:** Phase 07 attempt A1 **APPROVED** 26/09/2026 (Sang).
 
 | Review ID | Prompt ID / Task ID | Base/Head revision | Diff/evidence đã kiểm tra | Finding và resolution | User verdict |
 | --- | --- | --- | --- | --- | --- |
-| 07-M04-A1 | M04-TASK-001, 002 (SCRUM-24, 25); Claude implement theo yêu cầu chủ dự án (không qua prompt Antigravity) | base `main` `ecb835f` → correction PR `[Phase 07]` | toàn bộ `src/aicefr/features/*, tests/features/*, tests/conftest.py`; evidence module; chạy lại test/lint | FINDING-07-A1-01, FINDING-07-A1-04, FINDING-07-A1-05 — xem dưới | PENDING |
+| 07-M04-A1 | M04-TASK-001, 002 (SCRUM-24, 25); Claude implement theo yêu cầu chủ dự án (không qua prompt Antigravity) | base `main` `ecb835f` → correction PR `[Phase 07]` | toàn bộ `src/aicefr/features/*, tests/features/*, tests/conftest.py`; evidence module; chạy lại test/lint | FINDING-07-A1-01, FINDING-07-A1-04, FINDING-07-A1-05 — xem dưới | APPROVED 26/09/2026 (Sang) |
 
 ## Review Record 07-M04-A1
 
@@ -47,7 +47,7 @@ LOCATION: src/aicefr/features/pauses.py
 OBSERVED EVIDENCE: Segment VAD chồng nhau hoặc vượt `duration_s` không bị kiểm; `vad_silence_ratio` có thể âm.
 RISK/FAILED AC: Spec M04 không định; Silero thật trả segment hợp lệ.
 REQUIRED CHANGE: Follow-up trong M04-TASK-003: adapter Silero kiểm segment (tăng dần, không chồng, trong [0, D]).
-STATUS: OPEN — follow-up, không chặn nghiệm thu
+STATUS: ACCEPTED_RISK — chủ dự án chấp nhận để làm follow-up (26/09/2026)
 RESOLUTION EVIDENCE: —
 ```
 ```text
@@ -58,11 +58,11 @@ LOCATION: README.md
 OBSERVED EVIDENCE: README chưa hướng dẫn cài `.[dev]`, chạy test, biến `AICEFR_MODEL_DIR`.
 RISK/FAILED AC: Người mới không biết đặt artifact ở đâu; test cần artifact bị SKIP mà không rõ lý do.
 REQUIRED CHANGE: Follow-up trong SCRUM-44 (build/run guide).
-STATUS: OPEN — follow-up, không chặn nghiệm thu
+STATUS: ACCEPTED_RISK — chủ dự án chấp nhận để làm follow-up (26/09/2026)
 RESOLUTION EVIDENCE: —
 ```
 
-## Khác Test Plan — cần chủ dự án chấp nhận khi ghi verdict
+## Khác Test Plan — chủ dự án đã chấp nhận (26/09/2026)
 
 - D2: so ngưỡng 0,30 s / 1,00 s có sai số 1e-9 (lỗi dấu phẩy động, timestamp VAD ở mức mili-giây).
 - D3: M04-TEST-008 chỉ kiểm D = 0 và M04-TEST-009 đưa NaN qua segment VAD, vì contract đã chặn D < 0 và `prob` NaN.
