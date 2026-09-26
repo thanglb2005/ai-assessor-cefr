@@ -61,7 +61,7 @@ UT EVIDENCE
   (run 36257359229, Python 3.11: 123 passed, 10 skipped, 99 %); ruff check / format --check sạch
 - CODEX CHECK RESULT: PASS
 - CODEX RECOMMENDATION: RECOMMEND APPROVAL
-- USER VERDICT: PENDING
+- USER VERDICT: APPROVED (Sang, 27/09/2026)
 ```
 
 **Ngoài Phase 08 này:** M04-TASK-003 (Silero + smoke, M04-TEST-016, S1) BLOCKED.
