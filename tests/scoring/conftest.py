@@ -60,3 +60,32 @@ def real_artifact_path() -> Path:
 @pytest.fixture
 def real_artifact(real_artifact_path):
     return load_artifact(real_artifact_path)
+
+
+FEATURE_ORDER_V2 = [
+    "n_words", "words_per_sec", "total_dur", "mean_word_len", "ttr", "log_uniq",
+    "asr_conf_mean", "asr_conf_geo", "vad_silence_ratio", "vad_mean_pause",
+    "vad_pause_per_min", "vad_long_pause_ratio", "vad_pause_sd", "vad_mean_seg_len",
+    "vad_n_seg_per_min", "vad_articulation_rate", "vad_onset_delay", "vad_speech_sec",
+]  # fmt: skip
+
+
+@pytest.fixture
+def fake18(write_fake):
+    """ART-FAKE18: đúng 18 tên đặc trưng của Ridge v2, mọi giá trị 0,5 cho điểm = 3,0."""
+    n = len(FEATURE_ORDER_V2)
+    path, sha = write_fake(
+        feature_order=FEATURE_ORDER_V2,
+        mean=[0.5] * n,
+        scale=[1.0] * n,
+        coef=[1.0] * n,
+        feature_lo=[0.0] * n,
+        feature_hi=[1.0] * n,
+        trained_with={
+            "asr_model": "whisper-small",
+            "vad_name": "silero",
+            "vad_threshold": 0.5,
+            "vad_min_silence_ms": 150,
+        },
+    )
+    return load_artifact(path, expected_sha256=sha)

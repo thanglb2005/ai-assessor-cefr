@@ -193,6 +193,16 @@ class Provenance(_Frozen):
     scored_at: str
 
 
+class OutOfRangeFeature(_Frozen):
+    """Đặc trưng nằm ngoài khoảng chấp nhận của model, để báo lý do cho người học."""
+
+    feature: str
+    value: float
+    accepted_low: float
+    accepted_high: float
+    too: str  # "low" | "high"
+
+
 class Assessment(_Frozen):
     response_id: str
     status: AssessmentStatus
@@ -201,5 +211,6 @@ class Assessment(_Frozen):
     criteria: tuple[CriterionCoverage, ...]
     interaction: Interaction = Interaction()
     reasons: tuple[ReasonCode, ...] = ()
+    out_of_range: tuple[OutOfRangeFeature, ...] = ()
     provenance: Provenance
     teacher_verified: bool = False
