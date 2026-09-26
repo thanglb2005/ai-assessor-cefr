@@ -116,6 +116,40 @@ USER VERDICT AT: —
 NEXT ACTION: user ghi verdict Phase 08 (task → Verified); sau đó Phase 09 — Acceptance
 ```
 
+## Phase 09 acceptance package
+
+**SCOPE ID/ROOT:** M04 / `docs/sdd/modules/m04-features/` — chỉ kết luận cho module này.
+
+| Phase | Record | Verdict |
+| --- | --- | --- |
+| 01 Requirement | M04-01-A1 | APPROVED 26/09/2026 |
+| 03 Specification | M04-03-A1 | APPROVED 26/09/2026 |
+| 04 Test Plan | M04-04-A1 | APPROVED 26/09/2026 |
+| 05 Plan & Tasks | M04-05-A2 | APPROVED 26/09/2026 |
+| 07 Review | 07-M04-A1 (reviews/review-log.md) | APPROVED 26/09/2026 |
+| 08 Final Verification | M04-08-A1 (M04-EV-P08) | PENDING |
+
+| AC | Nội dung | Evidence cuối | Kết quả |
+| --- | --- | --- | --- |
+| M04-AC-001 | Feature tất định; thiếu timing → null + reason | M04-TEST-001–009 (M04-EV-001, EV-P08) | ĐẠT |
+| M04-AC-002 | Không PII; chỉ số không đo được không bị báo là đã đo | M04-TEST-007, 017 | ĐẠT |
+| M04-AC-003 | Đủ 18 tên đúng feature_order; thiếu vẫn giữ tên | M04-TEST-010, 011, 012 | ĐẠT |
+| M04-AC-004 | vad_name khớp trained_with; VAD khác → reason lệch | M04-TEST-014, 015 (VAD giả); Silero thật chưa có — M04-TASK-003 BLOCKED | ĐẠT ở mức unit |
+
+**Regression / chất lượng trên main 74afca9:** 133 passed (có artifact), 123 passed + 10 skipped (CI), 0 failed; coverage branch 99 %; TP-D-001 không bị hạ, không thêm exclusion.
+
+4/4 AC có evidence unit. Adapter Silero thật (M04-TASK-003, M04-TEST-016, S1) chưa làm vì bị chặn như M03-TASK-002; follow-up 07-A1-04 (kiểm segment VAD) gắn vào task này.
+
+```text
+PHASE RECORD ID: M04-09-A1
+PHASE: 09 — Acceptance
+CODEX CHECK RESULT: PASS cho phần đã làm; module còn task BLOCKED
+CODEX RECOMMENDATION: RECOMMEND APPROVAL cho phần đã làm (AC-001–004 ở mức unit); M04-TASK-003 để mở — chưa nghiệm thu trọn module
+USER VERDICT: PENDING
+VERIFIED/APPROVED BY: —
+USER VERDICT AT: —
+```
+
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
 

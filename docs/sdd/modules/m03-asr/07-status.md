@@ -116,6 +116,39 @@ USER VERDICT AT: —
 NEXT ACTION: user ghi verdict Phase 08 (task → Verified); sau đó Phase 09 — Acceptance
 ```
 
+## Phase 09 acceptance package
+
+**SCOPE ID/ROOT:** M03 / `docs/sdd/modules/m03-asr/` — chỉ kết luận cho module này.
+
+| Phase | Record | Verdict |
+| --- | --- | --- |
+| 01 Requirement | M03-01-A1 | APPROVED 26/09/2026 |
+| 03 Specification | M03-03-A1 | APPROVED 26/09/2026 |
+| 04 Test Plan | M03-04-A1 | APPROVED 26/09/2026 |
+| 05 Plan & Tasks | M03-05-A2 | APPROVED 26/09/2026 |
+| 07 Review | 07-M03-A1 (reviews/review-log.md) | APPROVED 26/09/2026 |
+| 08 Final Verification | M03-08-A1 (M03-EV-P08) | PENDING |
+
+| AC | Nội dung | Evidence cuối | Kết quả |
+| --- | --- | --- | --- |
+| M03-AC-001 | Test double tất định, đánh dấu test_only; lỗi engine → ASR_FAILED | M03-TEST-001, 003 (M03-EV-002, EV-P08) | ĐẠT |
+| M03-AC-002 | Smoke local thật có model/version, không mạng; chưa có evidence thì pending | Weight đã tải + SHA-256 (M03-EV-001); smoke S1/S2 NOT_RUN — M03-TASK-002 BLOCKED | PENDING (AC cho phép trạng thái chờ) |
+| M03-AC-003 | ASR khớp/lệch trained_with.asr_model | M03-TEST-013–015 (M03-EV-002) | ĐẠT |
+
+**Regression / chất lượng trên main 74afca9:** 133 passed (có artifact), 123 passed + 10 skipped (CI), 0 failed; coverage branch 99 %; TP-D-001 không bị hạ, không thêm exclusion.
+
+Phần W2 đã làm (TASK-003, 004, 001) đạt AC-001, AC-003. AC-002 còn PENDING vì TASK-002 bị chặn (16 kHz từ M02 — SCRUM-16, audio có quyền dùng — SCRUM-22).
+
+```text
+PHASE RECORD ID: M03-09-A1
+PHASE: 09 — Acceptance
+CODEX CHECK RESULT: PASS cho phần đã làm; module còn task BLOCKED
+CODEX RECOMMENDATION: RECOMMEND APPROVAL cho phần đã làm (AC-001, AC-003); AC-002 và TASK-002 để mở — chưa nghiệm thu trọn module
+USER VERDICT: PENDING
+VERIFIED/APPROVED BY: —
+USER VERDICT AT: —
+```
+
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
 

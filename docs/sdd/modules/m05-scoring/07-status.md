@@ -117,6 +117,39 @@ USER VERDICT AT: —
 NEXT ACTION: user ghi verdict Phase 08 (task → Verified); sau đó Phase 09 — Acceptance
 ```
 
+## Phase 09 acceptance package
+
+**SCOPE ID/ROOT:** M05 / `docs/sdd/modules/m05-scoring/` — chỉ kết luận cho module này.
+
+| Phase | Record | Verdict |
+| --- | --- | --- |
+| 01 Requirement | M05-01-A1 | APPROVED 26/09/2026 |
+| 03 Specification | M05-03-A1 | APPROVED 26/09/2026 |
+| 04 Test Plan | M05-04-A1 | APPROVED 26/09/2026 |
+| 05 Plan & Tasks | M05-05-A2 | APPROVED 26/09/2026 |
+| 07 Review | 07-M05-A1 (reviews/review-log.md) | APPROVED 26/09/2026 |
+| 08 Final Verification | M05-08-A1 (M05-EV-P08) | PENDING |
+
+| AC | Nội dung | Evidence cuối | Kết quả |
+| --- | --- | --- | --- |
+| M05-AC-001 | Thiếu evidence không có score; Interaction luôn insufficient_evidence | M05-TEST-004, 005–008, 014 (M05-EV-001/002, EV-P08) | ĐẠT |
+| M05-AC-002 | Artifact hợp lệ → overall tái lập + 5 coverage, không score riêng tiêu chí | M05-TEST-001–003, 015–020 (giá trị vàng 3,9465 / 2,2575 / 4,9414) | ĐẠT |
+| M05-AC-003 | Ba test lệch riêng asr_model, vad_name, feature_order | M05-TEST-009–013 | ĐẠT |
+
+**Regression / chất lượng trên main 74afca9:** 133 passed (có artifact), 123 passed + 10 skipped (CI), 0 failed; coverage branch 99 %; TP-D-001 không bị hạ, không thêm exclusion.
+
+3/3 AC đạt. M05-TASK-004 (integration M04→M05, M05-TEST-022) còn READY, thuộc W3, không chặn AC nào. Follow-up 07-A1-03 (reason QC) là SCRUM-45 của M02.
+
+```text
+PHASE RECORD ID: M05-09-A1
+PHASE: 09 — Acceptance
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL — nghiệm thu scope M05 cho W2
+USER VERDICT: PENDING
+VERIFIED/APPROVED BY: —
+USER VERDICT AT: —
+```
+
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
 
