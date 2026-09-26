@@ -41,7 +41,7 @@ Data flow, trạng thái, lỗi và reason code theo đúng [Specification](03-s
 | DEP-02 | Contract chung có `Word`, `Transcript`, `AsrStatus` theo M03 Spec và reason code `ASR_FAILED`, `ASR_EMPTY_TRANSCRIPT`, `ASR_HALLUCINATION`, `ASR_VERSION_MISMATCH` | Thắng | **Chưa có** | tất cả |
 | DEP-03 | M02 xác nhận DecodedAudio 16 kHz mono (M03-O-002) | Thắng | **Chưa xác nhận** | TASK-002 |
 | DEP-04 | Dependency `faster-whisper` trong `pyproject.toml` | Thắng (Sang đề nghị) | Chưa có | TASK-002 |
-| DEP-05 | Weight `whisper-small` dạng CTranslate2 tải có chủ đích, ghi nguồn/license/SHA-256 — **thao tác của Sang**, không giao Antigravity | Sang | Chưa làm | TASK-002 |
+| DEP-05 | Weight `whisper-small` dạng CTranslate2 tải có chủ đích, ghi nguồn/license/SHA-256 — **thao tác của Sang**, không giao Antigravity | Sang | **Đã làm** — [M03-EV-001](evidence/evidence-manifest.md#m03-ev-001--weight-whisper-small-ctranslate2), 26/09/2026 | — |
 | DEP-06 | Audio có quyền dùng cho smoke, đặt ngoài repo | Sang | Chưa có | TASK-002 |
 | DEP-07 | `trained_with.asr_model` từ loader của M05 | Sang (M05-TASK-002) | Chưa có | TASK-004 (có thể dùng dict giả trong test) |
 
@@ -80,7 +80,7 @@ Type hints cho mọi API public; hàm thuần tách khỏi I/O; ngưỡng là h�
 | 3. Hợp runtime/package manager/convention | **BLOCKED** — repo chưa có `pyproject.toml` (DEP-01) |
 | 4. Rủi ro, rollback, Clean Code, required checks | PASS |
 | 5–6. Task liên kết version đã duyệt; mục tiêu, scope, vùng file rõ | PASS |
-| 7. Dependency sẵn sàng | **BLOCKED** — DEP-01, DEP-02 cho mọi task; DEP-03..06 thêm cho TASK-002 |
+| 7. Dependency sẵn sàng | **BLOCKED** — DEP-01, DEP-02 cho mọi task; DEP-03, 04, 06 thêm cho TASK-002 (DEP-05 đã xong) |
 | 8. Task đủ nhỏ | PASS — 4 task, mỗi task một vòng implement–review |
 | 9. Evidence/report và quyền rõ | PASS |
 
