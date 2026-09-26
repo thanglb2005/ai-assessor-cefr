@@ -4,7 +4,7 @@
 | --- | --- |
 | Lifecycle | proposed |
 | Phase hiện tại | 01 — Requirement |
-| Requirement | [01-requirement.md](01-requirement.md) · DRAFT v0.1 · user verdict PENDING |
+| Requirement | [01-requirement.md](01-requirement.md) · DRAFT v0.2 (owner review 26/09/2026) · user verdict PENDING |
 | Research mode | RUN đề xuất; [02-research.md](02-research.md) DRAFT · chưa có quyết định của người dùng |
 | Specification | [03-specification.md](03-specification.md) · bản nháp W2, chưa Phase 03 approval |
 | Test Plan | [04-test-plan.md](04-test-plan.md) · bản nháp W2, chưa Phase 04 approval |
@@ -13,6 +13,8 @@
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
+
+**Artifact phía sau đã stale:** Specification/Test Plan/Plan/Tasks v0.1 chưa có M05-FR-003 và M05-O-001; cập nhật ở Phase 03 sau verdict Phase 01.
 
 - [Prompt Log](prompts/prompt-log.md): chưa phát prompt.
 - [Evidence Manifest](evidence/evidence-manifest.md): chưa có implementation/test evidence của repo dự án.
