@@ -1,6 +1,6 @@
 # M03 — 03 Specification (Đặc tả)
 
-> **v0.2 · 26/09/2026 · chờ Phase 03 verdict.** Dựa trên [Requirement v0.2 APPROVED](01-requirement.md) và [Research v0.2](02-research.md). Chưa cấp quyền phát prompt triển khai (cần Phase 04, 05).
+> **v0.2 · 26/09/2026 · APPROVED Phase 03 ngày 26/09/2026.** Dựa trên [Requirement v0.2 APPROVED](01-requirement.md) và [Research v0.2](02-research.md). Chưa cấp quyền phát prompt triển khai (cần Phase 04, 05).
 
 **Owner:** Sang. **Mục tiêu W2:** Transcript local từ `whisper-small`, có provenance, word timestamp/confidence nullable và trạng thái bất định; smoke trên audio có quyền dùng khi model đã được tải có chủ đích.
 
@@ -21,7 +21,7 @@
 ## Hành vi
 
 1. Chỉ chạy khi `QCResult.status ∈ {PASS, REVIEW}`; `REJECT` → `NOT_RUN`, không gọi engine.
-2. Decode config khởi đầu (có version `asr-decode-v1`): `word_timestamps=true`, `language="en"`, `condition_on_previous_text=false`, `compression_ratio_threshold=2.4`, log-prob threshold `-1.0`, `no_speech_threshold=0.6` (Research F-02). Tham số riêng của engine chốt theo M03-O-001.
+2. Decode config khởi đầu (có version `asr-decode-v1`): `word_timestamps=true`, `language="en"`, `condition_on_previous_text=false`, `compression_ratio_threshold=2.4`, log-prob threshold `-1.0`, `no_speech_threshold=0.6` (Research F-02). Engine: faster-whisper (CTranslate2) model `small` cho mọi môi trường (M03-O-001); tham số riêng của engine (ví dụ `vad_filter`) ghi trong `asr-decode-v1` và evidence smoke.
 3. Giữ filler và thứ tự lời nói trong `text`/`words`; không chuẩn hóa, không thêm từ.
 4. Engine không trả probability cho một word → `prob = null` (không bao giờ 0.0 — REF-03).
 5. Model không có sẵn local → `NOT_RUN` + `ASR_FAILED`; **không tự tải** (D-002).
@@ -71,16 +71,15 @@
 | Loại | Nội dung |
 | --- | --- |
 | Phụ thuộc | M05 cung cấp `trained_with.asr_model` từ artifact đang cấu hình |
-| Phụ thuộc | M02 cung cấp DecodedAudio 16 kHz mono → **M03-O-002** (Thắng chốt) |
 | Rủi ro → Test Plan | Phân phối `asr_conf_mean` từ engine local so với khoảng huấn luyện [0,691 ; 0,950] (Research I-01) |
-| **OPEN** | **M03-O-001** — chọn engine (khuyến nghị faster-whisper `small` cho mọi môi trường) |
-| **OPEN** | **M03-O-002** — sample rate 16 kHz mono từ M02 |
+| Quyết định | **M03-O-001** — faster-whisper `small` cho mọi môi trường (user chốt 26/09/2026) |
+| Phụ thuộc | **M03-O-002** — yêu cầu 16 kHz mono giữ nguyên; Thắng xác nhận phía M02 trước Phase 05 |
 
-**CODEX CHECK RESULT:** FR/AC trace đủ; success/invalid/failure/recovery có; security/privacy có, accessibility N/A có lý do. Hai OPEN chặn Phase 03. **User verdict Phase 03:** PENDING.
+**CODEX CHECK RESULT:** FR/AC trace đủ; success/invalid/failure/recovery có; security/privacy có, accessibility N/A có lý do. **User verdict Phase 03:** APPROVED 26/09/2026 (Sang), theo khuyến nghị.
 
 ## Lịch sử phiên bản
 
 | Phiên bản | Ngày | Thay đổi |
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu |
-| v0.2 | 26/09/2026 | Theo Requirement v0.2: `whisper-small`, bảng ánh xạ identifier, `prob=null`, bộ phát hiện hallucination có ngưỡng, bảng lỗi; hai OPEN |
+| v0.2 | 26/09/2026 | **APPROVED** Phase 03. Theo Requirement v0.2: `whisper-small`, bảng ánh xạ identifier, `prob=null`, bộ phát hiện hallucination có ngưỡng, bảng lỗi; M03-O-001 chốt, M03-O-002 thành phụ thuộc M02 |

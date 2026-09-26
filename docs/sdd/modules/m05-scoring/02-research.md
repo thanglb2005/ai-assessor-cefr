@@ -1,6 +1,6 @@
 # M05 — 02 Research (khảo sát scorer và band mapping)
 
-> **v0.2 · 26/09/2026 · chờ review cùng Phase 03.** `RESEARCH MODE: RUN` đã được chọn tại Phase 01 (v0.2 APPROVED). Tách **fact / inference / option / quyết định cần user**; không thêm requirement ngoài M05-FR-001..003. Kết quả kiểm tra hash và `trained_with` đã ghi ở Requirement (M05-R-001..003), không lặp lại.
+> **v0.2 · 26/09/2026 · APPROVED cùng Phase 03 ngày 26/09/2026.** `RESEARCH MODE: RUN` đã được chọn tại Phase 01 (v0.2 APPROVED). Tách **fact / inference / option / quyết định cần user**; không thêm requirement ngoài M05-FR-001..003. Kết quả kiểm tra hash và `trained_with` đã ghi ở Requirement (M05-R-001..003), không lặp lại.
 
 ## Câu hỏi nghiên cứu
 
@@ -75,12 +75,12 @@ Ngay tâm bậc B1 (3,25) xác suất sai band vẫn khoảng 1/3, vì B1 rộng
 | M05-REF-01 | `predict_overall` | F-01 | Công thức tuyến tính đúng artifact | Scorer đọc mean/scale/coef/intercept từ JSON | — | **ADOPT** |
 | M05-REF-02 | `out_of_distribution_detail` | F-02 | Từ chối có lý do, kèm con số | OOD với `ood_tolerance` từ artifact | — | **ADOPT** |
 | M05-REF-03 | `to_band` | F-03 | Band từ `band_thresholds` của artifact | — | — | **ADOPT** |
-| M05-REF-04 | `near_boundary` | F-03, F-06 | Cờ review ở cấp Assessment | — | Margin theo M05-O-001 | **ADOPT** công thức; margin **OPEN → M05-O-001** |
+| M05-REF-04 | `near_boundary` | F-03, F-06 | Cờ review ở cấp Assessment | — | Margin 0,5 của artifact (M05-O-001) | **ADOPT** |
 | M05-REF-05 | `IncompatibleModelError` | F-04 | Chặn model sai đơn vị | Kiểm `unit_of_inference` khi nạp | — | **ADOPT** |
 | M05-REF-06 | `CRITERION_FEATURES` | F-05 | Bản đồ tiêu chí → đặc trưng cho coverage | Coverage chỉ tính trên đặc trưng có trong `feature_order` | Bỏ `filler_ratio` | **ADAPT** |
 | M05-REF-07 | `_version_mismatches` | F-09 | Kiểm lệch ASR/VAD | So bằng `==` cả hai, thêm `feature_order`, `feature_version` | Bỏ chuỗi con | **ADAPT** |
-| M05-REF-08 | `windows.py` | F-07 | Chấm bài dài | — | — | **OPEN → M05-O-002** |
+| M05-REF-08 | `windows.py` | F-07 | Chấm bài dài | Không chia cửa sổ ở W2 (M05-O-002) | — | **REJECT** cho W2, xem lại W3 |
 | M05-REF-09 | `CriterionScore` lặp overall (bản cũ) | M05-R-003 | — | — | Đã thay bằng coverage-only | **REJECT** |
 | M05-REF-10 | Nhánh DeBERTa | scoring-audit | — | Nhánh nghiên cứu riêng, ngoài W2 | — | **REJECT** cho W2 |
 
-**CODEX CHECK RESULT:** fact/inference/option tách riêng; hai mục OPEN (M05-O-001 margin, M05-O-002 bài dài) có khuyến nghị, chờ user chốt trước khi Phase 03 APPROVED. **User decision:** PENDING.
+**CODEX CHECK RESULT:** fact/inference/option tách riêng. **User decision (26/09/2026):** M05-O-001 → Option A (giữ 0,5); M05-O-002 → Option A (không chia cửa sổ W2).

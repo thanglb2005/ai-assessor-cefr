@@ -1,6 +1,6 @@
 # M03 — 02 Research (khảo sát ASR)
 
-> **v0.2 · 26/09/2026 · chờ review cùng Phase 03.** `RESEARCH MODE: RUN` đã được chọn tại Phase 01 (v0.2 APPROVED). File này tách **fact** (đọc/đo được), **inference** (suy luận), **option** và **quyết định cần user**; không thêm requirement mới ngoài M03-FR-001..003.
+> **v0.2 · 26/09/2026 · APPROVED cùng Phase 03 ngày 26/09/2026.** `RESEARCH MODE: RUN` đã được chọn tại Phase 01 (v0.2 APPROVED). File này tách **fact** (đọc/đo được), **inference** (suy luận), **option** và **quyết định cần user**; không thêm requirement mới ngoài M03-FR-001..003.
 
 ## Câu hỏi nghiên cứu
 
@@ -56,8 +56,8 @@ HANDOFF MODE: tài liệu SDD; Antigravity chỉ nhận prompt sau Phase 05
 | M03-REF-04 | `hallucination.py` | F-05 | Năm luật đo được, có ngưỡng số | Bộ phát hiện với ngưỡng trong config có version | Ngưỡng giữ nguyên làm giá trị khởi đầu | **ADAPT** |
 | M03-REF-05 | `pipeline.py` | F-04 | Ý tưởng kiểm lệch model | So khớp chính xác qua bảng ánh xạ identifier | Bỏ so chuỗi con | **ADAPT** |
 | M03-REF-06 | `whisper_adapter.py` | F-01, F-07 | — | — | Không mang model mặc định large-v3-turbo; không tự tải (D-002) | **REJECT** |
-| M03-REF-07 | Engine cho `whisper-small` | F-07, F-08, I-03 | Chọn một engine chung dev/deploy | Xem Option bên dưới | — | **OPEN → M03-O-001** |
-| M03-REF-08 | Sample rate đầu vào | F-10 | Whisper cần 16 kHz mono | Yêu cầu từ phía consumer gửi M02 | M02 owner (Thắng) chốt | **OPEN → M03-O-002** |
+| M03-REF-07 | Engine cho `whisper-small` | F-07, F-08, I-03 | Chọn một engine chung dev/deploy | faster-whisper `small` cho mọi môi trường (Option A) | Chạy CPU trên Mac; ghi weight/nguồn/license/SHA-256 khi tải | **ADOPT** — user chốt M03-O-001 ngày 26/09/2026 |
+| M03-REF-08 | Sample rate đầu vào | F-10 | Whisper cần 16 kHz mono | M03/M04 yêu cầu DecodedAudio 16 kHz mono | M02 owner (Thắng) xác nhận | **ADAPT** — yêu cầu phía consumer do Sang chốt; xác nhận của Thắng là phụ thuộc liên module, phải có trước Phase 05 |
 
 ## Option cho M03-O-001 (engine)
 
@@ -69,4 +69,4 @@ HANDOFF MODE: tài liệu SDD; Antigravity chỉ nhận prompt sau Phase 05
 
 **Khuyến nghị (Codex role):** Option A — lý do là I-01/I-03: `asr_conf_mean` là đặc trưng nặng ký nhất, nên dev và deploy phải cùng engine. Tên weight cụ thể, nguồn tải, license và SHA-256 được ghi vào evidence khi owner tải có chủ đích (D-002); lúc này **chưa tải, smoke `NOT_RUN`**.
 
-**CODEX CHECK RESULT:** fact/inference/option tách riêng; hai mục OPEN (M03-O-001 engine, M03-O-002 sample rate với M02) phải được quyết trước khi Phase 03 APPROVED. **User decision:** PENDING.
+**CODEX CHECK RESULT:** fact/inference/option tách riêng. **User decision (26/09/2026):** M03-O-001 → Option A (faster-whisper `small`); M03-O-002 → giữ yêu cầu 16 kHz mono, chờ Thắng xác nhận phía M02 trước Phase 05.

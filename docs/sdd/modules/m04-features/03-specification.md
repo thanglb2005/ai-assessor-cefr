@@ -1,6 +1,6 @@
 # M04 — 03 Specification (Đặc tả)
 
-> **v0.2 · 26/09/2026 · chờ Phase 03 verdict.** Dựa trên [Requirement v0.2 APPROVED](01-requirement.md). `RESEARCH MODE: SKIP` (M04-D-003) — không có `02-research.md`; nguồn công thức ghi trực tiếp ở bảng Reference bên dưới. Chưa cấp quyền phát prompt triển khai.
+> **v0.2 · 26/09/2026 · APPROVED Phase 03 ngày 26/09/2026.** Dựa trên [Requirement v0.2 APPROVED](01-requirement.md). `RESEARCH MODE: SKIP` (M04-D-003) — không có `02-research.md`; nguồn công thức ghi trực tiếp ở bảng Reference bên dưới. Chưa cấp quyền phát prompt triển khai.
 
 **Owner:** Sang. **Mục tiêu W2:** FeatureSet đủ 18 đặc trưng theo `feature_order` của `ridge_resp_v2`, gồm 10 đặc trưng `vad_*` do M04 tự chạy Silero VAD; mỗi giá trị có đơn vị, nguồn và `missing_reason` khi không tính được.
 
@@ -103,11 +103,11 @@ Mọi đặc trưng `null` vẫn có mặt trong `values` với tên đúng vị
 | Rủi ro → Test Plan | Engine local có thể chép filler mà CTM huấn luyện không có → `n_words`/`ttr` lệch nhẹ (M03 Research I-02) |
 | OPEN riêng M04 | Không có |
 
-**CODEX CHECK RESULT:** FR/AC trace đủ; công thức, đơn vị, missing policy cho cả 18 đặc trưng; security/privacy có, accessibility N/A có lý do. Không có OPEN riêng; phụ thuộc M03-O-002. **User verdict Phase 03:** PENDING.
+**CODEX CHECK RESULT:** FR/AC trace đủ; công thức, đơn vị, missing policy cho cả 18 đặc trưng; security/privacy có, accessibility N/A có lý do. Không có OPEN riêng; phụ thuộc M03-O-002 (Thắng xác nhận trước Phase 05). **User verdict Phase 03:** APPROVED 26/09/2026 (Sang).
 
 ## Lịch sử phiên bản
 
 | Phiên bản | Ngày | Thay đổi |
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu (3 đặc trưng) |
-| v0.2 | 26/09/2026 | Theo Requirement v0.2: catalogue 18 đặc trưng, VAD Silero, bảng dữ liệu thiếu, loại fallback EnergyVad và giá trị 0 giả |
+| v0.2 | 26/09/2026 | **APPROVED** Phase 03. Theo Requirement v0.2: catalogue 18 đặc trưng, VAD Silero, bảng dữ liệu thiếu, loại fallback EnergyVad và giá trị 0 giả |

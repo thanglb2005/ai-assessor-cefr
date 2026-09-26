@@ -3,10 +3,10 @@
 | Mục | Trạng thái |
 | --- | --- |
 | Lifecycle | proposed |
-| Phase hiện tại | 03 — Specification |
+| Phase hiện tại | 04 — Test Plan |
 | Requirement | [01-requirement.md](01-requirement.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Research mode | **`RUN`** (chọn tại Phase 01); [02-research.md](02-research.md) review cùng Phase 03 |
-| Specification | [03-specification.md](03-specification.md) · v0.2 · chờ Phase 03 verdict |
+| Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Test Plan | [04-test-plan.md](04-test-plan.md) · bản nháp W2, chưa Phase 04 approval |
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · bản nháp W2, chưa Phase 05 approval |
 | Implementation / Review / Final Verification / Acceptance | NOT_STARTED; không có kết quả test hoặc verdict |
@@ -27,7 +27,7 @@ RESEARCH MODE: RUN — theo đề xuất, người dùng không đổi khi duy�
 NEXT ACTION: Phase 03 — Specification cùng Research
 ```
 
-## Phase 03 review package
+## Phase 03 record
 
 ```text
 PHASE RECORD ID: M05-03-A1
@@ -37,16 +37,16 @@ CHECKS: FR/AC trace; success/invalid/boundary/failure/recovery; security/privacy
   accessibility N/A có lý do; fact/inference/option tách riêng; không tự quyết sản phẩm
 OPEN: M05-O-001 boundary_margin (khuyến nghị 0,5); M05-O-002 bài dài (khuyến nghị không chia cửa sổ W2); M05-O-003 provenance lệch (khuyến nghị NOT_EVALUATED)
 CODEX CHECK RESULT: PASS về cấu trúc; còn OPEN nêu trên
-CODEX RECOMMENDATION: BLOCKED đến khi user chốt các OPEN
-USER VERDICT: PENDING
-VERIFIED/APPROVED BY: —
-USER VERDICT AT: —
-NEXT ACTION: user chốt OPEN và ghi verdict; sau đó Phase 04 — Test Plan
+CODEX RECOMMENDATION: RECOMMEND APPROVAL sau khi user chốt OPEN
+USER VERDICT: APPROVED — chốt các OPEN theo khuyến nghị
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 26/09/2026
+NEXT ACTION: Phase 04 — Test Plan
 ```
 
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
-**Artifact phía sau đã stale:** Test Plan/Plan/Tasks v0.1 chưa theo Specification v0.2; cập nhật ở Phase 04–05 sau verdict Phase 03.
+**Artifact phía sau đã stale:** Test Plan/Plan/Tasks v0.1 chưa theo Specification v0.2; Test Plan cập nhật ở Phase 04, Plan/Tasks ở Phase 05.
 
 - [Prompt Log](prompts/prompt-log.md): chưa phát prompt.
 - [Evidence Manifest](evidence/evidence-manifest.md): chưa có implementation/test evidence của repo dự án.

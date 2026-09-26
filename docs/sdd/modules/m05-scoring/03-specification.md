@@ -1,6 +1,6 @@
 # M05 — 03 Specification (Đặc tả)
 
-> **v0.2 · 26/09/2026 · chờ Phase 03 verdict.** Dựa trên [Requirement v0.2 APPROVED](01-requirement.md) và [Research v0.2](02-research.md). Chưa cấp quyền phát prompt triển khai.
+> **v0.2 · 26/09/2026 · APPROVED Phase 03 ngày 26/09/2026.** Dựa trên [Requirement v0.2 APPROVED](01-requirement.md) và [Research v0.2](02-research.md). Chưa cấp quyền phát prompt triển khai.
 
 **Owner:** Sang. **Mục tiêu W2:** Ước lượng **một** overall score/band từ `ridge_resp_v2` khi đầu vào đủ điều kiện; năm tiêu chí chỉ mang coverage; mọi trường hợp còn lại từ chối có lý do.
 
@@ -8,7 +8,7 @@
 
 | Artifact | Trường / invariant | Owner → consumer |
 | --- | --- | --- |
-| ModelConfig | `model_name="ridge_resp_v2"`; `model_sha256` ghim = `7cdeb2a0…b521a` (M05-R-001); `boundary_margin` (theo M05-O-001) | cấu hình dự án → M05 |
+| ModelConfig | `model_name="ridge_resp_v2"`; `model_sha256` ghim = `7cdeb2a0…b521a` (M05-R-001); `boundary_margin = 0.5` — đọc từ artifact (M05-O-001) | cấu hình dự án → M05 |
 | ScoreInput | `FeatureSet` từ M04 (18 giá trị theo `feature_order`, `feature_version`, `vad_*`, `asr_model`, reasons); `Transcript.status`, `reasons` từ M03 | M03/M04 → M05 |
 | Assessment | `status` (dưới); `overall_score: float \| null` ∈ [1,0 ; 6,0]; `overall_band: A2 \| B1 \| B2 \| null`; `criteria: list[CriterionCoverage]` (5 dòng); `interaction`; `reasons`; provenance | M05 → M06/M07 |
 | CriterionCoverage | `criterion ∈ {range, accuracy, fluency, coherence, phonology}`; `coverage ∈ [0,1] \| null`; `features: list[str]`; `reasons` — **không có score/band** | M05 → M06 |
@@ -32,7 +32,7 @@ Mọi status đều là ước lượng thử nghiệm; `teacher_verified=false`
 | 1 | Nạp JSON (không pickle); SHA-256 = `model_sha256` ghim | `MODEL_ARTIFACT_INVALID` (**mã mới**) — file thiếu: `MODEL_VERSION_MISSING` |
 | 2 | `unit_of_inference` chứa "một bài nói" (REF-05) | `MODEL_ARTIFACT_INVALID` |
 | 3 | `Transcript.status == OK` | giữ reason của M03 |
-| 4 | Provenance (M05-FR-003), so bằng `==`: `FeatureSet.asr_model == trained_with.asr_model`; `vad_name`, `vad_threshold`, `vad_min_silence_ms` khớp `trained_with`; danh sách tên FeatureSet == `feature_order`; `feature_version` khớp | `ASR_VERSION_MISMATCH`, `VAD_VERSION_MISMATCH`, `FEATURE_VERSION_MISMATCH` (gộp mọi mục lệch) — kết quả theo **M05-O-003** |
+| 4 | Provenance (M05-FR-003), so bằng `==`: `FeatureSet.asr_model == trained_with.asr_model`; `vad_name`, `vad_threshold`, `vad_min_silence_ms` khớp `trained_with`; danh sách tên FeatureSet == `feature_order`; `feature_version` khớp | `ASR_VERSION_MISMATCH`, `VAD_VERSION_MISMATCH`, `FEATURE_VERSION_MISMATCH` (gộp mọi mục lệch) → `NOT_EVALUATED` (M05-O-003) |
 | 5 | Không đặc trưng nào `null` | `FEATURE_NOT_COMPUTABLE` |
 | 6 | OOD (REF-02) với `ood_tolerance` từ artifact | `OUT_OF_DISTRIBUTION` + chi tiết từng đặc trưng |
 | 7 | Tính `z`, `raw`, clip [1,0 ; 6,0]; band theo `band_thresholds` | — |
@@ -80,15 +80,15 @@ Cùng FeatureSet + cùng artifact → cùng `status`, `overall_score`, `overall_
 | Phụ thuộc | M03 `asr_model` identifier chuẩn (M03 Spec); M04 FeatureSet 18 giá trị |
 | Phụ thuộc | Hai reason code mới cần Thắng duyệt vào contract chung |
 | Giả định | Artifact `ridge_resp_v2.json` đặt trong repo dự án hay kho model riêng — quyết ở Phase 05 (vị trí file), hash ghim không đổi |
-| **OPEN** | **M05-O-001** — `boundary_margin` (khuyến nghị giữ 0,5; B1 luôn sang giảng viên) |
-| **OPEN** | **M05-O-002** — bài dài (khuyến nghị W2 không chia cửa sổ, OOD kèm giới hạn ≈ 77,8 s) |
-| **OPEN** | **M05-O-003** — provenance lệch ra `NOT_EVALUATED` (không có số) hay `REVIEW_REQUIRED` (có số, chờ giảng viên). Khuyến nghị `NOT_EVALUATED`: số tính từ đặc trưng lệch nguồn không kiểm được bằng OOD, đưa cho giảng viên dễ bị hiểu là điểm hợp lệ |
+| Quyết định | **M05-O-001** — giữ `boundary_margin = 0,5`; mọi bài ước lượng B1 sang giảng viên; M06 cần nói rõ điều này |
+| Quyết định | **M05-O-002** — W2 không chia cửa sổ; bài vượt khoảng chấp nhận (≈ 77,8 s) → `OUT_OF_DISTRIBUTION` kèm chi tiết; M01/M02 hiển thị giới hạn (phối hợp Nguyên/Thắng) |
+| Quyết định | **M05-O-003** — provenance lệch → `NOT_EVALUATED`, không có số |
 
-**CODEX CHECK RESULT:** FR/AC trace đủ; success/invalid/boundary/failure có; security/privacy có, accessibility N/A có lý do. Ba OPEN chặn Phase 03. **User verdict Phase 03:** PENDING.
+**CODEX CHECK RESULT:** FR/AC trace đủ; success/invalid/boundary/failure có; security/privacy có, accessibility N/A có lý do. **User verdict Phase 03:** APPROVED 26/09/2026 (Sang), theo khuyến nghị cho cả ba quyết định.
 
 ## Lịch sử phiên bản
 
 | Phiên bản | Ngày | Thay đổi |
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu |
-| v0.2 | 26/09/2026 | Theo Requirement v0.2: thứ tự kiểm fail-closed, AssessmentStatus, coverage bỏ `filler_ratio`, hash ghim; ba OPEN |
+| v0.2 | 26/09/2026 | **APPROVED** Phase 03. Theo Requirement v0.2: thứ tự kiểm fail-closed, AssessmentStatus, coverage bỏ `filler_ratio`, hash ghim; ba quyết định M05-O-001..003 |
