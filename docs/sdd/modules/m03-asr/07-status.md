@@ -3,14 +3,29 @@
 | Mục | Trạng thái |
 | --- | --- |
 | Lifecycle | proposed |
-| Phase hiện tại | 01 — Requirement |
-| Requirement | [01-requirement.md](01-requirement.md) · DRAFT v0.2 (owner review 26/09/2026) · user verdict PENDING |
-| Research mode | RUN đề xuất; [02-research.md](02-research.md) DRAFT · chưa có quyết định của người dùng |
+| Phase hiện tại | 03 — Specification |
+| Requirement | [01-requirement.md](01-requirement.md) · v0.2 · **APPROVED** 26/09/2026 |
+| Research mode | **`RUN`** (chọn tại Phase 01); [02-research.md](02-research.md) review cùng Phase 03 |
 | Specification | [03-specification.md](03-specification.md) · bản nháp W2, chưa Phase 03 approval |
 | Test Plan | [04-test-plan.md](04-test-plan.md) · bản nháp W2, chưa Phase 04 approval |
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · bản nháp W2, chưa Phase 05 approval |
 | Implementation / Review / Final Verification / Acceptance | NOT_STARTED; không có kết quả test hoặc verdict |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
+
+## Phase 01 record
+
+```text
+PHASE RECORD ID: M03-01-A1
+PHASE: 01 — Requirement
+SUBJECT: 01-requirement.md v0.2
+CODEX CHECK RESULT: PASS — FR/AC có ID và trace; xung đột liên module đã nêu impact
+CODEX RECOMMENDATION: RECOMMEND APPROVAL
+USER VERDICT: APPROVED
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 26/09/2026
+RESEARCH MODE: RUN — theo đề xuất, người dùng không đổi khi duyệt
+NEXT ACTION: Phase 03 — Specification cùng Research
+```
 
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 

@@ -6,8 +6,8 @@
 | SCOPE ROOT | `docs/sdd/modules/m04-features/` |
 | OWNER | Sang (đề xuất W2–W3) |
 | LIFECYCLE | proposed |
-| PHASE 01 | DRAFT v0.2 — owner review 26/09/2026, chờ người dùng duyệt |
-| RESEARCH MODE | Đề xuất `SKIP`; người dùng quyết định trong Phase 01 |
+| PHASE 01 | **APPROVED** v0.2 — người dùng (Sang) duyệt ngày 26/09/2026 |
+| RESEARCH MODE | **`SKIP`** — theo đề xuất trong v0.2; người dùng duyệt Phase 01 không đổi đề xuất |
 | TARGET | W2 |
 | RELATED SCOPES | M02 QC và **DecodedAudio cho VAD**; M03 transcript/timestamp; **M05 — `feature_order` của model scoring quyết định bộ đặc trưng** (xem M04-FR-003) |
 | SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx), [kiểm tra scorer/model](../../../sources/scoring-audit.md); SDD hiện hành quyết định phạm vi, contract và approval của module |
@@ -62,4 +62,4 @@ W2 tính đủ 18 đặc trưng mà model scoring đòi; mỗi giá trị mang n
 | Phiên bản | Ngày | Thay đổi |
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu |
-| v0.2 | 26/09/2026 | Owner review: thêm M04-FR-003/004, M04-AC-003/004; quyết định M04-D-001 (18 đặc trưng), M04-D-002 (VAD thuộc M04), M04-D-003 |
+| v0.2 | 26/09/2026 | **APPROVED** Phase 01 ngày 26/09/2026. Owner review: thêm M04-FR-003/004, M04-AC-003/004; quyết định M04-D-001 (18 đặc trưng), M04-D-002 (VAD thuộc M04), M04-D-003 |

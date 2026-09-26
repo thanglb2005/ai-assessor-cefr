@@ -6,8 +6,8 @@
 | SCOPE ROOT | `docs/sdd/modules/m03-asr/` |
 | OWNER | Sang (đề xuất W2–W3) |
 | LIFECYCLE | proposed |
-| PHASE 01 | DRAFT v0.2 — owner review 26/09/2026, chờ người dùng duyệt |
-| RESEARCH MODE | Đề xuất `RUN`; người dùng quyết định trong Phase 01 |
+| PHASE 01 | **APPROVED** v0.2 — người dùng (Sang) duyệt ngày 26/09/2026 |
+| RESEARCH MODE | **`RUN`** — theo đề xuất trong v0.2; người dùng duyệt Phase 01 không đổi đề xuất |
 | TARGET | W2 |
 | RELATED SCOPES | M02 `PASS/REVIEW` (DecodedAudio); M04 dùng transcript/timestamp; **M05 — model scoring ràng buộc ASR model** (xem M03-FR-003) |
 | SOURCE BASIS | [Tài liệu nguồn do nhóm tạo](../../../sources/README.md), [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx), [kiểm tra scorer/model](../../../sources/scoring-audit.md); SDD hiện hành quyết định phạm vi, contract và approval của module |
@@ -59,4 +59,4 @@ W2 cần thử local ASR `whisper-small` trên audio có quyền sử dụng và
 | Phiên bản | Ngày | Thay đổi |
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu |
-| v0.2 | 26/09/2026 | Owner review: thêm M03-FR-003, M03-AC-003; quyết định M03-D-001 (`whisper-small`), M03-D-002 |
+| v0.2 | 26/09/2026 | **APPROVED** Phase 01 ngày 26/09/2026. Owner review: thêm M03-FR-003, M03-AC-003; quyết định M03-D-001 (`whisper-small`), M03-D-002 |
