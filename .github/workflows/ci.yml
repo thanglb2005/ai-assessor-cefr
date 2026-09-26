@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs-and-guards:
+    name: Tài liệu và file bị cấm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Kiểm tra link Markdown
+        run: python scripts/ci/check_md_links.py
+      - name: Chặn audio, model, DB, bí mật
+        run: python scripts/ci/check_forbidden_files.py
+
+  tests:
+    name: Unit test + coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bỏ qua khi repo chưa có pyproject.toml
+        if: hashFiles('pyproject.toml') == ''
+        run: echo "Chưa có pyproject.toml (SCRUM-14) nên chưa có test để chạy."
+      - uses: actions/setup-python@v5
+        if: hashFiles('pyproject.toml') != ''
+        with:
+          python-version: "3.11"
+      - name: Cài đặt
+        if: hashFiles('pyproject.toml') != ''
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]" || pip install -e . pytest pytest-cov
+      - name: Chạy test (không gồm smoke)
+        if: hashFiles('pyproject.toml') != ''
+        run: python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch --cov-report=term-missing
