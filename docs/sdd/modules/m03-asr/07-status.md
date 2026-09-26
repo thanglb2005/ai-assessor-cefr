@@ -3,7 +3,7 @@
 | Mục | Trạng thái |
 | --- | --- |
 | Lifecycle | proposed |
-| Phase hiện tại | 08 — Final Verification |
+| Phase hiện tại | 09 — Acceptance APPROVED cho phần đã làm; còn task BLOCKED |
 | Requirement | [01-requirement.md](01-requirement.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Research mode | **`RUN`** (chọn tại Phase 01); [02-research.md](02-research.md) review cùng Phase 03 |
 | Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
@@ -11,7 +11,8 @@
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · **APPROVED** 26/09/2026; task READY/BLOCKED theo dependency — xem 06-tasks.md |
 | Implementation | M03-TASK-003, 004, 001 đã implement (Claude, theo yêu cầu chủ dự án); evidence [M03-EV-002](evidence/evidence-manifest.md). TASK-002 BLOCKED |
 | Review | Phase 07 A1 **APPROVED** 26/09/2026, [review-log](reviews/review-log.md) |
-| Final Verification / Acceptance | NOT_STARTED |
+| Final Verification | Phase 08 evidence [M03-EV-P08](evidence/evidence-manifest.md) trên main 74afca9 — **APPROVED** 27/09/2026 |
+| Acceptance | Phase 09 **APPROVED** 27/09/2026 — nghiệm thu phần đã làm (AC-001, AC-003); AC-002 và M03-TASK-002 để mở |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
 ## Phase 01 record
@@ -97,6 +98,55 @@ USER VERDICT: APPROVED — chấp nhận các khác biệt Test Plan và các fo
 VERIFIED/APPROVED BY: User (Sang)
 USER VERDICT AT: 26/09/2026
 NEXT ACTION: Phase 08 — Final Verification trên main sau khi merge PR Phase 07
+```
+
+## Phase 08 record
+
+```text
+PHASE RECORD ID: M03-08-A1
+PHASE: 08 — Final Verification
+SUBJECT: M03-TASK-003, 004, 001 trên main 74afca9, fingerprint 7bc236e3a3df1890…
+CHECKS: test pass trên final head (0 failed); skipped có lý do (cần artifact thật, P05-D-001) và
+  đã chạy PASS trên máy có artifact; coverage đạt TP-D-001; Test ID khớp code cuối; CI main xanh
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL
+USER VERDICT: APPROVED — task đã làm chuyển Verified
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 27/09/2026
+NEXT ACTION: Phase 09 — Acceptance
+```
+
+## Phase 09 record
+
+**SCOPE ID/ROOT:** M03 / `docs/sdd/modules/m03-asr/` — chỉ kết luận cho module này.
+
+| Phase | Record | Verdict |
+| --- | --- | --- |
+| 01 Requirement | M03-01-A1 | APPROVED 26/09/2026 |
+| 03 Specification | M03-03-A1 | APPROVED 26/09/2026 |
+| 04 Test Plan | M03-04-A1 | APPROVED 26/09/2026 |
+| 05 Plan & Tasks | M03-05-A2 | APPROVED 26/09/2026 |
+| 07 Review | 07-M03-A1 (reviews/review-log.md) | APPROVED 26/09/2026 |
+| 08 Final Verification | M03-08-A1 (M03-EV-P08) | APPROVED 27/09/2026 |
+
+| AC | Nội dung | Evidence cuối | Kết quả |
+| --- | --- | --- | --- |
+| M03-AC-001 | Test double tất định, đánh dấu test_only; lỗi engine → ASR_FAILED | M03-TEST-001, 003 (M03-EV-002, EV-P08) | ĐẠT |
+| M03-AC-002 | Smoke local thật có model/version, không mạng; chưa có evidence thì pending | Weight đã tải + SHA-256 (M03-EV-001); smoke S1/S2 NOT_RUN — M03-TASK-002 BLOCKED | PENDING (AC cho phép trạng thái chờ) |
+| M03-AC-003 | ASR khớp/lệch trained_with.asr_model | M03-TEST-013–015 (M03-EV-002) | ĐẠT |
+
+**Regression / chất lượng trên main 74afca9:** 133 passed (có artifact), 123 passed + 10 skipped (CI), 0 failed; coverage branch 99 %; TP-D-001 không bị hạ, không thêm exclusion.
+
+Phần W2 đã làm (TASK-003, 004, 001) đạt AC-001, AC-003. AC-002 còn PENDING vì TASK-002 bị chặn (16 kHz từ M02 — SCRUM-16, audio có quyền dùng — SCRUM-22).
+
+```text
+PHASE RECORD ID: M03-09-A1
+PHASE: 09 — Acceptance
+CODEX CHECK RESULT: PASS cho phần đã làm; module còn task BLOCKED
+CODEX RECOMMENDATION: RECOMMEND APPROVAL cho phần đã làm (AC-001, AC-003); AC-002 và TASK-002 để mở — chưa nghiệm thu trọn module
+USER VERDICT: APPROVED — nghiệm thu phần đã làm (AC-001, AC-003); AC-002 và M03-TASK-002 để mở
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 27/09/2026
 ```
 
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.

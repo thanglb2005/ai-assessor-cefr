@@ -42,3 +42,26 @@ Lưu tại đây raw report của Antigravity, command output/test/coverage, ả
 - M04-TEST-009: contract `Word` chặn `prob` NaN, nên NaN được đưa vào qua timestamp segment VAD.
 - So ngưỡng 0,30 s và 1,00 s có sai số 1e-9 (timestamp VAD ở mức mili-giây), để khoảng đúng 0,30 s không bị tính là ngừng do lỗi dấu phẩy động.
 - M04-TEST-016 thuộc M04-TASK-003 (Silero, BLOCKED), chưa làm.
+
+## M04-EV-P08 — Phase 08 Final Verification (M04-TASK-001, 002)
+
+```text
+UT EVIDENCE
+- Final head/fingerprint: main 74afca9 (74afca9c3315256414f11697f07b717af0e22579); sdd-workspace-v2 7bc236e3a3df18900349d3fcfe16d12bc3398f3397b6c6d446812ac8ac14f81a
+  (171 file, git status sạch, không metadata file)
+- Test files và AC/Test ID mapping: tests/features/ (test_text_pauses.py, test_extractor.py); M04-TEST-001–015, 017, 018 (17/17)
+- Command: env -u AICEFR_MODEL_DIR pytest -q -m "not smoke" tests/<module>
+           AICEFR_MODEL_DIR=<thư mục artifact> python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch
+- Passed/failed/skipped: không artifact 26 passed, 1 skipped (M04-TEST-010 cần artifact thật); có artifact 27 passed; 0 failed
+  (toàn repo: 123 passed + 10 skipped / 133 passed)
+- Coverage metrics/policy/delta: `features/text.py`, `pauses.py`, `extractor.py` 100 % line/branch; toàn repo 99 % — đạt TP-D-001 (line ≥ 90 %, branch ≥ 85 %)
+- Coverage report path: ngoài repo (scratchpad của phiên, coverage.xml + junit.xml); tóm tắt ở đây
+- Critical uncovered branches/risk: Không có
+- Codex rerun: có — máy Sang (macOS 26.4, Python 3.12.14) và CI GitHub trên main 74afca9
+  (run 36257359229, Python 3.11: 123 passed, 10 skipped, 99 %); ruff check / format --check sạch
+- CODEX CHECK RESULT: PASS
+- CODEX RECOMMENDATION: RECOMMEND APPROVAL
+- USER VERDICT: APPROVED (Sang, 27/09/2026)
+```
+
+**Ngoài Phase 08 này:** M04-TASK-003 (Silero + smoke, M04-TEST-016, S1) BLOCKED.
