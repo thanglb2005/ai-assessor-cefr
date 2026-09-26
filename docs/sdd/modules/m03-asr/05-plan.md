@@ -37,10 +37,10 @@ Data flow, trạng thái, lỗi và reason code theo đúng [Specification](03-s
 
 | ID | Cần gì | Của ai | Trạng thái | Chặn task |
 | --- | --- | --- | --- | --- |
-| DEP-01 | `pyproject.toml`, layout `src/aicefr/` + `tests/`, `pytest`, `pytest-cov`, marker `smoke` | Thắng | **Chưa có** trên `main` | tất cả |
-| DEP-02 | Contract chung có `Word`, `Transcript`, `AsrStatus` theo M03 Spec và reason code `ASR_FAILED`, `ASR_EMPTY_TRANSCRIPT`, `ASR_HALLUCINATION`, `ASR_VERSION_MISMATCH` | Thắng | **Chưa có** | tất cả |
+| DEP-01 | `pyproject.toml`, layout `src/aicefr/` + `tests/`, `pytest`, `pytest-cov`, marker `smoke` | Thắng (Sang làm thay) | **Đã có** trên `main` a92fafe (PR #6, 26/09/2026) | — |
+| DEP-02 | Contract chung có `Word`, `Transcript`, `AsrStatus` theo M03 Spec và reason code `ASR_FAILED`, `ASR_EMPTY_TRANSCRIPT`, `ASR_HALLUCINATION`, `ASR_VERSION_MISMATCH` | Thắng (Sang làm thay) | **Đã có** — `src/aicefr/contracts.py` trên `main` a92fafe (PR #6, 26/09/2026) | — |
 | DEP-03 | M02 xác nhận DecodedAudio 16 kHz mono (M03-O-002) | Thắng | **Chưa xác nhận** | TASK-002 |
-| DEP-04 | Dependency `faster-whisper` trong `pyproject.toml` | Thắng (Sang đề nghị) | Chưa có | TASK-002 |
+| DEP-04 | Dependency `faster-whisper` trong `pyproject.toml` | Thắng (Sang làm thay) | **Đã có** — extra `asr` trong `pyproject.toml` | — |
 | DEP-05 | Weight `whisper-small` dạng CTranslate2 tải có chủ đích, ghi nguồn/license/SHA-256 — **thao tác của Sang**, không giao Antigravity | Sang | **Đã làm** — [M03-EV-001](evidence/evidence-manifest.md#m03-ev-001--weight-whisper-small-ctranslate2), 26/09/2026 | — |
 | DEP-06 | Audio có quyền dùng cho smoke, đặt ngoài repo | Sang | Chưa có | TASK-002 |
 | DEP-07 | `trained_with.asr_model` từ loader của M05 | Sang (M05-TASK-002) | Chưa có | TASK-004 (có thể dùng dict giả trong test) |
@@ -77,14 +77,14 @@ Type hints cho mọi API public; hàm thuần tách khỏi I/O; ngưỡng là h�
 | --- | --- |
 | 1. Trace FR/AC → Test → Task | PASS — xem [06-tasks.md](06-tasks.md) |
 | 2. Boundary, data flow, lỗi, dependency | PASS |
-| 3. Hợp runtime/package manager/convention | **BLOCKED** — repo chưa có `pyproject.toml` (DEP-01) |
+| 3. Hợp runtime/package manager/convention | PASS — `pyproject.toml` (Python ≥ 3.11, pytest, pytest-cov, marker smoke) và CI (PR #5) đã có trên `main` |
 | 4. Rủi ro, rollback, Clean Code, required checks | PASS |
 | 5–6. Task liên kết version đã duyệt; mục tiêu, scope, vùng file rõ | PASS |
-| 7. Dependency sẵn sàng | **BLOCKED** — DEP-01, DEP-02 cho mọi task; DEP-03, 04, 06 thêm cho TASK-002 (DEP-05 đã xong) |
+| 7. Dependency sẵn sàng | PASS cho TASK-001, 003, 004. **BLOCKED** cho TASK-002: còn DEP-03 (16 kHz, owner M02) và DEP-06 (audio có quyền dùng) |
 | 8. Task đủ nhỏ | PASS — 4 task, mỗi task một vòng implement–review |
 | 9. Evidence/report và quyền rõ | PASS |
 
-**CODEX CHECK RESULT:** BLOCKED — nội dung Plan/Task đạt, nhưng DoR chưa đủ vì skeleton và contract chung (Thắng) chưa có. **CODEX RECOMMENDATION:** BLOCKED — đề nghị user review nội dung; khi DEP-01/02 có trên `main`, Codex kiểm lại check 3 và 7 rồi trình verdict. **User verdict Phase 05:** PENDING.
+**CODEX CHECK RESULT:** PASS cho TASK-001, 003, 004 (kiểm lại 26/09/2026 sau khi DEP-01/02 có trên `main`); TASK-002 vẫn BLOCKED bởi DEP-03, DEP-06. **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05; chỉ phát prompt cho task READY, TASK-002 chờ đủ dependency. **User verdict Phase 05:** PENDING.
 
 ## Lịch sử phiên bản
 

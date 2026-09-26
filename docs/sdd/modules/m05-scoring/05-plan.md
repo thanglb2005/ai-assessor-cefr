@@ -49,8 +49,8 @@ Fact: `.gitignore` của repo có dòng `models/`, nên đường dẫn kiểu `
 
 | ID | Cần gì | Của ai | Trạng thái | Chặn task |
 | --- | --- | --- | --- | --- |
-| DEP-01 | Skeleton `pyproject.toml`/`tests/`, `pytest-cov` | Thắng | **Chưa có** | tất cả |
-| DEP-02 | Contract chung có `Assessment`, `CriterionCoverage`, `Interaction`, `AssessmentStatus` theo M05 Spec; reason code hiện có + **mới** `FEATURE_VERSION_MISMATCH`, `MODEL_ARTIFACT_INVALID` | Thắng | **Chưa có** | tất cả |
+| DEP-01 | Skeleton `pyproject.toml`/`tests/`, `pytest-cov` | Thắng (Sang làm thay) | **Đã có** trên `main` a92fafe (PR #6, 26/09/2026) | — |
+| DEP-02 | Contract chung có `Assessment`, `CriterionCoverage`, `Interaction`, `AssessmentStatus` theo M05 Spec; reason code hiện có + **mới** `FEATURE_VERSION_MISMATCH`, `MODEL_ARTIFACT_INVALID` | Thắng (Sang làm thay) | **Đã có** — `src/aicefr/contracts.py` | — |
 | DEP-03 | P05-D-001 được chốt | Sang | **Đã chốt** — Option B, 26/09/2026 | — |
 | DEP-04 | FeatureSet thật từ extractor | Sang (M04-TASK-002) | Chưa có | TASK-004 |
 
@@ -83,11 +83,11 @@ Prompt `prompts/`, raw report/coverage `evidence/`, review `reviews/`; Shared wo
 | Check | Kết quả |
 | --- | --- |
 | 1–2. Trace; boundary/data flow/lỗi | PASS |
-| 3. Runtime/convention | **BLOCKED** — chưa có `pyproject.toml` (DEP-01) |
+| 3. Runtime/convention | PASS — `pyproject.toml` và CI đã có trên `main` |
 | 4–6, 8–9 | PASS |
-| 7. Dependency sẵn sàng | **BLOCKED** — DEP-01, DEP-02 |
+| 7. Dependency sẵn sàng | PASS — TASK-002 và 001 không còn dependency ngoài; TASK-004 làm sau M04-TASK-002 (DEP-04) |
 
-**CODEX CHECK RESULT:** BLOCKED — nội dung đạt, DoR chưa đủ. **CODEX RECOMMENDATION:** BLOCKED — P05-D-001 đã chốt; kiểm lại khi DEP-01/02 có trên `main`. **User verdict Phase 05:** PENDING.
+**CODEX CHECK RESULT:** PASS (kiểm lại 26/09/2026 sau khi DEP-01/02 có trên `main`). **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05. **User verdict Phase 05:** PENDING.
 
 ## Lịch sử phiên bản
 

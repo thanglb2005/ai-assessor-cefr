@@ -34,10 +34,10 @@ artifact (M05) ───┘     ├─ text_features(words, D)        (#1–8)
 
 | ID | Cần gì | Của ai | Trạng thái | Chặn task |
 | --- | --- | --- | --- | --- |
-| DEP-01 | Skeleton `pyproject.toml`/`tests/`, `pytest-cov`, marker `smoke` | Thắng | **Chưa có** | tất cả |
-| DEP-02 | Contract chung có `FeatureValue`, `FeatureSet` theo M04 Spec; reason code `FEATURE_NOT_COMPUTABLE`, `TOO_FEW_WORDS`, `VAD_VERSION_MISMATCH` và **mới** `FEATURE_VERSION_MISMATCH` | Thắng | **Chưa có** | tất cả |
+| DEP-01 | Skeleton `pyproject.toml`/`tests/`, `pytest-cov`, marker `smoke` | Thắng (Sang làm thay) | **Đã có** trên `main` a92fafe (PR #6, 26/09/2026) | — |
+| DEP-02 | Contract chung có `FeatureValue`, `FeatureSet` theo M04 Spec; reason code `FEATURE_NOT_COMPUTABLE`, `TOO_FEW_WORDS`, `VAD_VERSION_MISMATCH` và **mới** `FEATURE_VERSION_MISMATCH` | Thắng (Sang làm thay) | **Đã có** — `src/aicefr/contracts.py` | — |
 | DEP-03 | M02 xác nhận DecodedAudio 16 kHz mono (M03-O-002); Thắng review M04 là consumer thứ hai | Thắng | **Chưa xác nhận** | TASK-003 |
-| DEP-04 | Dependency `silero-vad==6.2.1`, `numpy` trong `pyproject.toml` | Thắng (Sang đề nghị) | Chưa có | TASK-003 |
+| DEP-04 | Dependency `silero-vad==6.2.1`, `numpy` trong `pyproject.toml` | Thắng (Sang làm thay) | **Đã có** — extra `vad` và lõi `numpy` trong `pyproject.toml` | — |
 | DEP-05 | Loader artifact M05 trả `feature_order`, `feature_version`, `trained_with` | Sang (M05-TASK-002) | Chưa có | TASK-002 |
 | DEP-06 | Audio có quyền dùng cho smoke, ngoài repo | Sang | Chưa có | TASK-003 |
 
@@ -69,11 +69,11 @@ Như M03: prompt `prompts/`, raw report/coverage `evidence/`, review `reviews/`;
 | Check | Kết quả |
 | --- | --- |
 | 1–2. Trace; boundary/data flow/lỗi | PASS |
-| 3. Runtime/convention | **BLOCKED** — chưa có `pyproject.toml` (DEP-01) |
+| 3. Runtime/convention | PASS — `pyproject.toml` và CI đã có trên `main` |
 | 4–6, 8–9 | PASS |
-| 7. Dependency sẵn sàng | **BLOCKED** — DEP-01, DEP-02; TASK-002 thêm DEP-05; TASK-003 thêm DEP-03, 04, 06 |
+| 7. Dependency sẵn sàng | PASS cho TASK-001, 002 (TASK-002 làm sau M05-TASK-002 vì DEP-05). **BLOCKED** cho TASK-003: còn DEP-03 (16 kHz) và DEP-06 (audio) |
 
-**CODEX CHECK RESULT:** BLOCKED — nội dung đạt, DoR chưa đủ vì skeleton/contract chung. **CODEX RECOMMENDATION:** BLOCKED — kiểm lại khi DEP-01/02 có trên `main`. **User verdict Phase 05:** PENDING.
+**CODEX CHECK RESULT:** PASS cho TASK-001, 002 (kiểm lại 26/09/2026); TASK-003 vẫn BLOCKED bởi DEP-03, DEP-06. **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05; chỉ phát prompt cho task READY. **User verdict Phase 05:** PENDING.
 
 ## Lịch sử phiên bản
 
