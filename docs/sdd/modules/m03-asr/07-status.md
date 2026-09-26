@@ -9,7 +9,8 @@
 | Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · **APPROVED** 26/09/2026; task READY/BLOCKED theo dependency — xem 06-tasks.md |
-| Implementation / Review / Final Verification / Acceptance | NOT_STARTED; không có kết quả test hoặc verdict |
+| Implementation | M03-TASK-003, 004, 001 đã implement (Claude, theo yêu cầu chủ dự án); evidence [M03-EV-002](evidence/evidence-manifest.md). TASK-002 BLOCKED |
+| Review / Final Verification / Acceptance | NOT_STARTED — chờ Phase 07 |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
 ## Phase 01 record
