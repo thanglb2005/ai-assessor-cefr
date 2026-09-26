@@ -3,14 +3,15 @@
 | Mục | Trạng thái |
 | --- | --- |
 | Lifecycle | proposed |
-| Phase hiện tại | 06 — Implementation (task READY) |
+| Phase hiện tại | 07 — Implementation Review |
 | Requirement | [01-requirement.md](01-requirement.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Research mode | **`SKIPPED`** (chọn tại Phase 01) — skip record: M04-D-003 trong [01-requirement.md](01-requirement.md) |
 | Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · **APPROVED** 26/09/2026; task READY/BLOCKED theo dependency — xem 06-tasks.md |
 | Implementation | M04-TASK-001, 002 đã implement (Claude, theo yêu cầu chủ dự án); evidence [M04-EV-001](evidence/evidence-manifest.md). TASK-003 BLOCKED |
-| Review / Final Verification / Acceptance | NOT_STARTED — chờ Phase 07 |
+| Review | Phase 07 A1 xong, [review-log](reviews/review-log.md); chờ user verdict |
+| Final Verification / Acceptance | NOT_STARTED |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
 ## Phase 01 record
@@ -79,6 +80,23 @@ USER VERDICT: APPROVED — cho các task READY; task BLOCKED chờ đủ depende
 VERIFIED/APPROVED BY: User (Sang)
 USER VERDICT AT: 26/09/2026
 NEXT ACTION: Phase 06 — M05-TASK-002 (Claude implement theo yêu cầu của chủ dự án)
+```
+
+## Phase 07 review package
+
+```text
+PHASE RECORD ID: M04-07-A1
+PHASE: 07 — Implementation Review
+SUBJECT: M04-TASK-001, 002 (SCRUM-24, 25)
+CHECKS: verify evidence (base/diff/test/coverage) PASS; checklist code + test PASS sau correction
+FINDINGS: 07-A1-01 MAJOR, 07-A1-04 MINOR, 07-A1-05 MINOR — MAJOR/NIT đã sửa; MINOR còn mở là follow-up
+DEVIATIONS: xem reviews/review-log.md (cần user chấp nhận)
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL — kèm chấp nhận các khác biệt Test Plan và follow-up MINOR
+USER VERDICT: PENDING
+VERIFIED/APPROVED BY: —
+USER VERDICT AT: —
+NEXT ACTION: user ghi verdict Phase 07; sau đó Phase 08 — Final Verification trên revision cuối
 ```
 
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
