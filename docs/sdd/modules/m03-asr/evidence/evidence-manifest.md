@@ -61,3 +61,26 @@ Tải có chủ đích theo M03-D-001 (`whisper-small`), M03-D-002 (không tự 
 | M03-TEST-016 | `test_log_does_not_contain_transcript_text` | PASS |
 
 **Cách hiểu cần owner xác nhận ở Phase 07:** luật "cụm 3–10 từ lặp ≥ 3 lần" được hiện thực là lặp **liền nhau** (như "i like it i like it i like it"). Đếm cả lặp rời rạc sẽ gắn cờ nhầm lời nói bình thường ("i think that" xuất hiện 3 lần trong 60 giây).
+
+## M03-EV-P08 — Phase 08 Final Verification (M03-TASK-003, 004, 001)
+
+```text
+UT EVIDENCE
+- Final head/fingerprint: main 74afca9 (74afca9c3315256414f11697f07b717af0e22579); sdd-workspace-v2 7bc236e3a3df18900349d3fcfe16d12bc3398f3397b6c6d446812ac8ac14f81a
+  (171 file, git status sạch, không metadata file)
+- Test files và AC/Test ID mapping: tests/asr/ (test_service.py, test_hallucination.py, test_identity_validation.py); M03-TEST-001–016 (16/16)
+- Command: env -u AICEFR_MODEL_DIR pytest -q -m "not smoke" tests/<module>
+           AICEFR_MODEL_DIR=<thư mục artifact> python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch
+- Passed/failed/skipped: không artifact 45 passed; có artifact 45 passed; 0 failed
+  (toàn repo: 123 passed + 10 skipped / 133 passed)
+- Coverage metrics/policy/delta: `asr/service.py`, `identity.py`, `validation.py` 100 % line/branch; `hallucination.py` 99 % line/branch; toàn repo 99 % — đạt TP-D-001 (line ≥ 90 %, branch ≥ 85 %)
+- Coverage report path: ngoài repo (scratchpad của phiên, coverage.xml + junit.xml); tóm tắt ở đây
+- Critical uncovered branches/risk: `hallucination.py` nhánh 84→88 (vòng lặp cụm lặp kết thúc mà không gặp cụm nào — trường hợp thường, không phải hành vi quan trọng chưa kiểm)
+- Codex rerun: có — máy Sang (macOS 26.4, Python 3.12.14) và CI GitHub trên main 74afca9
+  (run 36257359229, Python 3.11: 123 passed, 10 skipped, 99 %); ruff check / format --check sạch
+- CODEX CHECK RESULT: PASS
+- CODEX RECOMMENDATION: RECOMMEND APPROVAL
+- USER VERDICT: PENDING
+```
+
+**Ngoài Phase 08 này:** M03-TASK-002 (faster-whisper + smoke S1/S2) BLOCKED — chưa có code, không thuộc Phase 08 này.

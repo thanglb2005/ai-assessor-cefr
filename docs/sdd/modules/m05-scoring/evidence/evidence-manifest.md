@@ -54,3 +54,26 @@ Lưu tại đây raw report của Antigravity, command output/test/coverage, ả
 | M05-TEST-021 | `test_log_has_ids_and_status_but_no_feature_values` | PASS |
 
 **Thay đổi contract (phần M05):** thêm `OutOfRangeFeature` và `Assessment.out_of_range` để trả chi tiết OOD như Spec bước 6 yêu cầu; M06 dùng để báo giới hạn cho người học. Test chạy được trên CI nhờ fixture ART-FAKE18 có đúng 18 tên đặc trưng của Ridge v2.
+
+## M05-EV-P08 — Phase 08 Final Verification (M05-TASK-002, 001)
+
+```text
+UT EVIDENCE
+- Final head/fingerprint: main 74afca9 (74afca9c3315256414f11697f07b717af0e22579); sdd-workspace-v2 7bc236e3a3df18900349d3fcfe16d12bc3398f3397b6c6d446812ac8ac14f81a
+  (171 file, git status sạch, không metadata file)
+- Test files và AC/Test ID mapping: tests/scoring/ (test_artifact.py, test_ridge.py, test_scorer.py); M05-TEST-001–021 (21/21; M05-TEST-005 kiểm cả cấp loader và cấp Assessment)
+- Command: env -u AICEFR_MODEL_DIR pytest -q -m "not smoke" tests/<module>
+           AICEFR_MODEL_DIR=<thư mục artifact> python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch
+- Passed/failed/skipped: không artifact 44 passed, 9 skipped (test cần artifact thật); có artifact 53 passed; 0 failed
+  (toàn repo: 123 passed + 10 skipped / 133 passed)
+- Coverage metrics/policy/delta: `scoring/artifact.py`, `ridge.py`, `coverage.py`, `scorer.py` 100 % line/branch; toàn repo 99 % — đạt TP-D-001 (line ≥ 90 %, branch ≥ 85 %)
+- Coverage report path: ngoài repo (scratchpad của phiên, coverage.xml + junit.xml); tóm tắt ở đây
+- Critical uncovered branches/risk: Không có
+- Codex rerun: có — máy Sang (macOS 26.4, Python 3.12.14) và CI GitHub trên main 74afca9
+  (run 36257359229, Python 3.11: 123 passed, 10 skipped, 99 %); ruff check / format --check sạch
+- CODEX CHECK RESULT: PASS
+- CODEX RECOMMENDATION: RECOMMEND APPROVAL
+- USER VERDICT: PENDING
+```
+
+**Ngoài Phase 08 này:** M05-TASK-004 (integration M04→M05, M05-TEST-022) READY, chưa làm — không thuộc W2.

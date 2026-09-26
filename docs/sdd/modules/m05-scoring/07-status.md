@@ -11,7 +11,8 @@
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · **APPROVED** 26/09/2026; task READY/BLOCKED theo dependency — xem 06-tasks.md |
 | Implementation | M05-TASK-002, M05-TASK-001 đã implement (Claude, theo yêu cầu chủ dự án); evidence [M05-EV-001, M05-EV-002](evidence/evidence-manifest.md) |
 | Review | Phase 07 A1 **APPROVED** 26/09/2026, [review-log](reviews/review-log.md) |
-| Final Verification / Acceptance | NOT_STARTED |
+| Final Verification | Phase 08 evidence [M05-EV-P08](evidence/evidence-manifest.md) trên main 74afca9; chờ user verdict |
+| Acceptance | NOT_STARTED |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
 ## Phase 01 record
@@ -98,6 +99,22 @@ USER VERDICT: APPROVED — chấp nhận các khác biệt Test Plan và các fo
 VERIFIED/APPROVED BY: User (Sang)
 USER VERDICT AT: 26/09/2026
 NEXT ACTION: Phase 08 — Final Verification trên main sau khi merge PR Phase 07
+```
+
+## Phase 08 review package
+
+```text
+PHASE RECORD ID: M05-08-A1
+PHASE: 08 — Final Verification
+SUBJECT: M05-TASK-002, 001 trên main 74afca9, fingerprint 7bc236e3a3df1890…
+CHECKS: test pass trên final head (0 failed); skipped có lý do (cần artifact thật, P05-D-001) và
+  đã chạy PASS trên máy có artifact; coverage đạt TP-D-001; Test ID khớp code cuối; CI main xanh
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL
+USER VERDICT: PENDING
+VERIFIED/APPROVED BY: —
+USER VERDICT AT: —
+NEXT ACTION: user ghi verdict Phase 08 (task → Verified); sau đó Phase 09 — Acceptance
 ```
 
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
