@@ -1,48 +1,86 @@
 # M03 — 03 Specification (Đặc tả)
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M03 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **v0.2 · 26/09/2026 · chờ Phase 03 verdict.** Dựa trên [Requirement v0.2 APPROVED](01-requirement.md) và [Research v0.2](02-research.md). Chưa cấp quyền phát prompt triển khai (cần Phase 04, 05).
 
-**Owner đề xuất:** Sang. **Cơ sở:** [Nguồn đề tài do nhóm tạo](../../../sources/README.md) và [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx). **Mục tiêu W2:** Cung cấp transcript local có provenance và trạng thái bất định; W2 smoke trên audio có quyền sử dụng nếu runtime/model sẵn sàng.
+**Owner:** Sang. **Mục tiêu W2:** Transcript local từ `whisper-small`, có provenance, word timestamp/confidence nullable và trạng thái bất định; smoke trên audio có quyền dùng khi model đã được tải có chủ đích.
 
-## Boundary và hợp đồng đầu vào/đầu ra
+## Boundary và hợp đồng
 
-| Artifact/boundary | Trường hoặc invariant bắt buộc | Owner/consumer |
+| Artifact | Trường / invariant | Owner → consumer |
 | --- | --- | --- |
-| AsrInput | DecodedAudio/QCResult từ M02, response ID, language hint; không nhận URL ngoài | M02 → M03 |
-| Transcript | text verbatim, segment/word timestamps nullable, quality flags, `asr_model`, `transcript_version`, source hash | M03 → M04/M06 |
-| AsrStatus | `OK/ASR_FAILED/UNRELIABLE/NOT_RUN`; reason codes riêng | M03 → pipeline/M07 |
-| AsrEngine port | local adapter riêng; test double chỉ cho test, luôn có marker test | M03 internal |
+| AsrInput | `response_id`; `DecodedAudio` (PCM float32, mono, **16 kHz** — chờ M03-O-002); `QCResult.status ∈ {PASS, REVIEW}`; `language="en"` | M02 → M03 |
+| Word | `text`; `start_s`, `end_s` (float, giây); `prob` ∈ [0,1] **hoặc `null`** | M03 → M04/M06 |
+| Transcript | `response_id`; `status` (dưới); `text` verbatim; `words: list[Word]`; `asr_model` (identifier chuẩn, xem bảng ánh xạ); `engine` + `engine_version`; `decode_config_version`; `audio_sha256`; `reasons: list[ReasonCode]` | M03 → M04/M06 |
+| AsrStatus | `OK` · `UNRELIABLE` · `ASR_FAILED` · `NOT_RUN` | M03 → pipeline/M07 |
+| AsrEngine port | `transcribe(audio) -> Transcript`; adapter local; test double mang `test_only=true` | nội bộ M03 |
 
-## Hành vi có thể kiểm tra
+### Bảng ánh xạ identifier (M03-FR-003)
 
-- Chỉ chạy khi QC policy cho phép; xử lý bằng model local được cấu hình, lưu exact model identifier/checksum và decode config.
-- Giữ filler và thứ tự lời nói trong bản transcript gốc; không thêm từ để làm đẹp câu.
-- Word timestamp/confidence chỉ điền khi engine thực cung cấp; segment-only không được khai là word-level.
-- Không tự động tải model từ mạng khi chạy smoke mặc định; nếu model chưa có, trả `NOT_RUN`/reason và W2 gate chưa đạt.
+`asr_model` là **identifier chuẩn**, không phải tên repo weight. Config ánh xạ tường minh, ví dụ `{"<tên weight đã tải>": "whisper-small"}`. So khớp với `trained_with.asr_model` là **so bằng tuyệt đối** (`==`). Weight không có trong bảng → `asr_model = null` + `ASR_VERSION_MISMATCH`. `whisper-small.en` **không** ánh xạ về `whisper-small` (Research F-04).
 
-## Lỗi, thiếu dữ liệu và phục hồi
+## Hành vi
 
-- ASR fail/timeout hoặc transcript rỗng khi audio có tiếng: trả status/reason, không tạo transcript `OK`.
-- Nghi hallucination/low reliability: `UNRELIABLE`, chặn feature/scoring đòi text đáng tin hoặc gửi review.
-- Timestamp âm, đảo thứ tự hoặc vượt duration: reject artifact và giữ diagnostic metadata.
+1. Chỉ chạy khi `QCResult.status ∈ {PASS, REVIEW}`; `REJECT` → `NOT_RUN`, không gọi engine.
+2. Decode config khởi đầu (có version `asr-decode-v1`): `word_timestamps=true`, `language="en"`, `condition_on_previous_text=false`, `compression_ratio_threshold=2.4`, log-prob threshold `-1.0`, `no_speech_threshold=0.6` (Research F-02). Tham số riêng của engine chốt theo M03-O-001.
+3. Giữ filler và thứ tự lời nói trong `text`/`words`; không chuẩn hóa, không thêm từ.
+4. Engine không trả probability cho một word → `prob = null` (không bao giờ 0.0 — REF-03).
+5. Model không có sẵn local → `NOT_RUN` + `ASR_FAILED`; **không tự tải** (D-002).
+6. Sau decode chạy bộ phát hiện (REF-04), ngưỡng trong config `hallucination-v1`:
 
-## Quyền, riêng tư và giao diện
+| Luật | Ngưỡng khởi đầu | Kết quả |
+| --- | --- | --- |
+| Lặp một token liên tiếp | `> 6` lần | `UNRELIABLE` + `ASR_HALLUCINATION` |
+| Một token chiếm tỷ lệ | `> 0.35` khi `≥ 60` từ | như trên |
+| Cụm 3–10 từ lặp | `≥ 3` lần | như trên |
+| Đuôi prob thấp | `≥ 5` từ cuối có `prob < 0.05` | như trên |
+| Đồng hồ đứng | `≥ 4` từ liên tiếp `< 0.05 s/từ` | như trên |
 
-- Chỉ xử lý audio được phép; không gửi audio/transcript lên cloud mặc định.
-- Log không chứa raw transcript hay audio; lưu artifact dưới M08 với owner/access policy.
-- Test double phải hiện rõ `test_only=true` và không xuất hiện ở báo cáo thực nghiệm.
+7. Transcript rỗng khi QC báo có tiếng → `UNRELIABLE` + `ASR_EMPTY_TRANSCRIPT`.
+8. `asr_model ≠ trained_with.asr_model` của artifact M05 đang cấu hình → thêm `ASR_VERSION_MISMATCH`; `status` giữ nguyên (lệch phiên bản không làm transcript sai, chỉ chặn band ở M05-FR-003).
+
+## Lỗi và phục hồi
+
+| Tình huống | Status | Reason | Phục hồi |
+| --- | --- | --- | --- |
+| Engine exception / timeout | `ASR_FAILED` | `ASR_FAILED` | Chạy lại thủ công; không tạo transcript |
+| Timestamp âm, `end < start`, không đơn điệu, vượt duration | `ASR_FAILED` | `ASR_FAILED` | Giữ diagnostic metadata, không giữ words |
+| Hallucination (bảng trên) | `UNRELIABLE` | `ASR_HALLUCINATION` | M04 không tính đặc trưng text (M03-FR-002); chuyển review |
+| Model không có local | `NOT_RUN` | `ASR_FAILED` | Owner tải có chủ đích, ghi evidence |
+
+## Bảo mật, riêng tư, accessibility
+
+- Không gọi mạng khi chạy (cả engine lẫn tải model); smoke kiểm bằng cách chạy khi tắt mạng.
+- Log chỉ ghi `response_id`, status, reason, thời gian xử lý; không log `text`/`words`/audio.
+- Transcript lưu qua M08 với quyền truy cập của bài nộp.
+- Accessibility: N/A — M03 không có giao diện.
+
+## Reason code dùng (đề nghị Thắng đưa vào contract chung)
+
+`ASR_FAILED`, `ASR_EMPTY_TRANSCRIPT`, `ASR_HALLUCINATION`, `ASR_VERSION_MISMATCH` — cả bốn đã có trong hồ sơ tham chiếu (Research F-09).
 
 ## Trace Requirement → AC
 
-| Requirement | Acceptance Criteria | Cách quan sát |
+| Requirement | AC | Quan sát |
 | --- | --- | --- |
-| M03-FR-001 | M03-AC-001, M03-AC-002 | Adapter/version và timestamp nullable đúng nguồn |
-| M03-FR-002 | M03-AC-001, M03-AC-002 | Lỗi/không đáng tin không đi vào score |
+| M03-FR-001 | M03-AC-001, M03-AC-002 | Provenance đủ trường; `prob=null` khi engine không trả |
+| M03-FR-002 | M03-AC-001 | Fixture lỗi → `ASR_FAILED`; fixture lặp → `UNRELIABLE` |
+| M03-FR-003 | M03-AC-003 | Ánh xạ khớp → không reason; `whisper-small.en` hoặc weight lạ → `ASR_VERSION_MISMATCH` |
 
-## Quyết định còn mở
+## Giả định, phụ thuộc, câu hỏi mở
 
-- Máy W2 có CPU/GPU/RAM nào và model local nào đã có hợp lệ?
-- Chọn engine/model/version nào sau khi kiểm license và runtime?
-- Cần word timestamp W2 hay segment timestamp đủ cho report ban đầu?
+| Loại | Nội dung |
+| --- | --- |
+| Phụ thuộc | M05 cung cấp `trained_with.asr_model` từ artifact đang cấu hình |
+| Phụ thuộc | M02 cung cấp DecodedAudio 16 kHz mono → **M03-O-002** (Thắng chốt) |
+| Rủi ro → Test Plan | Phân phối `asr_conf_mean` từ engine local so với khoảng huấn luyện [0,691 ; 0,950] (Research I-01) |
+| **OPEN** | **M03-O-001** — chọn engine (khuyến nghị faster-whisper `small` cho mọi môi trường) |
+| **OPEN** | **M03-O-002** — sample rate 16 kHz mono từ M02 |
 
-**CODEX CHECK RESULT:** DRAFT — đã đối chiếu FR/AC và ranh giới M03; chưa có verdict Phase 01, hợp đồng liên module và dữ liệu W2 cần review. **User verdict Phase 03:** PENDING.
+**CODEX CHECK RESULT:** FR/AC trace đủ; success/invalid/failure/recovery có; security/privacy có, accessibility N/A có lý do. Hai OPEN chặn Phase 03. **User verdict Phase 03:** PENDING.
+
+## Lịch sử phiên bản
+
+| Phiên bản | Ngày | Thay đổi |
+| --- | --- | --- |
+| v0.1 | 25/09/2026 | Bản nháp đầu |
+| v0.2 | 26/09/2026 | Theo Requirement v0.2: `whisper-small`, bảng ánh xạ identifier, `prob=null`, bộ phát hiện hallucination có ngưỡng, bảng lỗi; hai OPEN |

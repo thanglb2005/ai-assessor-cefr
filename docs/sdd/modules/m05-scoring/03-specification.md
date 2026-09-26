@@ -1,49 +1,94 @@
 # M05 — 03 Specification (Đặc tả)
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M05 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **v0.2 · 26/09/2026 · chờ Phase 03 verdict.** Dựa trên [Requirement v0.2 APPROVED](01-requirement.md) và [Research v0.2](02-research.md). Chưa cấp quyền phát prompt triển khai.
 
-**Owner đề xuất:** Sang. **Cơ sở:** [Nguồn đề tài do nhóm tạo](../../../sources/README.md) và [báo cáo W1](../../../reports/week-01/bao-cao-tuan-01.docx). **Mục tiêu W2:** Định nghĩa scorer có provenance và đường từ chối an toàn; tái kiểm model Ridge do nhóm từng huấn luyện như một ứng viên, chỉ phát band overall ước lượng khi artifact/pipeline/input đủ điều kiện.
+**Owner:** Sang. **Mục tiêu W2:** Ước lượng **một** overall score/band từ `ridge_resp_v2` khi đầu vào đủ điều kiện; năm tiêu chí chỉ mang coverage; mọi trường hợp còn lại từ chối có lý do.
 
-## Boundary và hợp đồng đầu vào/đầu ra
+## Boundary và hợp đồng
 
-| Artifact/boundary | Trường hoặc invariant bắt buộc | Owner/consumer |
+| Artifact | Trường / invariant | Owner → consumer |
 | --- | --- | --- |
-| ScoreInput | FeatureSet hợp lệ, task version, model/band-map config và evidence coverage; `rubric_version` nullable khi chưa có rubric tiêu chí; không nhận null như số 0 | M04/M08 → M05 |
-| CriterionProfile | `criterion`, coverage, evidence refs và missing reason cho năm tiêu chí W1; **không có score/band riêng** trong MVP | M05 → M06/M07 |
-| InteractionResult | `level=null`, `score_status=insufficient_evidence` cho monologue | M05 → M06 |
-| OverallEstimate/ScoreProvenance | nullable overall score/band, model ID/hash, unit `one_response`, feature/ASR/VAD/band-map/calibration/rubric version hoặc reason | M05 → report/evidence |
+| ModelConfig | `model_name="ridge_resp_v2"`; `model_sha256` ghim = `7cdeb2a0…b521a` (M05-R-001); `boundary_margin` (theo M05-O-001) | cấu hình dự án → M05 |
+| ScoreInput | `FeatureSet` từ M04 (18 giá trị theo `feature_order`, `feature_version`, `vad_*`, `asr_model`, reasons); `Transcript.status`, `reasons` từ M03 | M03/M04 → M05 |
+| Assessment | `status` (dưới); `overall_score: float \| null` ∈ [1,0 ; 6,0]; `overall_band: A2 \| B1 \| B2 \| null`; `criteria: list[CriterionCoverage]` (5 dòng); `interaction`; `reasons`; provenance | M05 → M06/M07 |
+| CriterionCoverage | `criterion ∈ {range, accuracy, fluency, coherence, phonology}`; `coverage ∈ [0,1] \| null`; `features: list[str]`; `reasons` — **không có score/band** | M05 → M06 |
+| Interaction | `level=null`, `score_status="insufficient_evidence"` — luôn luôn cho bài độc thoại | M05 → M06 |
+| Provenance | `model_version`, `model_sha256`, `feature_version`, `band_map_version`, `calibration_version`, `trained_with`, `unit_of_inference`, `scored_at` — tất cả đọc từ artifact trừ `scored_at` | M05 → M06/M08 |
 
-## Hành vi có thể kiểm tra
+### AssessmentStatus
 
-- Chỉ dùng 5 tiêu chí của W1 làm **phạm vi nháp**; giữ `Interaction=null` với reason `insufficient_evidence`; overall chỉ từ model đã tái kiểm, không từ một proxy đơn lẻ.
-- Implementation đã khảo sát dùng Ridge v2 cho overall response và có năm `CriterionScore` cùng nhận một overall; `confidence` của mỗi dòng là coverage, chưa phải năm điểm độc lập. Chỉ dùng artifact sau khi chủ dự án duyệt và kiểm feature order, ASR/VAD, task/unit, license, hash; nếu thiếu, trả `NOT_EVALUATED` và không tạo band.
-- Nếu baseline Ridge được duyệt, overall estimate phải tất định với cùng input/config, thể hiện estimated/provisional, model version và giới hạn corpus. Chỉ xuất một overall score/band; năm CriterionProfile xuất coverage/evidence, không có score/band riêng.
-- Near-boundary/OOD/low confidence chỉ kích hoạt `REVIEW_REQUIRED` theo ngưỡng có version; không gán xác suất hoặc confidence nếu chưa hiệu chỉnh.
+| Status | Khi nào | `overall_*` |
+| --- | --- | --- |
+| `ESTIMATED` | Mọi kiểm tra đạt, không near-boundary | có score + band |
+| `REVIEW_REQUIRED` | Có score nhưng near-boundary (`SCORE_NEAR_BOUNDARY`) | có score + band, chờ giảng viên |
+| `NOT_EVALUATED` | Artifact không hợp lệ, provenance lệch, thiếu đặc trưng, OOD, hoặc transcript không `OK` | `null` |
 
-## Lỗi, thiếu dữ liệu và phục hồi
+Mọi status đều là ước lượng thử nghiệm; `teacher_verified=false` cho đến khi M07 xác nhận.
 
-- Model file thiếu/hash sai hoặc parser lỗi: fail closed, không fallback sang band mặc định.
-- FeatureSet thiếu/stale/NaN hoặc criterion coverage không đủ: null + reason.
-- Model/band-map không phù hợp task/unit/feature pipeline: `NOT_EVALUATED`; thiếu rubric tiêu chí không được biến thành năm điểm riêng. Metric dev lịch sử chỉ ghi ở tài liệu nguồn, không hiện như kết quả dự án.
+## Thứ tự kiểm (fail-closed, dừng ở bước đầu tiên thất bại)
 
-## Quyền, riêng tư và giao diện
+| Bước | Kiểm | Thất bại → reason |
+| --- | --- | --- |
+| 1 | Nạp JSON (không pickle); SHA-256 = `model_sha256` ghim | `MODEL_ARTIFACT_INVALID` (**mã mới**) — file thiếu: `MODEL_VERSION_MISSING` |
+| 2 | `unit_of_inference` chứa "một bài nói" (REF-05) | `MODEL_ARTIFACT_INVALID` |
+| 3 | `Transcript.status == OK` | giữ reason của M03 |
+| 4 | Provenance (M05-FR-003), so bằng `==`: `FeatureSet.asr_model == trained_with.asr_model`; `vad_name`, `vad_threshold`, `vad_min_silence_ms` khớp `trained_with`; danh sách tên FeatureSet == `feature_order`; `feature_version` khớp | `ASR_VERSION_MISMATCH`, `VAD_VERSION_MISMATCH`, `FEATURE_VERSION_MISMATCH` (gộp mọi mục lệch) — kết quả theo **M05-O-003** |
+| 5 | Không đặc trưng nào `null` | `FEATURE_NOT_COMPUTABLE` |
+| 6 | OOD (REF-02) với `ood_tolerance` từ artifact | `OUT_OF_DISTRIBUTION` + chi tiết từng đặc trưng |
+| 7 | Tính `z`, `raw`, clip [1,0 ; 6,0]; band theo `band_thresholds` | — |
+| 8 | `|score − t| ≤ boundary_margin` với `t ∈ {2,75 ; 3,75}` | `SCORE_NEAR_BOUNDARY` → `REVIEW_REQUIRED` |
 
-- Không nhận model artifact không rõ nguồn hoặc pickle không tin cậy; format và hash cần chốt.
-- Không xuất lời khẳng định “chứng chỉ CEFR”/đậu rớt; mọi điểm là ước lượng thử nghiệm nếu chưa validation.
-- Log chỉ provenance/status/reason, không log transcript hay đặc điểm nhận dạng.
+## Coverage năm tiêu chí (REF-06)
+
+| Tiêu chí | Đặc trưng liên quan (chỉ những tên có trong `feature_order`) |
+| --- | --- |
+| range | `log_uniq`, `ttr`, `mean_word_len` |
+| accuracy | `asr_conf_mean`, `asr_conf_geo` |
+| fluency | `words_per_sec`, `vad_articulation_rate`, `vad_mean_pause`, `vad_pause_per_min`, `vad_long_pause_ratio` |
+| coherence | `n_words`, `vad_mean_seg_len`, `total_dur` |
+| phonology | `asr_conf_mean`, `vad_silence_ratio` |
+
+`coverage = số đặc trưng liên quan khác null / số đặc trưng liên quan`, làm tròn 2 chữ số. `coverage < 1` → `FEATURE_NOT_COMPUTABLE` trên dòng đó. Status `NOT_EVALUATED` → `coverage=null` + reason của Assessment. Bảng gán lấy từ hồ sơ tham chiếu, đã bỏ `filler_ratio` (Research F-05); là **giải thích**, không phải thang đo đã được thẩm định học thuật.
+
+## Tính tất định
+
+Cùng FeatureSet + cùng artifact → cùng `status`, `overall_score`, `overall_band`, `criteria`, `reasons` (so sánh bỏ qua `scored_at`). Artifact nạp một lần khi khởi tạo; không đọc lại giữa chừng.
+
+## Bảo mật, riêng tư, accessibility
+
+- Chỉ nạp artifact JSON có hash ghim; không pickle, không tải model qua mạng.
+- Không có câu chữ "chứng chỉ CEFR", đậu/rớt; M06 hiển thị "ước lượng thử nghiệm" cùng `calibration_version`.
+- Log chỉ ghi `response_id`, status, reason, `model_version`; không log FeatureSet chi tiết kèm định danh người học.
+- Accessibility: N/A — M05 không có giao diện (M06 chịu trách nhiệm hiển thị).
+
+## Reason code dùng (đề nghị Thắng đưa vào contract chung)
+
+Đã có trong hồ sơ tham chiếu: `FEATURE_NOT_COMPUTABLE`, `OUT_OF_DISTRIBUTION`, `SCORE_NEAR_BOUNDARY`, `MODEL_VERSION_MISSING`, `ASR_VERSION_MISMATCH`, `VAD_VERSION_MISMATCH`. **Mới:** `FEATURE_VERSION_MISMATCH` (chung với M04), `MODEL_ARTIFACT_INVALID`.
 
 ## Trace Requirement → AC
 
-| Requirement | Acceptance Criteria | Cách quan sát |
+| Requirement | AC | Quan sát |
 | --- | --- | --- |
-| M05-FR-001 | M05-AC-001, M05-AC-002 | Model/input hợp lệ mới có estimate; provenance đủ |
-| M05-FR-002 | M05-AC-001 | Thiếu/OOD/near boundary dẫn tới reason/review, Interaction null |
+| M05-FR-001 | M05-AC-001, M05-AC-002 | Bước 1–7; provenance đủ; 5 dòng coverage, không score riêng |
+| M05-FR-002 | M05-AC-001 | Bước 5, 6, 8; `Interaction` luôn `insufficient_evidence` |
+| M05-FR-003 | M05-AC-003 | Bước 4: ba fixture lệch riêng `asr_model`, `vad_name`, `feature_order` |
 
-## Quyết định còn mở
+## Giả định, phụ thuộc, câu hỏi mở
 
-- Rubric Speaking được giảng viên duyệt và năm nhãn criterion hiện chưa có theo xác nhận chủ dự án; cần kế hoạch xây/duyệt nếu muốn kết luận riêng từng tiêu chí. Corpus Ridge có nhãn overall.
-- Điều kiện quyền/compatibility nào cần chốt để tích hợp Ridge v2 có provenance? Bốn weight DeBERTa nằm ngoài Git tại kho model của Thắng; tích hợp vào W2 hay giữ nhánh nghiên cứu?
-- Nếu artifact chưa qua kiểm tương thích, W2 chấp nhận report `NOT_EVALUATED` thay band hay điều chỉnh thời hạn?
-- Có giữ band thresholds có version trong Ridge v2 cho overall estimate thử nghiệm sau kiểm tương thích không? Ngưỡng review/calibration cần được quyết định.
+| Loại | Nội dung |
+| --- | --- |
+| Phụ thuộc | M03 `asr_model` identifier chuẩn (M03 Spec); M04 FeatureSet 18 giá trị |
+| Phụ thuộc | Hai reason code mới cần Thắng duyệt vào contract chung |
+| Giả định | Artifact `ridge_resp_v2.json` đặt trong repo dự án hay kho model riêng — quyết ở Phase 05 (vị trí file), hash ghim không đổi |
+| **OPEN** | **M05-O-001** — `boundary_margin` (khuyến nghị giữ 0,5; B1 luôn sang giảng viên) |
+| **OPEN** | **M05-O-002** — bài dài (khuyến nghị W2 không chia cửa sổ, OOD kèm giới hạn ≈ 77,8 s) |
+| **OPEN** | **M05-O-003** — provenance lệch ra `NOT_EVALUATED` (không có số) hay `REVIEW_REQUIRED` (có số, chờ giảng viên). Khuyến nghị `NOT_EVALUATED`: số tính từ đặc trưng lệch nguồn không kiểm được bằng OOD, đưa cho giảng viên dễ bị hiểu là điểm hợp lệ |
 
-**CODEX CHECK RESULT:** DRAFT — đã đối chiếu FR/AC và ranh giới M05; chưa có verdict Phase 01, hợp đồng liên module và dữ liệu W2 cần review. **User verdict Phase 03:** PENDING.
+**CODEX CHECK RESULT:** FR/AC trace đủ; success/invalid/boundary/failure có; security/privacy có, accessibility N/A có lý do. Ba OPEN chặn Phase 03. **User verdict Phase 03:** PENDING.
+
+## Lịch sử phiên bản
+
+| Phiên bản | Ngày | Thay đổi |
+| --- | --- | --- |
+| v0.1 | 25/09/2026 | Bản nháp đầu |
+| v0.2 | 26/09/2026 | Theo Requirement v0.2: thứ tự kiểm fail-closed, AssessmentStatus, coverage bỏ `filler_ratio`, hash ghim; ba OPEN |
