@@ -24,7 +24,10 @@ def resolve_asr_model(weight_name: str, weight_map: Mapping[str, str] | None = N
 def asr_version_reasons(
     asr_model: str | None, trained_asr_model: str | None
 ) -> tuple[ReasonCode, ...]:
-    """`ASR_VERSION_MISMATCH` khi identifier không khớp đúng model scoring đã học."""
+    """`ASR_VERSION_MISMATCH` khi weight không có trong bảng ánh xạ, hoặc identifier
+    không khớp đúng model scoring đã học."""
+    if asr_model is None:
+        return (ReasonCode.ASR_VERSION_MISMATCH,)
     if trained_asr_model is None:
         return ()
     return () if asr_model == trained_asr_model else (ReasonCode.ASR_VERSION_MISMATCH,)

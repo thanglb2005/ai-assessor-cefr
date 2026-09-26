@@ -28,6 +28,11 @@ def test_custom_map_and_other_model_mismatch():
     assert asr_version_reasons("whisper-medium", None) == ()
 
 
+def test_unmapped_weight_is_mismatch_even_without_trained_model():
+    """FINDING-07-A1-02: Spec M03 — weight không có trong bảng → null + mismatch."""
+    assert asr_version_reasons(None, None) == (ReasonCode.ASR_VERSION_MISMATCH,)
+
+
 def _w(start, end):
     return Word(text="a", start_s=start, end_s=end)
 

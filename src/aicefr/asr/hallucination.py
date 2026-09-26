@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass
 
@@ -59,8 +60,8 @@ def _consecutive_repeat(tokens: list[str], cfg: HallucinationConfig) -> Hallucin
 def _token_share(tokens: list[str], cfg: HallucinationConfig) -> HallucinationFinding | None:
     if len(tokens) < cfg.min_words_for_share:
         return None
-    top = max(set(tokens), key=tokens.count)
-    share = tokens.count(top) / len(tokens)
+    top, count = Counter(tokens).most_common(1)[0]
+    share = count / len(tokens)
     if share > cfg.max_single_token_share:
         return HallucinationFinding("token_share", f"{top!r} chiếm {share:.2f}")
     return None

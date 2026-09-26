@@ -105,10 +105,12 @@ class RidgeScorer:
 
     def _evaluate(self, features: FeatureSet, transcript: Transcript) -> Assessment:
         art = self._artifact
-        # Bước 1–2: artifact.
+        # Bước 1–2: artifact. __init__ bảo đảm có đúng một trong artifact / load_error.
         if art is None:
-            assert self._load_error is not None
-            return self._not_evaluated(features, (self._load_error.reason,))
+            reason = (
+                self._load_error.reason if self._load_error else ReasonCode.MODEL_VERSION_MISSING
+            )
+            return self._not_evaluated(features, (reason,))
         # Bước 3: transcript phải OK.
         if transcript.status is not AsrStatus.OK:
             return self._not_evaluated(features, tuple(transcript.reasons))

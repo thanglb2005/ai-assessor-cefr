@@ -29,6 +29,9 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Cho phép test import helper dùng chung (tests.features.fixtures, tests.asr.fixtures)
+# khi chạy `pytest` trơn, không chỉ `python -m pytest`.
+pythonpath = ["."]
 addopts = "-ra"
 markers = [
     "smoke: cần model hoặc audio thật; không chạy mặc định (dùng -m smoke)",
