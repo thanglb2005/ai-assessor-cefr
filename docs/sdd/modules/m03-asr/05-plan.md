@@ -1,6 +1,6 @@
 # M03 — 05 Plan & Task Readiness (Kế hoạch)
 
-> **v0.2 · 26/09/2026 · chờ Phase 05 verdict.** Dựa trên [Requirement v0.2](01-requirement.md), [Research v0.2](02-research.md), [Specification v0.2](03-specification.md), [Test Plan v0.2](04-test-plan.md) — cả bốn APPROVED. Chưa phát prompt Antigravity.
+> **v0.2 · 26/09/2026 · APPROVED Phase 05 ngày 26/09/2026.** Dựa trên [Requirement v0.2](01-requirement.md), [Research v0.2](02-research.md), [Specification v0.2](03-specification.md), [Test Plan v0.2](04-test-plan.md) — cả bốn APPROVED. Chưa phát prompt Antigravity.
 
 **Owner:** Sang. **Vùng file của M03 (chỉ sửa trong vùng này):** `src/aicefr/asr/`, `tests/asr/`, `tests/smoke/test_asr_smoke.py`. File dùng chung (`pyproject.toml`, contract/reason code, `conftest.py`, pipeline) thuộc Thắng — M03 chỉ **yêu cầu**, không sửa.
 
@@ -84,7 +84,7 @@ Type hints cho mọi API public; hàm thuần tách khỏi I/O; ngưỡng là h�
 | 8. Task đủ nhỏ | PASS — 4 task, mỗi task một vòng implement–review |
 | 9. Evidence/report và quyền rõ | PASS |
 
-**CODEX CHECK RESULT:** PASS cho TASK-001, 003, 004 (kiểm lại 26/09/2026 sau khi DEP-01/02 có trên `main`); TASK-002 vẫn BLOCKED bởi DEP-03, DEP-06. **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05; chỉ phát prompt cho task READY, TASK-002 chờ đủ dependency. **User verdict Phase 05:** PENDING.
+**CODEX CHECK RESULT:** PASS cho TASK-001, 003, 004 (kiểm lại 26/09/2026 sau khi DEP-01/02 có trên `main`); TASK-002 vẫn BLOCKED bởi DEP-03, DEP-06. **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05; chỉ phát prompt cho task READY, TASK-002 chờ đủ dependency. **User verdict Phase 05:** APPROVED 26/09/2026 (Sang).
 
 ## Lịch sử phiên bản
 

@@ -3,12 +3,12 @@
 | Mục | Trạng thái |
 | --- | --- |
 | Lifecycle | proposed |
-| Phase hiện tại | 05 — Plan & Task Readiness |
+| Phase hiện tại | 06 — Implementation (task READY) |
 | Requirement | [01-requirement.md](01-requirement.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Research mode | **`RUN`** (chọn tại Phase 01); [02-research.md](02-research.md) review cùng Phase 03 |
 | Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · **APPROVED** 26/09/2026 |
-| Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · chờ Phase 05 verdict; task READY/BLOCKED theo dependency — xem 06-tasks.md |
+| Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · **APPROVED** 26/09/2026; task READY/BLOCKED theo dependency — xem 06-tasks.md |
 | Implementation / Review / Final Verification / Acceptance | NOT_STARTED; không có kết quả test hoặc verdict |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
@@ -62,7 +62,7 @@ USER VERDICT AT: 26/09/2026
 NEXT ACTION: Phase 05 — Plan & Task Readiness
 ```
 
-## Phase 05 review package
+## Phase 05 record
 
 ```text
 PHASE RECORD ID: M05-05-A2
@@ -75,10 +75,10 @@ TASKS: TASK-002, 001, 004 đề xuất READY
 DECISION: P05-D-001 = artifact ngoài repo (AICEFR_MODEL_DIR, hash ghim) — user chốt 26/09/2026
 CODEX CHECK RESULT: PASS cho task đề xuất READY
 CODEX RECOMMENDATION: RECOMMEND APPROVAL — chỉ phát prompt Antigravity cho task READY
-USER VERDICT: PENDING
-VERIFIED/APPROVED BY: —
-USER VERDICT AT: —
-NEXT ACTION: user ghi verdict Phase 05; sau đó phát prompt task đầu tiên (M05-TASK-002)
+USER VERDICT: APPROVED — cho các task READY; task BLOCKED chờ đủ dependency
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 26/09/2026
+NEXT ACTION: Phase 06 — M05-TASK-002 (Claude implement theo yêu cầu của chủ dự án)
 ```
 
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.

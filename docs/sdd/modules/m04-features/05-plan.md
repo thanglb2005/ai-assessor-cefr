@@ -1,6 +1,6 @@
 # M04 — 05 Plan & Task Readiness (Kế hoạch)
 
-> **v0.2 · 26/09/2026 · chờ Phase 05 verdict.** Dựa trên [Requirement v0.2](01-requirement.md), [Specification v0.2](03-specification.md), [Test Plan v0.2](04-test-plan.md) — cả ba APPROVED; Research SKIPPED (M04-D-003). Chưa phát prompt Antigravity.
+> **v0.2 · 26/09/2026 · APPROVED Phase 05 ngày 26/09/2026.** Dựa trên [Requirement v0.2](01-requirement.md), [Specification v0.2](03-specification.md), [Test Plan v0.2](04-test-plan.md) — cả ba APPROVED; Research SKIPPED (M04-D-003). Chưa phát prompt Antigravity.
 
 **Owner:** Sang. **Vùng file của M04:** `src/aicefr/features/`, `tests/features/`, `tests/smoke/test_vad_smoke.py`. File dùng chung thuộc Thắng — M04 chỉ yêu cầu.
 
@@ -73,7 +73,7 @@ Như M03: prompt `prompts/`, raw report/coverage `evidence/`, review `reviews/`;
 | 4–6, 8–9 | PASS |
 | 7. Dependency sẵn sàng | PASS cho TASK-001, 002 (TASK-002 làm sau M05-TASK-002 vì DEP-05). **BLOCKED** cho TASK-003: còn DEP-03 (16 kHz) và DEP-06 (audio) |
 
-**CODEX CHECK RESULT:** PASS cho TASK-001, 002 (kiểm lại 26/09/2026); TASK-003 vẫn BLOCKED bởi DEP-03, DEP-06. **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05; chỉ phát prompt cho task READY. **User verdict Phase 05:** PENDING.
+**CODEX CHECK RESULT:** PASS cho TASK-001, 002 (kiểm lại 26/09/2026); TASK-003 vẫn BLOCKED bởi DEP-03, DEP-06. **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05; chỉ phát prompt cho task READY. **User verdict Phase 05:** APPROVED 26/09/2026 (Sang).
 
 ## Lịch sử phiên bản
 

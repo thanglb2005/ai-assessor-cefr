@@ -1,6 +1,6 @@
 # M05 — 05 Plan & Task Readiness (Kế hoạch)
 
-> **v0.2 · 26/09/2026 · chờ Phase 05 verdict.** Dựa trên [Requirement v0.2](01-requirement.md), [Research v0.2](02-research.md), [Specification v0.2](03-specification.md), [Test Plan v0.2](04-test-plan.md) — cả bốn APPROVED. Chưa phát prompt Antigravity.
+> **v0.2 · 26/09/2026 · APPROVED Phase 05 ngày 26/09/2026.** Dựa trên [Requirement v0.2](01-requirement.md), [Research v0.2](02-research.md), [Specification v0.2](03-specification.md), [Test Plan v0.2](04-test-plan.md) — cả bốn APPROVED. Chưa phát prompt Antigravity.
 
 **Owner:** Sang. **Vùng file của M05:** `src/aicefr/scoring/`, `tests/scoring/`. File dùng chung thuộc Thắng — M05 chỉ yêu cầu.
 
@@ -87,7 +87,7 @@ Prompt `prompts/`, raw report/coverage `evidence/`, review `reviews/`; Shared wo
 | 4–6, 8–9 | PASS |
 | 7. Dependency sẵn sàng | PASS — TASK-002 và 001 không còn dependency ngoài; TASK-004 làm sau M04-TASK-002 (DEP-04) |
 
-**CODEX CHECK RESULT:** PASS (kiểm lại 26/09/2026 sau khi DEP-01/02 có trên `main`). **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05. **User verdict Phase 05:** PENDING.
+**CODEX CHECK RESULT:** PASS (kiểm lại 26/09/2026 sau khi DEP-01/02 có trên `main`). **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05. **User verdict Phase 05:** APPROVED 26/09/2026 (Sang).
 
 ## Lịch sử phiên bản
 
