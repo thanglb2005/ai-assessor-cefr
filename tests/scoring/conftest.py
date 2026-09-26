@@ -62,20 +62,12 @@ def real_artifact(real_artifact_path):
     return load_artifact(real_artifact_path)
 
 
-FEATURE_ORDER_V2 = [
-    "n_words", "words_per_sec", "total_dur", "mean_word_len", "ttr", "log_uniq",
-    "asr_conf_mean", "asr_conf_geo", "vad_silence_ratio", "vad_mean_pause",
-    "vad_pause_per_min", "vad_long_pause_ratio", "vad_pause_sd", "vad_mean_seg_len",
-    "vad_n_seg_per_min", "vad_articulation_rate", "vad_onset_delay", "vad_speech_sec",
-]  # fmt: skip
-
-
 @pytest.fixture
-def fake18(write_fake):
+def fake18(write_fake, feature_order_v2):
     """ART-FAKE18: đúng 18 tên đặc trưng của Ridge v2, mọi giá trị 0,5 cho điểm = 3,0."""
-    n = len(FEATURE_ORDER_V2)
+    n = len(feature_order_v2)
     path, sha = write_fake(
-        feature_order=FEATURE_ORDER_V2,
+        feature_order=list(feature_order_v2),
         mean=[0.5] * n,
         scale=[1.0] * n,
         coef=[1.0] * n,
