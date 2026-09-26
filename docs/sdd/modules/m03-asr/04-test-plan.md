@@ -1,6 +1,6 @@
 # M03 — 04 Test Plan (Kế hoạch kiểm thử)
 
-> **v0.2 · 26/09/2026 · chờ Phase 04 verdict.** Dựa trên [Specification v0.2 APPROVED](03-specification.md). Mọi test ở đây là **ca dự kiến, chưa chạy** — repo dự án chưa có mã nguồn. Không thêm hành vi ngoài Specification.
+> **v0.2 · 26/09/2026 · APPROVED Phase 04 ngày 26/09/2026.** Dựa trên [Specification v0.2 APPROVED](03-specification.md). Mọi test ở đây là **ca dự kiến, chưa chạy** — repo dự án chưa có mã nguồn. Không thêm hành vi ngoài Specification.
 
 ## Fixture và nguyên tắc
 
@@ -60,13 +60,13 @@ Command, thời điểm, exit code, số test pass/fail/skip, coverage report, r
 
 ## Quyết định cần user — TP-D-001 (chung M03/M04/M05)
 
-Coverage đo bằng `pytest-cov` (coverage.py), **bật branch**, phạm vi = code thay đổi của `aicefr.asr`, `aicefr.features`, `aicefr.scoring`. **Khuyến nghị:** line ≥ 90 % và branch ≥ 85 % trên phần logic thuần; loại trừ hai adapter gọi thư viện nặng (faster-whisper, Silero) khỏi ngưỡng vì được kiểm bằng smoke; ngoài con số, mọi dòng trong bảng FR/AC → Test phải có test tương ứng. Lý do: ba module quyết định việc có phát band hay không, nhánh từ chối là nơi lỗi nguy hiểm nhất.
+**Đã chốt 26/09/2026 theo khuyến nghị.** Coverage đo bằng `pytest-cov` (coverage.py), **bật branch**, phạm vi = code thay đổi của `aicefr.asr`, `aicefr.features`, `aicefr.scoring`. **Khuyến nghị:** line ≥ 90 % và branch ≥ 85 % trên phần logic thuần; loại trừ hai adapter gọi thư viện nặng (faster-whisper, Silero) khỏi ngưỡng vì được kiểm bằng smoke; ngoài con số, mọi dòng trong bảng FR/AC → Test phải có test tương ứng. Lý do: ba module quyết định việc có phát band hay không, nhánh từ chối là nơi lỗi nguy hiểm nhất.
 
-**CODEX CHECK RESULT:** mỗi FR/AC có test; đủ success/invalid/boundary/failure/regression; UT applicability và alternative evidence (smoke) rõ; không thêm requirement. Chờ TP-D-001. **User verdict Phase 04:** PENDING.
+**CODEX CHECK RESULT:** mỗi FR/AC có test; đủ success/invalid/boundary/failure/regression; UT applicability và alternative evidence (smoke) rõ; không thêm requirement. TP-D-001 chốt theo khuyến nghị. **User verdict Phase 04:** APPROVED 26/09/2026 (Sang).
 
 ## Lịch sử phiên bản
 
 | Phiên bản | Ngày | Thay đổi |
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu (5 ca) |
-| v0.2 | 26/09/2026 | Theo Spec v0.2: 16 unit + 2 smoke, ca biên cho từng luật hallucination, regression REF-03/F-04 |
+| v0.2 | 26/09/2026 | **APPROVED** Phase 04. Theo Spec v0.2: 16 unit + 2 smoke, ca biên cho từng luật hallucination, regression REF-03/F-04 |

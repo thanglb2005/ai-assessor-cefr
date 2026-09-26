@@ -3,11 +3,11 @@
 | Mục | Trạng thái |
 | --- | --- |
 | Lifecycle | proposed |
-| Phase hiện tại | 04 — Test Plan |
+| Phase hiện tại | 05 — Plan & Task Readiness |
 | Requirement | [01-requirement.md](01-requirement.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Research mode | **`RUN`** (chọn tại Phase 01); [02-research.md](02-research.md) review cùng Phase 03 |
 | Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
-| Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · chờ Phase 04 verdict |
+| Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · bản nháp W2, chưa Phase 05 approval |
 | Implementation / Review / Final Verification / Acceptance | NOT_STARTED; không có kết quả test hoặc verdict |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
@@ -44,7 +44,7 @@ USER VERDICT AT: 26/09/2026
 NEXT ACTION: Phase 04 — Test Plan
 ```
 
-## Phase 04 review package
+## Phase 04 record
 
 ```text
 PHASE RECORD ID: M05-04-A1
@@ -56,10 +56,10 @@ OPEN: TP-D-001 coverage policy (khuyến nghị line ≥ 90 %, branch ≥ 85 %, 
 DEPENDENCY: pyproject/tests skeleton của Thắng; reason code mới trong contract chung
 CODEX CHECK RESULT: PASS về cấu trúc; chờ TP-D-001
 CODEX RECOMMENDATION: RECOMMEND APPROVAL sau khi user chốt TP-D-001
-USER VERDICT: PENDING
-VERIFIED/APPROVED BY: —
-USER VERDICT AT: —
-NEXT ACTION: user chốt TP-D-001 và ghi verdict; sau đó Phase 05 — Plan & Tasks
+USER VERDICT: APPROVED — TP-D-001 theo khuyến nghị
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 26/09/2026
+NEXT ACTION: Phase 05 — Plan & Task Readiness
 ```
 
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.

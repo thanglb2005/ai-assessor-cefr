@@ -1,6 +1,6 @@
 # M05 — 04 Test Plan (Kế hoạch kiểm thử)
 
-> **v0.2 · 26/09/2026 · chờ Phase 04 verdict.** Dựa trên [Specification v0.2 APPROVED](03-specification.md). Mọi test ở đây là **ca dự kiến, chưa chạy**. Không thêm hành vi ngoài Specification.
+> **v0.2 · 26/09/2026 · APPROVED Phase 04 ngày 26/09/2026.** Dựa trên [Specification v0.2 APPROVED](03-specification.md). Mọi test ở đây là **ca dự kiến, chưa chạy**. Không thêm hành vi ngoài Specification.
 
 ## Fixture
 
@@ -70,11 +70,11 @@ Metric chất lượng model (PCC/RMSE trên pipeline dự án) cần dữ liệ
 | Coverage policy | **TP-D-001** — xem [M03 Test Plan](../m03-asr/04-test-plan.md#quyết-định-cần-user--tp-d-001-chung-m03m04m05) |
 | Hiện trạng | `NOT_RUN` — chưa có mã nguồn; hai reason code mới chờ Thắng đưa vào contract chung |
 
-**CODEX CHECK RESULT:** mỗi FR/AC có test; 8 bước kiểm của Spec đều có ca; giá trị vàng tính sẵn; không thêm requirement. Chờ TP-D-001. **User verdict Phase 04:** PENDING.
+**CODEX CHECK RESULT:** mỗi FR/AC có test; 8 bước kiểm của Spec đều có ca; giá trị vàng tính sẵn; không thêm requirement. TP-D-001 chốt theo khuyến nghị. **User verdict Phase 04:** APPROVED 26/09/2026 (Sang).
 
 ## Lịch sử phiên bản
 
 | Phiên bản | Ngày | Thay đổi |
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu (6 ca) |
-| v0.2 | 26/09/2026 | Theo Spec v0.2: 21 unit + 1 integration, giá trị vàng trên artifact thật, ca biên band/near-boundary/OOD |
+| v0.2 | 26/09/2026 | **APPROVED** Phase 04. Theo Spec v0.2: 21 unit + 1 integration, giá trị vàng trên artifact thật, ca biên band/near-boundary/OOD |
