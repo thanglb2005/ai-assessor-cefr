@@ -8,7 +8,7 @@
 | Research mode | **`SKIPPED`** (chọn tại Phase 01) — skip record: M04-D-003 trong [01-requirement.md](01-requirement.md) |
 | Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · **APPROVED** 26/09/2026 |
-| Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · bản nháp W2, chưa Phase 05 approval |
+| Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · chờ Phase 05 verdict; task `BLOCKED` theo dependency |
 | Implementation / Review / Final Verification / Acceptance | NOT_STARTED; không có kết quả test hoặc verdict |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
@@ -62,9 +62,25 @@ USER VERDICT AT: 26/09/2026
 NEXT ACTION: Phase 05 — Plan & Task Readiness
 ```
 
+## Phase 05 review package
+
+```text
+PHASE RECORD ID: M04-05-A1
+PHASE: 05 — Plan & Task Readiness
+SUBJECT: 05-plan.md v0.2 + 06-tasks.md v0.2 — 3 task (001–003)
+CHECKS: trace FR/AC → Test → Task PASS; boundary/data flow PASS; rủi ro/rollback/Clean Code PASS;
+  task nhỏ, vùng file rõ PASS; runtime/convention BLOCKED; dependency sẵn sàng BLOCKED
+BLOCKERS: DEP-01/02 skeleton + contract (Thắng); TASK-002 cần loader M05; TASK-003 thêm DEP-03, 04, 06
+CODEX CHECK RESULT: BLOCKED — nội dung đạt, Definition of Ready chưa đủ
+CODEX RECOMMENDATION: BLOCKED — kiểm lại check 3 và 7 khi dependency có trên main
+USER VERDICT: PENDING
+VERIFIED/APPROVED BY: —
+USER VERDICT AT: —
+NEXT ACTION: Thắng đưa skeleton + contract lên main; user review nội dung Plan/Task
+```
+
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
-**Artifact phía sau đã stale:** Plan/Tasks v0.1 chưa theo Specification/Test Plan v0.2; cập nhật ở Phase 05.
 
 - [Prompt Log](prompts/prompt-log.md): chưa phát prompt.
 - [Evidence Manifest](evidence/evidence-manifest.md): chưa có implementation/test evidence của repo dự án.

@@ -1,19 +1,18 @@
-# M05 — 06 Tasks (W2 task breakdown)
+# M05 — 06 Tasks
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M05 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **v0.2 · 26/09/2026 · chờ Phase 05 verdict.** Theo [Plan v0.2](05-plan.md). Chưa phát prompt. Owner mọi task: **Sang**.
 
-Task dưới đây là **bản nháp để review**, chưa phát prompt hoặc chuyển sang Antigravity. ID giữ ổn định để liên kết evidence sau này.
+| Task ID | FR / AC | Test ID | Vùng file | Mục tiêu quan sát được | Dependency | Trạng thái |
+| --- | --- | --- | --- | --- | --- | --- |
+| M05-TASK-001 | FR-001..003 / AC-001..003 | 001–004, 008–014, 020, 021 | `scoring/scorer.py`, `scoring/coverage.py`, `tests/scoring/test_scorer.py`, `tests/scoring/test_coverage.py` | Thứ tự 8 bước; 3 status; provenance lệch → `NOT_EVALUATED`; 5 dòng coverage không có score, fluency = 1,0 khi đủ; Interaction null; tất định; log không có vector | DEP-01, DEP-02, TASK-002 | BLOCKED |
+| M05-TASK-002 | FR-001, FR-002 / AC-001, AC-002 | 005, 006, 007, 015–019 | `scoring/artifact.py`, `scoring/ridge.py`, `tests/scoring/test_artifact.py`, `tests/scoring/test_ridge.py` | Loader kiểm hash và `unit_of_inference`; OOD kèm chi tiết; band/near-boundary/clip đúng tại biên; `scale=0` không chia 0 | DEP-01, DEP-02 | BLOCKED |
+| M05-TASK-003 | — | — | — | **Rút lại** (v0.2): metric chất lượng model ngoài phạm vi W2 | — | WITHDRAWN |
+| M05-TASK-004 | FR-001 / AC-002 | 022 | `tests/scoring/test_integration_features.py` | FeatureSet từ extractor M04 đi qua scorer; ra `NOT_EVALUATED` + `OUT_OF_DISTRIBUTION` chỉ vì `log_uniq` | DEP-01, DEP-02, DEP-04, TASK-001 | BLOCKED |
 
-| Task ID / owner | FR/AC và Test ID | Phạm vi file dự kiến | Đầu ra kiểm chứng |
-| --- | --- | --- | --- |
-| M05-TASK-001 / Sang | M05-FR-001, M05-FR-002, M05-AC-001 · M05-TEST-001, M05-TEST-002, M05-TEST-004 | Score schema/refusal path + tests | Chỉ overall + năm coverage; model chưa tương thích hoặc thiếu evidence thì NOT_EVALUATED |
-| M05-TASK-002 / Sang | M05-FR-001, M05-AC-002 · M05-TEST-003, M05-TEST-006 | Triển khai model loader/predict từ artifact Ridge đã kiểm provenance, có điều kiện | Overall chạy khi quyền và tương thích artifact được duyệt; nếu không BLOCKED |
-| M05-TASK-003 / Sang | M05-FR-002, M05-AC-002 · M05-TEST-005 | Experiment manifest/evaluation, có điều kiện | Metric thật hoặc NOT_RUN với lý do |
+**Ngoài scope mọi task:** sửa file dùng chung, code M03/M04, chép artifact vào repo (P05-D-001 = Option B), huấn luyện lại hay đổi hệ số.
 
-## Handoff và điều kiện hoàn tất
+## Handoff và hoàn tất
 
-- Mỗi task khi được duyệt phải có prompt file riêng trong `prompts/`, mã Prompt ID, phạm vi file, artifact versions, baseline/fingerprint, check và format raw report. Không ghi `SENT`/`DONE` trước khi có thao tác và evidence thật.
-- Unit test bắt buộc cho logic có thể kiểm thử; integration/API/browser check theo Test Plan. Nếu test không áp dụng, giải thích tại task đã duyệt và dùng alternative evidence.
-- Một task chỉ được đánh dấu hoàn thành sau actual diff, kết quả chạy thật, Code/Clean Code Review, Final Verification trên revision cuối và user verdict. Metric/test báo cáo phải gắn với lệnh chạy, revision và evidence của dự án.
+Như [M03 Tasks](../m03-asr/06-tasks.md#handoff-và-hoàn-tất).
 
-**Trạng thái tất cả task:** DRAFT / NOT_STARTED. **Phase 05 verdict:** PENDING.
+**Trạng thái:** 3 task `BLOCKED` chờ DEP-01/DEP-02 (Thắng). **Phase 05 verdict:** PENDING.
