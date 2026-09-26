@@ -1,18 +1,21 @@
-# M03 — 06 Tasks (W2 task breakdown)
+# M03 — 06 Tasks
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M03 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **v0.2 · 26/09/2026 · APPROVED Phase 05 ngày 26/09/2026.** Theo [Plan v0.2](05-plan.md). Chưa phát prompt. Owner mọi task: **Sang**.
 
-Task dưới đây là **bản nháp để review**, chưa phát prompt hoặc chuyển sang Antigravity. ID giữ ổn định để liên kết evidence sau này.
+| Task ID | FR / AC | Test ID | Vùng file | Mục tiêu quan sát được | Dependency | Trạng thái |
+| --- | --- | --- | --- | --- | --- | --- |
+| M03-TASK-001 | FR-001, FR-002 / AC-001, AC-002 | 001–007, 016 | `asr/service.py`, `asr/validation.py`, `tests/asr/test_service.py`, `tests/asr/test_validation.py` | `AsrService` trả Transcript đúng status/reason cho QC gate, lỗi engine, timestamp sai, `prob=None`, transcript rỗng, model thiếu; log không chứa transcript | TASK-003, TASK-004 | READY (sau TASK-003, 004) |
+| M03-TASK-002 | FR-001 / AC-002 | S1, S2 | `asr/faster_whisper_engine.py`, `tests/smoke/test_asr_smoke.py` | Adapter faster-whisper `small` chạy offline; evidence smoke đủ trường S1; ghi `asr_conf_mean` (S2) | DEP-03, DEP-06, TASK-001 | BLOCKED |
+| M03-TASK-003 | FR-002 / AC-001 | 008–012 | `asr/hallucination.py`, `tests/asr/test_hallucination.py` | 5 luật cho đúng kết quả tại và quanh ngưỡng; ngưỡng gom trong config `hallucination-v1` | — | READY |
+| M03-TASK-004 | FR-003 / AC-003 | 013–015 | `asr/identity.py`, `tests/asr/test_identity.py` | Ánh xạ weight → identifier chuẩn; so `==`; `whisper-small.en` và weight lạ → `ASR_VERSION_MISMATCH` | — | READY |
 
-| Task ID / owner | FR/AC và Test ID | Phạm vi file dự kiến | Đầu ra kiểm chứng |
-| --- | --- | --- | --- |
-| M03-TASK-001 / Sang | M03-FR-001, M03-FR-002, M03-AC-001 · M03-TEST-001, M03-TEST-002, M03-TEST-004, M03-TEST-005 | AsrEngine port, validator + tests | Contract và failure path không tạo transcript giả hợp lệ |
-| M03-TASK-002 / Sang | M03-FR-001, M03-AC-002 · M03-TEST-003 | Local ASR adapter + smoke record | Một lần chạy offline thật có model/version; nếu thiếu ghi NOT_RUN |
+**Ngoài scope mọi task:** sửa `pyproject.toml`, contract/reason code chung, pipeline, code của M02/M04/M05; tải model; dữ liệu người học.
 
-## Handoff và điều kiện hoàn tất
+**Thao tác của owner (không giao Antigravity):** DEP-05 tải weight `whisper-small` (CTranslate2) có chủ đích và ghi nguồn, license, SHA-256 vào `evidence/`; DEP-06 chuẩn bị audio có quyền dùng ngoài repo.
 
-- Mỗi task khi được duyệt phải có prompt file riêng trong `prompts/`, mã Prompt ID, phạm vi file, artifact versions, baseline/fingerprint, check và format raw report. Không ghi `SENT`/`DONE` trước khi có thao tác và evidence thật.
-- Unit test bắt buộc cho logic có thể kiểm thử; integration/API/browser check theo Test Plan. Nếu test không áp dụng, giải thích tại task đã duyệt và dùng alternative evidence.
-- Một task chỉ được đánh dấu hoàn thành sau actual diff, kết quả chạy thật, Code/Clean Code Review, Final Verification trên revision cuối và user verdict. Metric/test báo cáo phải gắn với lệnh chạy, revision và evidence của dự án.
+## Handoff và hoàn tất
 
-**Trạng thái tất cả task:** DRAFT / NOT_STARTED. **Phase 05 verdict:** PENDING.
+- Mỗi task một prompt trong `prompts/` (mẫu `antigravity-handoff.md` §3), có base revision và fingerprint `sdd-workspace-v2`.
+- Task chỉ xong khi có actual diff, lệnh test/coverage chạy thật, Phase 07 review, Phase 08 trên revision cuối và user verdict.
+
+**Trạng thái (26/09/2026):** 3 task đề xuất READY (003, 004 → 001); TASK-002 `BLOCKED` chờ DEP-03 (16 kHz) và DEP-06 (audio). **Phase 05 verdict:** APPROVED 26/09/2026 (Sang).

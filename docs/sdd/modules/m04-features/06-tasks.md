@@ -1,18 +1,19 @@
-# M04 — 06 Tasks (W2 task breakdown)
+# M04 — 06 Tasks
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M04 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **v0.2 · 26/09/2026 · APPROVED Phase 05 ngày 26/09/2026.** Theo [Plan v0.2](05-plan.md). Chưa phát prompt. Owner mọi task: **Sang**.
 
-Task dưới đây là **bản nháp để review**, chưa phát prompt hoặc chuyển sang Antigravity. ID giữ ổn định để liên kết evidence sau này.
+| Task ID | FR / AC | Test ID | Vùng file | Mục tiêu quan sát được | Dependency | Trạng thái |
+| --- | --- | --- | --- | --- | --- | --- |
+| M04-TASK-001 | FR-001, FR-002 / AC-001, AC-002 | 001, 002, 003, 005, 006, 007, 008, 009 | `features/text.py`, `features/pauses.py`, `tests/features/test_text.py`, `tests/features/test_pauses.py` | 18 công thức khớp bảng kỳ vọng (1e-6); biên 0,30 s / 1,00 s / 10 token đúng; không có `0.0` giả | — | READY |
+| M04-TASK-002 | FR-001..004 / AC-001..004 | 004, 010–015, 017, 018 | `features/extractor.py`, `tests/features/test_extractor.py` | FeatureSet 18 tên đúng thứ tự artifact, không `filler_ratio`; bảng dữ liệu thiếu; `FEATURE_VERSION_MISMATCH`, `VAD_VERSION_MISMATCH`; không lộ transcript; tất định | DEP-05 (M05-TASK-002), TASK-001 | READY (sau M05-TASK-002, TASK-001) |
+| M04-TASK-003 | FR-004 / AC-004 | 016, S1 | `features/silero_vad.py`, `tests/features/test_silero_vad.py`, `tests/smoke/test_vad_smoke.py` | Silero 0,5 / 150 ms / 16 kHz; lỗi nạp → null, không fallback; smoke offline có evidence | DEP-03, DEP-06, TASK-002 | BLOCKED |
 
-| Task ID / owner | FR/AC và Test ID | Phạm vi file dự kiến | Đầu ra kiểm chứng |
-| --- | --- | --- | --- |
-| M04-TASK-001 / Sang | M04-FR-001, M04-AC-001 · M04-TEST-001, M04-TEST-002 | FeatureSet schema, extractor + tests | Feature hợp lệ có unit/source/version; thiếu trả null |
-| M04-TASK-002 / Sang | M04-FR-002, M04-AC-002 · M04-TEST-003, M04-TEST-004, M04-TEST-005 | Feature validator/privacy tests | Không impute hoặc rò nội dung transcript |
+**Ghi chú:** TEST-016 là unit (loader giả raise `ImportError`) nên phần unit của TASK-003 không cần Silero thật; chỉ S1 cần DEP-03/04/06.
 
-## Handoff và điều kiện hoàn tất
+**Ngoài scope mọi task:** sửa file dùng chung, code M02/M03/M05, thêm hay bớt đặc trưng ngoài `feature_order`.
 
-- Mỗi task khi được duyệt phải có prompt file riêng trong `prompts/`, mã Prompt ID, phạm vi file, artifact versions, baseline/fingerprint, check và format raw report. Không ghi `SENT`/`DONE` trước khi có thao tác và evidence thật.
-- Unit test bắt buộc cho logic có thể kiểm thử; integration/API/browser check theo Test Plan. Nếu test không áp dụng, giải thích tại task đã duyệt và dùng alternative evidence.
-- Một task chỉ được đánh dấu hoàn thành sau actual diff, kết quả chạy thật, Code/Clean Code Review, Final Verification trên revision cuối và user verdict. Metric/test báo cáo phải gắn với lệnh chạy, revision và evidence của dự án.
+## Handoff và hoàn tất
 
-**Trạng thái tất cả task:** DRAFT / NOT_STARTED. **Phase 05 verdict:** PENDING.
+Như [M03 Tasks](../m03-asr/06-tasks.md#handoff-và-hoàn-tất).
+
+**Trạng thái (26/09/2026):** TASK-001, 002 đề xuất READY; TASK-003 `BLOCKED` chờ DEP-03 (16 kHz) và DEP-06 (audio). **Phase 05 verdict:** APPROVED 26/09/2026 (Sang).

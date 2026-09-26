@@ -3,13 +3,14 @@
 | Mục | Trạng thái |
 | --- | --- |
 | Lifecycle | proposed |
-| Phase hiện tại | 03 — Specification |
+| Phase hiện tại | 06 — Implementation (task READY) |
 | Requirement | [01-requirement.md](01-requirement.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Research mode | **`RUN`** (chọn tại Phase 01); [02-research.md](02-research.md) review cùng Phase 03 |
-| Specification | [03-specification.md](03-specification.md) · bản nháp W2, chưa Phase 03 approval |
-| Test Plan | [04-test-plan.md](04-test-plan.md) · bản nháp W2, chưa Phase 04 approval |
-| Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · bản nháp W2, chưa Phase 05 approval |
-| Implementation / Review / Final Verification / Acceptance | NOT_STARTED; không có kết quả test hoặc verdict |
+| Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
+| Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · **APPROVED** 26/09/2026 |
+| Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · **APPROVED** 26/09/2026; task READY/BLOCKED theo dependency — xem 06-tasks.md |
+| Implementation | M05-TASK-002, M05-TASK-001 đã implement (Claude, theo yêu cầu chủ dự án); evidence [M05-EV-001, M05-EV-002](evidence/evidence-manifest.md) |
+| Review / Final Verification / Acceptance | NOT_STARTED — chờ Phase 07 |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
 ## Phase 01 record
@@ -27,9 +28,62 @@ RESEARCH MODE: RUN — theo đề xuất, người dùng không đổi khi duy�
 NEXT ACTION: Phase 03 — Specification cùng Research
 ```
 
+## Phase 03 record
+
+```text
+PHASE RECORD ID: M05-03-A1
+PHASE: 03 — Specification
+SUBJECT: 02-research.md v0.2 + 03-specification.md v0.2
+CHECKS: FR/AC trace; success/invalid/boundary/failure/recovery; security/privacy;
+  accessibility N/A có lý do; fact/inference/option tách riêng; không tự quyết sản phẩm
+OPEN: M05-O-001 boundary_margin (khuyến nghị 0,5); M05-O-002 bài dài (khuyến nghị không chia cửa sổ W2); M05-O-003 provenance lệch (khuyến nghị NOT_EVALUATED)
+CODEX CHECK RESULT: PASS về cấu trúc; còn OPEN nêu trên
+CODEX RECOMMENDATION: RECOMMEND APPROVAL sau khi user chốt OPEN
+USER VERDICT: APPROVED — chốt các OPEN theo khuyến nghị
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 26/09/2026
+NEXT ACTION: Phase 04 — Test Plan
+```
+
+## Phase 04 record
+
+```text
+PHASE RECORD ID: M05-04-A1
+PHASE: 04 — Test Plan
+SUBJECT: 04-test-plan.md v0.2 — 21 unit + 1 integration; giá trị vàng trên artifact thật
+CHECKS: FR/AC → Test ID; success/invalid/boundary/failure/regression; level/command;
+  UT applicability + alternative evidence; browser N/A có lý do; không thêm requirement
+OPEN: TP-D-001 coverage policy (khuyến nghị line ≥ 90 %, branch ≥ 85 %, loại trừ adapter nặng)
+DEPENDENCY: pyproject/tests skeleton của Thắng; reason code mới trong contract chung
+CODEX CHECK RESULT: PASS về cấu trúc; chờ TP-D-001
+CODEX RECOMMENDATION: RECOMMEND APPROVAL sau khi user chốt TP-D-001
+USER VERDICT: APPROVED — TP-D-001 theo khuyến nghị
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 26/09/2026
+NEXT ACTION: Phase 05 — Plan & Task Readiness
+```
+
+## Phase 05 record
+
+```text
+PHASE RECORD ID: M05-05-A2
+PHASE: 05 — Plan & Task Readiness
+SUBJECT: 05-plan.md v0.2 + 06-tasks.md v0.2 — task 001, 002, 004; TASK-003 rút lại
+CHECKS: trace FR/AC → Test → Task PASS; boundary/data flow PASS; rủi ro/rollback/Clean Code PASS;
+  task nhỏ, vùng file rõ PASS; runtime/convention PASS (pyproject + CI trên main a92fafe);
+  dependency sẵn sàng PASS cho task READY (kiểm lại 26/09/2026)
+TASKS: TASK-002, 001, 004 đề xuất READY
+DECISION: P05-D-001 = artifact ngoài repo (AICEFR_MODEL_DIR, hash ghim) — user chốt 26/09/2026
+CODEX CHECK RESULT: PASS cho task đề xuất READY
+CODEX RECOMMENDATION: RECOMMEND APPROVAL — chỉ phát prompt Antigravity cho task READY
+USER VERDICT: APPROVED — cho các task READY; task BLOCKED chờ đủ dependency
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 26/09/2026
+NEXT ACTION: Phase 06 — M05-TASK-002 (Claude implement theo yêu cầu của chủ dự án)
+```
+
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
-**Artifact phía sau đã stale:** Specification/Test Plan/Plan/Tasks v0.1 chưa có M05-FR-003 và M05-O-001; cập nhật ở Phase 03 sau verdict Phase 01.
 
 - [Prompt Log](prompts/prompt-log.md): chưa phát prompt.
 - [Evidence Manifest](evidence/evidence-manifest.md): chưa có implementation/test evidence của repo dự án.
