@@ -1,6 +1,6 @@
 # M08 — Review Records
 
-**Hiện trạng:** chưa có implementation review.
+**Hiện trạng:** Codex đã review diff SCRUM-48; Nguyên và user review còn pending.
 
 | Review ID | Prompt ID / Task ID | Base/Head revision | Diff/evidence đã kiểm tra | Finding và resolution | User verdict |
 | --- | --- | --- | --- | --- | --- |
