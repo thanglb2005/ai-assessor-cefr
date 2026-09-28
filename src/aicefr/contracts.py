@@ -11,6 +11,7 @@ trung bình.
 
 from __future__ import annotations
 
+from datetime import datetime
 from enum import StrEnum
 from typing import Any
 
@@ -24,6 +25,42 @@ EXPECTED_SAMPLE_RATE_HZ = 16_000
 
 class _Frozen(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
+
+
+# --- M08 — Identity and consent ----------------------------------------------
+
+
+class ActorRole(StrEnum):
+    STUDENT = "student"
+    TEACHER = "teacher"
+    ADMIN = "admin"
+
+
+class Actor(_Frozen):
+    actor_id: str = Field(min_length=1)
+    role: ActorRole
+
+
+class ConsentState(StrEnum):
+    ACTIVE = "active"
+    WITHDRAWN = "withdrawn"
+
+
+class ConsentRecord(_Frozen):
+    participant_id: str = Field(min_length=1)
+    consent_version: str = Field(min_length=1)
+    state: ConsentState
+    recorded_at: datetime
+
+
+class SessionRecord(_Frozen):
+    token_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    actor_id: str = Field(min_length=1)
+    role: ActorRole
+    created_at: datetime
+    last_seen_at: datetime
+    idle_expires_at: datetime
+    absolute_expires_at: datetime
 
 
 class ReasonCode(StrEnum):

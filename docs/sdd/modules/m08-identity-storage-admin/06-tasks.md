@@ -1,19 +1,25 @@
-# M08 — 06 Tasks (W2 task breakdown)
+# M08 — 06 Tasks
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M08 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> W2 v0.3 · 28/09/2026. Thắng approved implementing and pushing the four task branches on 28/09/2026; M01/M07 owner review remains PENDING.
 
-Task dưới đây là **bản nháp để review**, chưa phát prompt hoặc chuyển sang Antigravity. ID giữ ổn định để liên kết evidence sau này.
+| Task | Branch | Owner | Dependency | Test IDs |
+| --- | --- | --- | --- | --- |
+| M08-TASK-001 / SCRUM-48 | `feat/SCRUM-48-M08-TASK-001-Auth-consent-va-kiểm-tra-owner` | Thắng | Phase 01/03/04/05 approved | M08-TEST-001, 002, 004, 005 |
+| M08-TASK-002 / SCRUM-49 | `feat/SCRUM-49-M08-TASK-002-SQLite-BlobStore-persistence-va-audit` | Thắng | SCRUM-48 typed interfaces | M08-TEST-001, 002, 003, 005 |
 
-| Task ID / owner | FR/AC và Test ID | Phạm vi file dự kiến | Đầu ra kiểm chứng |
-| --- | --- | --- | --- |
-| M08-TASK-001 / Thắng | M08-FR-001, M08-AC-001 · M08-TEST-001, M08-TEST-002, M08-TEST-004 | auth/consent/session + tests | Role/consent/owner bảo vệ submit/read |
-| M08-TASK-002 / Thắng | M08-FR-002, M08-AC-002 · M08-TEST-003, M08-TEST-005 | SQLite/BlobStore/audit + tests | Persist/restart/checksum và log sạch |
-| M08-TASK-003 / Thắng | M08-FR-002, M08-AC-001, M08-AC-002 · policy pending | admin/export/delete contract; có điều kiện W3 | Không vận hành dữ liệu thật trước data plan approval |
+## SCRUM-48 — Auth, consent and owner
 
-## Handoff và điều kiện hoàn tất
+Implement typed Actor, SessionRecord and ConsentRecord; Argon2id fixture account bootstrap; opaque session token with digest-only repository, 30-minute idle and 8-hour absolute expiry; consent activate/withdraw/require-active; and generic owner authorization error. Scope: `src/aicefr/auth/**`, M08 auth additions to `src/aicefr/contracts.py`, `pyproject.toml`, `tests/auth/**` and `tests/storage/test_authorization.py`.
 
-- Mỗi task khi được duyệt phải có prompt file riêng trong `prompts/`, mã Prompt ID, phạm vi file, artifact versions, baseline/fingerprint, check và format raw report. Không ghi `SENT`/`DONE` trước khi có thao tác và evidence thật.
-- Unit test bắt buộc cho logic có thể kiểm thử; integration/API/browser check theo Test Plan. Nếu test không áp dụng, giải thích tại task đã duyệt và dùng alternative evidence.
-- Một task chỉ được đánh dấu hoàn thành sau actual diff, kết quả chạy thật, Code/Clean Code Review, Final Verification trên revision cuối và user verdict. Metric/test báo cáo phải gắn với lệnh chạy, revision và evidence của dự án.
+## SCRUM-49 — SQLite, BlobStore and audit
 
-**Trạng thái tất cả task:** DRAFT / NOT_STARTED. **Phase 05 verdict:** PENDING.
+Implement versioned SQLite schema/repositories, persistent sessions/consent/response/audit, bounded immutable blobs, same-filesystem staging, SHA-256 verification, compensation after DB failure, and report-only orphan reconciliation. Scope: `src/aicefr/storage/**`, `src/aicefr/infra/**`, M08 storage additions to `src/aicefr/contracts.py`, `tests/storage/**`, M08 contract assertions in `tests/test_contracts.py`.
+
+## Definition of Done
+
+- All listed Test IDs run with actual PASS; SKIPPED count stated.
+- Pure M08 Python logic reaches line ≥ 90% and branch ≥ 85% where measured.
+- Branch/PR title includes Jira key; checks green and PR reviewed before merge.
+- Only task-scoped source and synthetic fixture data; no secrets, real audio, transcript, real PII or generated DB/blob committed.
+- Evidence includes commands, exit codes, coverage and revision under M08 `evidence/`.
+- Cross-owner M01/M07 contract review is recorded before merge. It is currently PENDING.

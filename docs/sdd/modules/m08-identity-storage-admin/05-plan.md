@@ -1,36 +1,40 @@
-# M08 — 05 Plan & Task Readiness (Kế hoạch)
+# M08 — 05 Plan & Task Readiness
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M08 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **W2 v0.3 · 28/09/2026 · Phase 05 APPROVED by Thắng ('duyệt đi, cứ done task đã rồi tính, gấp').** Phase 01, 03 and 04 were approved earlier.
 
-**Owner đề xuất:** Thắng. **Phạm vi source:** `src/aicefr/auth/, src/aicefr/storage/, src/aicefr/infra/ (đề xuất)` (chưa tạo). Implementation W2 được phát triển trong repo dự án theo Specification sau khi được duyệt.
+**Owner:** Thắng. **Module source scope:** `src/aicefr/auth/`, `src/aicefr/storage/`, M08 additions to `src/aicefr/contracts.py`, M08 dependency pins in `pyproject.toml`, and listed tests only. Only generated fixture accounts/data may be used.
 
-## Kiến trúc và thứ tự triển khai
+## Architecture and task order
 
-- Chốt schema Actor/Consent/Response/Blob/Audit và boundary với M01/M07; quyết định demo-only vs dữ liệu thật.
-- Dựng auth/session/consent và repository SQLite/BlobStore local với path config; test quyền, rollback và restart.
-- Bổ sung admin tối thiểu và audit; W3 chỉ triển khai export/delete thật sau policy/approval riêng.
+1. **M08-TASK-001 / SCRUM-48:** typed Actor/auth/password/session service, fixture-only account bootstrap, consent gate, owner authorization. The auth/session service depends on repository protocols; database-backed persistence is delivered by Task 002.
+2. **M08-TASK-002 / SCRUM-49:** SQLite repositories/schema, persistent session digest/consent/response/audit metadata and filesystem BlobStore. Use explicit transactions and injected `data_dir`; stage/hash/atomic-replace blobs and compensate on DB failure; startup reconciliation reports orphan blobs without deleting them.
 
-## Phụ thuộc và bàn giao
+Task 002 depends on Task 001 interfaces. Overall proposed integration order across the four branches is SCRUM-46 → SCRUM-47 → SCRUM-48 → SCRUM-49, to serialize edits to `contracts.py` and `pyproject.toml`. Within M08, Task 002 depends on Task 001. Finish/review Task 001 first, then rebase Task 002 to latest `main` after SCRUM-48 merges before requesting its PR merge.
 
-- M01 cần auth/consent/repository trước submit; M07 cần teacher role/audit/revision W3.
-- Data management/consent của nguồn đề tài là draft; người dùng/GVHD cần duyệt policy trước dữ liệu thật.
+## Shared-contract review — pending
 
-## Required checks và review
+Nguyên (M01/M07) has not yet reviewed Actor/Consent/Response/Blob/Audit schemas, ownership semantics or audit fields. Thắng explicitly authorized implementation first on 28/09/2026; this does not claim Nguyên approved the contract. Keep the pending review visible before PR merge. No HTTP routes, export/delete of real records, retention execution, encryption-at-rest, backup, cloud storage or production privacy claim is in W2. Record cross-owner feedback in the review log.
 
-- Trước task: đối chiếu `01` → `03` → `04`, chốt các quyết định `OPEN`, xác nhận đường dẫn được phép sửa và baseline/fingerprint của repo dự án. Git đã được khởi tạo trong repo dự án ngày 25/09/2026; dùng commit/diff và revision thực làm evidence sau khi có baseline commit.
-- Khi triển khai: type hints cho contract public; validation tại boundary; hàm logic nhỏ và có test; không truyền trạng thái bằng dict vô kiểu giữa module. Mỗi dependency, model và download phải có lý do gắn với task cùng provenance rõ.
-- Sau task: chạy các test ID của task, `ruff`/typecheck nếu được cấu hình, kiểm tra diff và privacy. Review code/test riêng tại Phase 07; chạy lại checks trên final revision tại Phase 08.
-- Antigravity chỉ nhận prompt sau verdict `APPROVED` của Phase 01, 03, 04 và 05 đúng version. Prompt, raw report và review lưu trong scope root; `docs/evidence/` chỉ dẫn chiếu theo rubric.
+## File scope by task
 
-## Rủi ro và phương án xử lý
+| Jira | Allowed files |
+| --- | --- |
+| SCRUM-48 / M08-TASK-001 | `pyproject.toml`; `src/aicefr/contracts.py` (Actor/Session/Consent types only); `src/aicefr/auth/**`; `tests/auth/test_auth.py`; `tests/auth/test_consent.py`; `tests/storage/test_authorization.py`; `tests/auth/test_privacy.py` |
+| SCRUM-49 / M08-TASK-002 | `src/aicefr/contracts.py` (Response/Blob/Audit types only); `src/aicefr/storage/**`; `src/aicefr/infra/**`; `tests/storage/test_sqlite_blob_store.py`; `tests/storage/test_privacy.py`; M08 assertions in `tests/test_contracts.py` |
 
-- Auth/PII/consent là phần nhạy cảm; không dùng Fast Path hoặc hard-code credential.
-- SQLite không đồng nghĩa mã hóa/backup; phải ghi cơ chế cụ thể và kiểm trên môi trường thật.
+No user data, transcript, audio, secrets, generated database/blob, unrelated module or model files. The draft M08-TASK-003 for admin/export/delete is deferred to W3 and has no branch in this W2 delivery.
 
-## Definition of Ready (điều kiện phát prompt)
+## Required checks and evidence
 
-- Owner chốt login/session và demo/data thật; policy storage có approver.
-- M01/M07 cùng review schema và permission matrix.
-- Phase 01/03/04/05 đúng version được duyệt.
+- Phase 04 approved commands: `python3 -m pytest -q -m "not smoke" tests/auth tests/storage`; coverage with `--cov=aicefr.auth --cov=aicefr.storage --cov-branch --cov-report=term-missing`; run `python3 -m pytest -q tests/test_contracts.py` for shared types.
+- Gate: line ≥ 90% and branch ≥ 85% on pure M08 Python logic; assertions cover role/owner/consent/expiry, rollback, restart, checksum and privacy. No browser/API check applies because the repository has no HTTP/UI surface.
+- Record command, timestamp, exit code, pass/fail/skip, coverage, revision and workspace fingerprint under module `evidence/`. No DB/blob test output is committed.
+- Initial observed branch base was `55d8952`; verify branch head and capture a fresh fingerprint before implementation. Thắng asked Codex to implement the tasks directly and push the branches. No Antigravity prompt is issued for this direct implementation.
 
-**CODEX CHECK RESULT:** DRAFT — ranh giới và phụ thuộc đã mô tả; các quyết định mở/approval khiến task chưa `READY`. **User verdict Phase 05:** PENDING.
+## Risks and Definition of Ready
+
+- Session tokens are random 32-byte opaque values; store only SHA-256 digests. Argon2id uses argon2-cffi 25.1.0 at 19 MiB/t=2/p=1. These settings are approved; measure local verification timing in implementation evidence.
+- SQLite/filesystem work only for generated fixtures. Atomic filesystem replace and SQLite commit are not one transaction; compensate known failures and report crash leftovers for review.
+- **Phase 05 decision:** Thắng approved proceeding immediately with the concrete task scopes. M01/M07 review remains pending and is recorded as a PR integration risk; do not represent it as completed.
+
+**CODEX CHECK RESULT:** PASS for scoped implementation readiness; M01/M07 review remains PENDING. **USER VERDICT:** APPROVED to implement and push, 28/09/2026.
