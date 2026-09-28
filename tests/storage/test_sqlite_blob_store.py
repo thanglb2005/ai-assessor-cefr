@@ -69,7 +69,7 @@ def test_restart_restores_response_audit_session_and_checksum(tmp_path):
     assert restarted_responses.get_response(owner, record.response_id) == record
     assert restarted_responses.get_blob(owner, record.response_id) == b"synthetic fixture bytes"
     assert len(restarted.list_audit()) == 2
-    assert restarted.connection.execute("PRAGMA user_version").fetchone()[0] == 1
+    assert restarted.connection.execute("PRAGMA user_version").fetchone()[0] == 2
     assert restarted.connection.execute("PRAGMA foreign_keys").fetchone()[0] == 1
     restarted.close()
 
@@ -128,16 +128,35 @@ def test_corruption_limits_and_reconciliation_report_only(tmp_path):
     with pytest.raises(BlobIntegrityError):
         responses.get_blob(owner, record.response_id)
     path.unlink()
-    path.symlink_to(tmp_path / "outside")
-    with pytest.raises(BlobIntegrityError):
-        responses.get_blob(owner, record.response_id)
-    path.unlink()
     orphan = blobs.root / ("a" * 32)
     orphan.write_bytes(b"orphan")
     staging = blobs.root / "tmp-fixture.part"
     staging.write_bytes(b"staged")
     assert responses.report_orphans() == ("a" * 32, "tmp-fixture.part")
     assert orphan.exists() and staging.exists()
+    store.close()
+
+
+def test_symlinked_blob_is_rejected_when_platform_supports_it(tmp_path):
+    _, store, blobs, _, owner, _, _, responses = setup_service(tmp_path)
+    record = responses.submit(
+        owner,
+        task_id="task",
+        task_version="v1",
+        consent_version="v1",
+        audio_bytes=b"fixture",
+    )
+    path = blobs.root / record.blob.blob_id
+    path.unlink()
+    try:
+        path.symlink_to(tmp_path / "outside")
+    except OSError as error:
+        store.close()
+        pytest.skip(f"symlink creation is unavailable on this Windows host: {error.winerror}")
+
+    with pytest.raises(BlobIntegrityError):
+        responses.get_blob(owner, record.response_id)
+    path.unlink()
     store.close()
 
 
@@ -166,7 +185,7 @@ def test_audit_is_append_only_and_schema_version_is_rejected(tmp_path):
     _, store, _, _, _, _, _, _ = setup_service(tmp_path)
     with pytest.raises(sqlite3.IntegrityError):
         store.connection.execute("DELETE FROM audit")
-    store.connection.execute("PRAGMA user_version=2")
+    store.connection.execute("PRAGMA user_version=3")
     store.close()
     with pytest.raises(RuntimeError, match="unsupported"):
         SQLiteStore(tmp_path / "m08-data")
