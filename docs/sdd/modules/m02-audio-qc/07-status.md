@@ -9,7 +9,7 @@
 | Specification | 03-specification.md · v0.3 · APPROVED 28/09/2026 |
 | Test Plan | 04-test-plan.md · v0.2 · APPROVED 28/09/2026 |
 | Plan & Tasks | 05-plan.md, 06-tasks.md · v0.2 · APPROVED by Thắng 28/09/2026; Sang review PENDING |
-| Implementation | SCRUM-46 implemented; checks PASS; SCRUM-47 pending |
+| Implementation | SCRUM-46 implemented at `a6da59a`; checks PASS; SCRUM-47 pending |
 | Review / Final Verification / Acceptance | Codex review pending; Sang review pending; user merge verdict pending |
 | Prompt hiện hành | M02-PROMPT-001 / SCRUM-46 · ISSUED_TO_CODEX · base 55d8952, fingerprint 7cabc5b… |
 

@@ -15,4 +15,4 @@
 
 Test bytes are synthesized at runtime; no audio payload, transcript, model, secret or participant data committed. WAV PCM, FLAC, OGG/Vorbis and MP3 encoder/decoder paths were exercised; each assertion passed. Decoder executes in process within configured byte/rate/channel/frame caps; hard wall-clock timeout remains outside approved W2 scope. Product QC thresholds were not set. Sang shared-contract review remains pending before PR merge.
 
-Final code revision and final fingerprint are recorded after commit in the follow-up verification record. Coverage JSON was written to `/tmp` and its exact totals are reproduced above.
+Code revision: `a6da59ab3868d2ffe6584b597d4153a964bfe2e1`. Source fingerprint (`git ls-tree -r HEAD` over M02 source, shared contract, dependency and task tests, then SHA-256): `d9963b0b9a449eb009014d9d5c41bc84847025f0463a6a93e352afa2c409a936`. Coverage JSON was written to `/tmp` and its exact totals are reproduced above. Final verification on this code revision uses the checks above; this evidence-only commit does not change code.
