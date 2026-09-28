@@ -1,6 +1,6 @@
 # M02 — Prompt Log (nhật ký prompt Antigravity)
 
-**Hiện trạng:** chưa phát hành prompt triển khai hoặc prompt sửa. Không suy prompt đã tồn tại chỉ vì có Requirement/Plan.
+**Hiện trạng:** M02-PROMPT-001 issued to Codex for direct implementation on 28/09/2026; Antigravity tool unavailable in this session. Sang owner review remains pending.
 
 | Prompt ID | Task ID | Attempt | Issued at | Phase 05 verdict | Base revision / fingerprint | Prompt file | Raw report / evidence | Review | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |

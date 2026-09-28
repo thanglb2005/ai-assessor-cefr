@@ -1,9 +1,8 @@
 """Hợp đồng dữ liệu dùng chung giữa các module.
 
-Bản đầu chỉ gồm phần M03 (ASR), M04 (Features), M05 (Scoring) cần, lấy field
-từ Specification v0.2 đã duyệt của ba module đó, cộng hai kiểu đầu vào từ M02
-(`QCResult`, `DecodedAudio`) ở mức tối thiểu. Owner M01/M02/M06/M07/M08 bổ sung
-kiểu và reason code của module mình vào đây.
+Hợp đồng M02/M03/M04/M05; M02 mở rộng QCResult, QCMeasurement và DecodedAudio
+để giao PCM float32 mono 16 kHz cùng reason code ổn định. Owner M01/M06/M07/M08
+bổ sung kiểu và reason code của module mình vào đây.
 
 Nguyên tắc: thiếu dữ liệu là `None` kèm reason, không bao giờ là 0 hay giá trị
 trung bình.
@@ -11,14 +10,14 @@ trung bình.
 
 from __future__ import annotations
 
+import math
 from enum import StrEnum
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-# M03 và M04 cần audio 16 kHz mono (whisper-small và Silero VAD). Chờ owner M02
-# xác nhận (M03-O-002, SCRUM-16); DecodedAudio chỉ ghi lại sample rate thực tế.
+# M02 xuất 16 kHz mono cho M03/M04; Sang review shared contract còn pending.
 EXPECTED_SAMPLE_RATE_HZ = 16_000
 
 
@@ -27,6 +26,21 @@ class _Frozen(BaseModel):
 
 
 class ReasonCode(StrEnum):
+    # M02 — Audio QC
+    QC_EMPTY_AUDIO = "QC_EMPTY_AUDIO"
+    QC_INPUT_TOO_LARGE = "QC_INPUT_TOO_LARGE"
+    QC_UNSUPPORTED_FORMAT = "QC_UNSUPPORTED_FORMAT"
+    QC_FORMAT_MISMATCH = "QC_FORMAT_MISMATCH"
+    QC_DECODE_FAILED = "QC_DECODE_FAILED"
+    QC_TOO_MANY_CHANNELS = "QC_TOO_MANY_CHANNELS"
+    QC_SAMPLE_RATE_LIMIT = "QC_SAMPLE_RATE_LIMIT"
+    QC_DURATION_LIMIT = "QC_DURATION_LIMIT"
+    QC_TOO_SHORT = "QC_TOO_SHORT"
+    QC_SILENCE_REVIEW = "QC_SILENCE_REVIEW"
+    QC_SILENCE_REJECT = "QC_SILENCE_REJECT"
+    QC_CLIPPING_REVIEW = "QC_CLIPPING_REVIEW"
+    QC_CLIPPING_REJECT = "QC_CLIPPING_REJECT"
+    QC_MEASUREMENT_MISSING = "QC_MEASUREMENT_MISSING"
     # M03 — ASR
     ASR_FAILED = "ASR_FAILED"
     ASR_EMPTY_TRANSCRIPT = "ASR_EMPTY_TRANSCRIPT"
@@ -53,10 +67,30 @@ class QCStatus(StrEnum):
     REJECT = "REJECT"
 
 
+class QCMeasurement(_Frozen):
+    """Một phép đo QC; giá trị thiếu phải có reason rõ ràng."""
+
+    name: str = Field(min_length=1)
+    value: float | None
+    unit: str = Field(min_length=1)
+    missing_reason: ReasonCode | None = None
+
+    @model_validator(mode="after")
+    def _value_or_reason(self) -> QCMeasurement:
+        if self.value is None and self.missing_reason is None:
+            raise ValueError("giá trị thiếu cần missing_reason")
+        if self.value is not None and self.missing_reason is not None:
+            raise ValueError("giá trị đo không được có missing_reason")
+        if self.value is not None and not math.isfinite(self.value):
+            raise ValueError("giá trị đo phải hữu hạn")
+        return self
+
+
 class QCResult(_Frozen):
     status: QCStatus
-    reasons: tuple[str, ...] = ()
-    qc_config_version: str
+    reasons: tuple[ReasonCode, ...] = ()
+    qc_config_version: str = Field(min_length=1)
+    measurements: tuple[QCMeasurement, ...] = ()
 
 
 class DecodedAudio(_Frozen):
@@ -65,7 +99,7 @@ class DecodedAudio(_Frozen):
     model_config = ConfigDict(frozen=True, extra="forbid", arbitrary_types_allowed=True)
 
     samples: np.ndarray
-    sample_rate_hz: int = Field(gt=0)
+    sample_rate_hz: Literal[16_000]
     duration_s: float = Field(ge=0)
     audio_sha256: str
 
@@ -76,6 +110,8 @@ class DecodedAudio(_Frozen):
             raise ValueError("samples phải là mảng 1 chiều (mono)")
         if v.dtype != np.float32:
             raise ValueError("samples phải có dtype float32")
+        if not np.isfinite(v).all():
+            raise ValueError("samples phải hữu hạn")
         return v
 
 
