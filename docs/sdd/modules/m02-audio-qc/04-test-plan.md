@@ -1,23 +1,33 @@
 # M02 — 04 Test Plan (Kế hoạch kiểm thử)
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M02 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **W2 v0.2 · 28/09/2026 · Phase 04 APPROVED by Thắng.** Specification v0.3 đã được user duyệt Phase 03. Test chưa chạy; Phase 04 đã được duyệt, Phase 05 vẫn pending trước khi triển khai.
 
-Test ở đây là **ca dự kiến**, chưa được chạy. Fixture tạo bởi nhóm chỉ kiểm tra logic; không thay âm thanh người dùng hoặc dữ liệu kiểm định CEFR.
+Mọi ca dùng signal/audio bytes tổng hợp do nhóm tạo, QCConfig versioned có giá trị tường minh và temporary files. Không dùng audio người học, không gửi mạng và không ghi raw audio vào log.
 
-| Test ID | FR/AC | Level | Tình huống | Kỳ vọng |
-| --- | --- | --- | --- | --- |
-| M02-TEST-001 | M02-FR-001 / M02-AC-001 | Unit | Input rỗng hoặc bytes hỏng | REJECT; decoder/ASR sau không gọi |
-| M02-TEST-002 | M02-FR-001 / M02-AC-001 | Unit | Audio ngắn dưới ngưỡng test config | Reason đúng, không tạo score/transcript |
-| M02-TEST-003 | M02-FR-002 / M02-AC-002 | Unit | Audio test có duration/silence/clipping biết trước | Measured fields có unit và config version |
-| M02-TEST-004 | M02-FR-002 / M02-AC-002 | Unit | Cùng input và config chạy hai lần | Các số đo tất định khớp trong sai số đo đã ghi |
-| M02-TEST-005 | M02-FR-001 / M02-AC-001 | Boundary/integration | Extension không khớp nội dung file hoặc decoder timeout | Không đi tiếp M03; reason an toàn |
+| Test ID | FR/AC | Level | Tình huống | Kỳ vọng | Test file dự kiến |
+| --- | --- | --- | --- | --- | --- |
+| M02-TEST-001 | M02-FR-001 / M02-AC-001 | Unit | Bytes rỗng, sai/corrupt, unsupported subtype | REJECT với reason ổn định; không có samples được chuyển tiếp | `tests/audio/test_decoder.py` |
+| M02-TEST-002 | M02-FR-001 / M02-AC-001 | Unit/boundary | Vượt max bytes, input rate hoặc frame/duration cap trong QCConfig | Vượt bất kỳ hard resource cap nào trả REJECT với reason xác định; dừng đọc tại frame cap, không cấp phát payload không giới hạn; không tạo transcript/score | `tests/audio/test_decoder.py` |
+| M02-TEST-003 | M02-FR-002 / M02-AC-002 | Unit | Signal tổng hợp có đoạn im lặng và sample clipped với ngưỡng test config biết trước | Duration (s), silence ratio và clipped ratio khớp phép tính sample-level; value/unit/missing reason đúng; gắn config version | `tests/qc/test_measurements.py` |
+| M02-TEST-004 | M02-FR-002 / M02-AC-002 | Unit | Decode signal mono và resample từ input rate hợp lệ hai lần với cùng config | PCM 1-D `float32`, 16 kHz, duration/hash đúng; kết quả xác định trong tolerance ghi tại assertion | `tests/audio/test_decoder.py` |
+| M02-TEST-005 | M02-FR-001 / M02-AC-001 | Boundary | Extension/declared format không khớp bytes thực | REJECT với safe reason; không leak decoder message | `tests/audio/test_decoder.py` |
+| M02-TEST-006 | M02-FR-001/002 / M02-AC-001/002 | Unit | WAV PCM, FLAC, OGG/Vorbis và MP3 trong whitelist; mono/stereo và >2 channels | Format được duyệt giải mã thành contract PCM; stereo dùng arithmetic mean; trên 2 channels REJECT | `tests/audio/test_decoder.py` |
+| M02-TEST-007 | M02-FR-001/002 / M02-AC-001/002 | Unit | Min-duration/metric policy config đặt signal vào từng outcome | PASS/REVIEW/REJECT và reason/measurement/version đúng config; không có implicit production default | `tests/qc/test_policy.py` |
+| M02-TEST-008 | M02-FR-001 / M02-AC-001 | Pipeline boundary | Chạy pipeline với từng QCStatus và ASR spy | PASS gọi ASR đúng một lần; REVIEW chờ explicit review, REJECT không gọi; non-PASS không tạo transcript/score | `tests/audio/test_pipeline.py` |
 
-## Chính sách chạy và bằng chứng
+## Mapping và lệnh dự kiến
 
-- Tạo test cùng task triển khai; ưu tiên unit test cho logic thuần, integration test cho boundary I/O, và kiểm tra UI/API khi hành vi nhìn thấy được.
-- Lệnh dự kiến sau khi repo dự án có `pyproject.toml`: `python3 -m pytest -q tests/` và `python3 -m pytest --cov=aicefr --cov-report=term-missing`; tên test/path cuối cùng ghi trong task đã duyệt. **Hiện trạng: NOT_RUN**, vì repo dự án chưa có mã nguồn/test.
-- Coverage là chỉ báo để tìm nhánh quan trọng chưa được kiểm thử. Chính sách threshold/no-regression chỉ được chốt ở Phase 04/05 sau khi có stack và baseline đo được.
-- Bằng chứng Phase 06/08: command, thời điểm, exit code, số test, phần skipped/fail, coverage report nếu áp dụng, revision/fingerprint, file trong `evidence/`. Browser QA nếu có phải ghi môi trường và ảnh/trạng thái thực.
-- Test với audio có quyền sử dụng là smoke/integration riêng; không đưa audio, transcript chứa PII hoặc secret vào Git/log. Chưa có data/consent/approval thì đánh dấu `NOT_RUN` thay vì tạo kết quả thay thế.
+| Mục | Lệnh / phạm vi |
+| --- | --- |
+| Cài môi trường dev | `python3 -m pip install -e '.[dev]'` |
+| Unit + boundary | `python3 -m pytest -q -m "not smoke" tests/audio tests/qc` |
+| Coverage branch | `python3 -m pytest -q -m "not smoke" --cov=aicefr.audio --cov=aicefr.qc --cov-branch --cov-report=term-missing tests/audio tests/qc` |
+| Shared contract | `python3 -m pytest -q tests/test_contracts.py` |
+| Coverage đề xuất | Line ≥ 90% và branch ≥ 85% trên logic thuần `aicefr.audio`/`aicefr.qc`; mọi nhánh format/resource/QC/pipeline gate cần assertion. TP-D-001 hiện chỉ áp dụng M03/M04/M05; đề xuất mở rộng ngưỡng tương tự cho M02. |
+| Smoke/browser | N/A cho W2: không có audio thật được duyệt hoặc UI/API; mọi test dùng fixture tổng hợp. |
 
-**CODEX CHECK RESULT:** DRAFT — mỗi AC có ca kiểm tra; lệnh và coverage policy còn chờ stack. **User verdict Phase 04:** PENDING.
+## Bằng chứng Phase 06/08
+
+Ghi lệnh, thời gian, exit code, pass/fail/skip, line/branch coverage, revision/fingerprint và evidence path. Không báo test format PASS nếu libsndfile build không hỗ trợ; nếu target runtime thiếu format bắt buộc, đây là FAIL cần sửa dependency/package, không chuyển thành skip im lặng.
+
+**CODEX CHECK RESULT:** PASS — cả hai AC được ánh xạ; command tương thích pytest/pytest-cov hiện có; coverage target được duyệt. **User verdict Phase 04:** APPROVED theo đề xuất · 28/09/2026.
