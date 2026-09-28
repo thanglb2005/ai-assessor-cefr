@@ -2,7 +2,9 @@
 
 > **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M06 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
 
-**Owner đề xuất:** Nguyên. **Phạm vi source:** `src/aicefr/report/ (đề xuất)` (chưa tạo). Implementation W2 được phát triển trong repo dự án theo Specification sau khi được duyệt.
+> **Cập nhật direct implementation (28/09/2026):** chủ dự án yêu cầu triển khai trực tiếp; actual diff/evidence được ghi riêng, không thay Phase 05 hoặc user verdict.
+
+**Owner đề xuất:** Nguyên. **Phạm vi source actual:** `src/aicefr/report/`, M01 presentation adapter, M07 verification boundary và tests M06. Evidence: `evidence/M06-EVID-DIRECT-20260928.md`.
 
 ## Kiến trúc và thứ tự triển khai
 
