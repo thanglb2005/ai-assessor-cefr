@@ -42,11 +42,16 @@ class BlobStore:
                 handle.flush()
                 os.fsync(handle.fileno())
             os.replace(staging, final)
-            directory_fd = os.open(self.root, os.O_RDONLY)
-            try:
-                os.fsync(directory_fd)
-            finally:
-                os.close(directory_fd)
+            # Windows does not permit opening a directory descriptor for fsync.
+            # The staged file itself was flushed above and ``os.replace`` remains
+            # atomic on the same volume; POSIX additionally flushes the directory
+            # entry for crash durability.
+            if os.name != "nt":
+                directory_fd = os.open(self.root, os.O_RDONLY)
+                try:
+                    os.fsync(directory_fd)
+                finally:
+                    os.close(directory_fd)
         except Exception:
             staging.unlink(missing_ok=True)
             final.unlink(missing_ok=True)
