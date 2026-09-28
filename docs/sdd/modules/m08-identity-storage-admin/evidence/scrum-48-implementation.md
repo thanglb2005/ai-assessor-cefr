@@ -17,3 +17,10 @@
 Mapping: M08-TEST-001 owner denial with indistinguishable missing/foreign errors; M08-TEST-002 versioned consent withdrawal gate; M08-TEST-004 Argon2id, digest-only token, role and TTL; M08-TEST-005 caplog contains no credential/hash/token.
 
 **Review limitation:** Nguyên's M01/M07 contract review is PENDING. The user authorized implementation first; do not infer owner approval or PR merge readiness from this evidence.
+
+## Integration after M02 task completion
+
+- Merged `feat/SCRUM-47-M02-TASK-002-QC-policy-va-pipeline-boundary-tests` into SCRUM-48 after both task pairs were implemented, retaining M02 and M08 types in `src/aicefr/contracts.py` and all three pinned dependencies in `pyproject.toml`.
+- Combined check: `PYTHONPATH=src /tmp/ai-assessor-cefr-m02-venv/bin/python -m pytest -q -m 'not smoke'` → exit 0, 149 passed, 10 skipped for absent `ridge_resp_v2.json` in `$AICEFR_MODEL_DIR`.
+- Combined Ruff check over M02/M08 source, shared contract and corresponding tests → exit 0, all checks passed. `git diff --cached --check` → exit 0.
+- Sang (M03/M04) and Nguyên (M01/M07) cross-owner reviews remain pending. No main merge was performed.
