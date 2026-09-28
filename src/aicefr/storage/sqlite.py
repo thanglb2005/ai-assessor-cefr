@@ -17,14 +17,16 @@ from aicefr.contracts import (
     BlobRef,
     ConsentRecord,
     ConsentState,
+    ReasonCode,
     ResponseRecord,
+    ResponseStatus,
     SessionRecord,
 )
 from aicefr.storage.paths import external_data_dir
 
 
 class SQLiteStore:
-    SCHEMA_VERSION = 1
+    SCHEMA_VERSION = 2
 
     def __init__(self, data_dir: Path | str) -> None:
         self.data_dir = external_data_dir(data_dir)
@@ -51,49 +53,99 @@ class SQLiteStore:
 
     def _migrate(self) -> None:
         version = self.connection.execute("PRAGMA user_version").fetchone()[0]
-        if version != 0 and version != self.SCHEMA_VERSION:
+        if version < 0 or version > self.SCHEMA_VERSION:
             raise RuntimeError("unsupported SQLite schema version")
-        if version == self.SCHEMA_VERSION:
-            return
         try:
-            self.connection.executescript(
-                """
-                BEGIN IMMEDIATE;
-                CREATE TABLE accounts (
-                    actor_id TEXT PRIMARY KEY, role TEXT NOT NULL, password_hash TEXT NOT NULL
-                );
-                CREATE TABLE sessions (
-                    token_digest TEXT PRIMARY KEY,
-                    actor_id TEXT NOT NULL REFERENCES accounts(actor_id),
-                    role TEXT NOT NULL, created_at TEXT NOT NULL, last_seen_at TEXT NOT NULL,
-                    idle_expires_at TEXT NOT NULL, absolute_expires_at TEXT NOT NULL
-                );
-                CREATE TABLE consents (
-                    participant_id TEXT PRIMARY KEY REFERENCES accounts(actor_id),
-                    consent_version TEXT NOT NULL, state TEXT NOT NULL, recorded_at TEXT NOT NULL
-                );
-                CREATE TABLE responses (
-                    response_id TEXT PRIMARY KEY,
-                    owner_id TEXT NOT NULL REFERENCES accounts(actor_id),
-                    task_id TEXT NOT NULL, task_version TEXT NOT NULL,
-                    blob_id TEXT UNIQUE NOT NULL, sha256 TEXT NOT NULL, size_bytes INTEGER NOT NULL,
-                    status TEXT NOT NULL, revision INTEGER NOT NULL, created_at TEXT NOT NULL
-                );
-                CREATE TABLE audit (
-                    event_id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, action TEXT NOT NULL,
-                    object_id TEXT NOT NULL, recorded_at TEXT NOT NULL, reason TEXT
-                );
-                CREATE TRIGGER audit_no_update BEFORE UPDATE ON audit
-                    BEGIN SELECT RAISE(ABORT, 'audit is append-only'); END;
-                CREATE TRIGGER audit_no_delete BEFORE DELETE ON audit
-                    BEGIN SELECT RAISE(ABORT, 'audit is append-only'); END;
-                PRAGMA user_version=1;
-                COMMIT;
-                """
-            )
+            if version == 0:
+                self._create_v1_schema()
+                version = 1
+            if version == 1:
+                self._upgrade_v1_to_v2()
+                version = 2
+            if version != self.SCHEMA_VERSION:
+                raise RuntimeError("unsupported SQLite schema version")
         except Exception:
             self.connection.rollback()
             raise
+
+    def _create_v1_schema(self) -> None:
+        self.connection.executescript(
+            """
+            BEGIN IMMEDIATE;
+            CREATE TABLE accounts (
+                actor_id TEXT PRIMARY KEY, role TEXT NOT NULL, password_hash TEXT NOT NULL
+            );
+            CREATE TABLE sessions (
+                token_digest TEXT PRIMARY KEY,
+                actor_id TEXT NOT NULL REFERENCES accounts(actor_id),
+                role TEXT NOT NULL, created_at TEXT NOT NULL, last_seen_at TEXT NOT NULL,
+                idle_expires_at TEXT NOT NULL, absolute_expires_at TEXT NOT NULL
+            );
+            CREATE TABLE consents (
+                participant_id TEXT PRIMARY KEY REFERENCES accounts(actor_id),
+                consent_version TEXT NOT NULL, state TEXT NOT NULL, recorded_at TEXT NOT NULL
+            );
+            CREATE TABLE responses (
+                response_id TEXT PRIMARY KEY,
+                owner_id TEXT NOT NULL REFERENCES accounts(actor_id),
+                task_id TEXT NOT NULL, task_version TEXT NOT NULL,
+                blob_id TEXT UNIQUE NOT NULL, sha256 TEXT NOT NULL, size_bytes INTEGER NOT NULL,
+                status TEXT NOT NULL, revision INTEGER NOT NULL, created_at TEXT NOT NULL
+            );
+            CREATE TABLE audit (
+                event_id TEXT PRIMARY KEY, actor_id TEXT NOT NULL, action TEXT NOT NULL,
+                object_id TEXT NOT NULL, recorded_at TEXT NOT NULL, reason TEXT
+            );
+            CREATE TRIGGER audit_no_update BEFORE UPDATE ON audit
+                BEGIN SELECT RAISE(ABORT, 'audit is append-only'); END;
+            CREATE TRIGGER audit_no_delete BEFORE DELETE ON audit
+                BEGIN SELECT RAISE(ABORT, 'audit is append-only'); END;
+            PRAGMA user_version=1;
+            COMMIT;
+            """
+        )
+
+    def _upgrade_v1_to_v2(self) -> None:
+        """Add M01 status reasons and durable M07 review records atomically."""
+        self.connection.executescript(
+            """
+            BEGIN IMMEDIATE;
+            ALTER TABLE responses ADD COLUMN status_reason TEXT;
+            UPDATE responses SET status='QUEUED' WHERE status='submitted';
+            CREATE TABLE review_candidates (
+                response_id TEXT PRIMARY KEY REFERENCES responses(response_id),
+                response_revision INTEGER NOT NULL,
+                assessment_status TEXT NOT NULL,
+                proposed_band TEXT,
+                reasons_json TEXT NOT NULL,
+                source_versions_json TEXT NOT NULL,
+                state TEXT NOT NULL,
+                revision INTEGER NOT NULL,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+            CREATE TABLE review_decisions (
+                decision_id TEXT PRIMARY KEY,
+                response_id TEXT NOT NULL REFERENCES review_candidates(response_id),
+                teacher_id TEXT NOT NULL REFERENCES accounts(actor_id),
+                action TEXT NOT NULL,
+                old_state TEXT NOT NULL,
+                new_state TEXT NOT NULL,
+                candidate_revision INTEGER NOT NULL,
+                proposed_band TEXT,
+                final_band TEXT,
+                reason TEXT,
+                audit_id TEXT UNIQUE NOT NULL REFERENCES audit(event_id),
+                recorded_at TEXT NOT NULL
+            );
+            CREATE INDEX review_candidates_queue_idx
+                ON review_candidates(state, updated_at);
+            CREATE INDEX review_decisions_response_idx
+                ON review_decisions(response_id, recorded_at);
+            PRAGMA user_version=2;
+            COMMIT;
+            """
+        )
 
     def _audit(self, connection: sqlite3.Connection, event: AuditEvent) -> None:
         connection.execute(
@@ -106,6 +158,24 @@ class SQLiteStore:
                 event.recorded_at.isoformat(),
                 event.reason,
             ),
+        )
+
+    def record_audit(self, connection: sqlite3.Connection, event: AuditEvent) -> None:
+        """Append an audit event inside a caller-owned metadata transaction."""
+        self._audit(connection, event)
+
+    @staticmethod
+    def _response_from_row(row: tuple[object, ...]) -> ResponseRecord:
+        return ResponseRecord(
+            response_id=str(row[0]),
+            owner_id=str(row[1]),
+            task_id=str(row[2]),
+            task_version=str(row[3]),
+            blob=BlobRef(blob_id=str(row[4]), sha256=str(row[5]), size_bytes=int(row[6])),
+            status=ResponseStatus(str(row[7])),
+            revision=int(row[8]),
+            created_at=datetime.fromisoformat(str(row[9])),
+            status_reason=ReasonCode(str(row[10])) if row[10] is not None else None,
         )
 
     def get_account(self, actor_id: str) -> AccountRecord | None:
@@ -198,21 +268,15 @@ class SQLiteStore:
         ).fetchone()
         if row is None:
             return None
-        return ResponseRecord(
-            response_id=row[0],
-            owner_id=row[1],
-            task_id=row[2],
-            task_version=row[3],
-            blob=BlobRef(blob_id=row[4], sha256=row[5], size_bytes=row[6]),
-            status=row[7],
-            revision=row[8],
-            created_at=datetime.fromisoformat(row[9]),
-        )
+        return self._response_from_row(row)
 
     def save_response(self, response: ResponseRecord, event: AuditEvent) -> None:
         with self.transaction() as connection:
             connection.execute(
-                "INSERT INTO responses VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                """INSERT INTO responses (
+                response_id, owner_id, task_id, task_version, blob_id, sha256,
+                size_bytes, status, status_reason, revision, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     response.response_id,
                     response.owner_id,
@@ -222,11 +286,40 @@ class SQLiteStore:
                     response.blob.sha256,
                     response.blob.size_bytes,
                     response.status,
+                    response.status_reason,
                     response.revision,
                     response.created_at.isoformat(),
                 ),
             )
             self._audit(connection, event)
+
+    def update_response_status(
+        self,
+        response_id: str,
+        *,
+        expected_revision: int,
+        status: ResponseStatus,
+        status_reason: ReasonCode | None,
+        event: AuditEvent,
+    ) -> ResponseRecord:
+        """Đổi trạng thái response với optimistic locking và audit cùng transaction.
+
+        Đây là port nội bộ cho pipeline M01–M06, không phải API cho client.
+        """
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                """UPDATE responses SET status=?, status_reason=?, revision=revision+1
+                WHERE response_id=? AND revision=?""",
+                (status, status_reason, response_id, expected_revision),
+            )
+            if cursor.rowcount != 1:
+                raise ConcurrentResponseUpdate("response missing or revision is stale")
+            self._audit(connection, event)
+            row = connection.execute(
+                "SELECT * FROM responses WHERE response_id=?", (response_id,)
+            ).fetchone()
+        assert row is not None
+        return self._response_from_row(row)
 
     def list_audit(self) -> tuple[AuditEvent, ...]:
         rows = self.connection.execute("SELECT * FROM audit ORDER BY rowid").fetchall()
@@ -244,3 +337,7 @@ class SQLiteStore:
 
     def referenced_blob_ids(self) -> set[str]:
         return {row[0] for row in self.connection.execute("SELECT blob_id FROM responses")}
+
+
+class ConcurrentResponseUpdate(RuntimeError):
+    """Response đã bị đổi bởi pipeline khác hoặc không còn tồn tại."""

@@ -63,6 +63,13 @@ class SessionRecord(_Frozen):
 
 
 class ReasonCode(StrEnum):
+    # M01 — Submission and presentation boundary
+    EMPTY_AUDIO = "EMPTY_AUDIO"
+    AUDIO_TOO_LARGE = "AUDIO_TOO_LARGE"
+    UNSUPPORTED_AUDIO_FORMAT = "UNSUPPORTED_AUDIO_FORMAT"
+    TASK_NOT_OPEN = "TASK_NOT_OPEN"
+    PIPELINE_ENQUEUE_FAILED = "PIPELINE_ENQUEUE_FAILED"
+    REPORT_NOT_AVAILABLE = "REPORT_NOT_AVAILABLE"
     # M02 — Audio QC
     QC_EMPTY_AUDIO = "QC_EMPTY_AUDIO"
     QC_INPUT_TOO_LARGE = "QC_INPUT_TOO_LARGE"
@@ -161,13 +168,30 @@ class BlobRef(_Frozen):
     size_bytes: int = Field(gt=0)
 
 
+class ResponseStatus(StrEnum):
+    """Public lifecycle state of one submitted response.
+
+    ``COMPLETED`` is only shown after M06 has made a report available.  A
+    technical failure carries a stable ``ReasonCode`` instead of an invented
+    score or a free-form implementation detail.
+    """
+
+    QUEUED = "QUEUED"
+    RUNNING = "RUNNING"
+    COMPLETED = "COMPLETED"
+    REVIEW_REQUIRED = "REVIEW_REQUIRED"
+    REJECTED = "REJECTED"
+    FAILED = "FAILED"
+
+
 class ResponseRecord(_Frozen):
     response_id: str = Field(pattern=r"^[0-9a-f]{32}$")
     owner_id: str = Field(min_length=1)
     task_id: str = Field(min_length=1)
     task_version: str = Field(min_length=1)
     blob: BlobRef
-    status: str = "submitted"
+    status: ResponseStatus = ResponseStatus.QUEUED
+    status_reason: ReasonCode | None = None
     revision: int = Field(default=1, ge=1)
     created_at: datetime
 
@@ -316,3 +340,84 @@ class Assessment(_Frozen):
     out_of_range: tuple[OutOfRangeFeature, ...] = ()
     provenance: Provenance
     teacher_verified: bool = False
+
+
+# --- M07 — Teacher review ----------------------------------------------------
+
+
+class ReviewState(StrEnum):
+    """Trạng thái xử lý của một ca cần giảng viên xem xét."""
+
+    PENDING = "PENDING"
+    IN_REVIEW = "IN_REVIEW"
+    APPROVED = "APPROVED"
+    OVERRIDDEN = "OVERRIDDEN"
+    REJECTED = "REJECTED"
+
+
+class ReviewAction(StrEnum):
+    """Hành động cuối cùng của giảng viên trên một ReviewCandidate."""
+
+    APPROVE = "APPROVE"
+    OVERRIDE = "OVERRIDE"
+    REJECT = "REJECT"
+
+
+class ReviewCandidate(_Frozen):
+    """Ca được đưa vào hàng đợi từ reason code và kết quả M05.
+
+    ``revision`` là optimistic-lock token: mọi thao tác ghi phải gửi lại giá trị
+    mà người dùng đã đọc để tránh hai giảng viên ghi đè im lặng.
+    """
+
+    response_id: str = Field(min_length=1)
+    response_revision: int = Field(ge=1)
+    assessment_status: AssessmentStatus
+    proposed_band: Band | None = None
+    reasons: tuple[ReasonCode, ...] = Field(min_length=1)
+    source_versions: dict[str, str] = Field(default_factory=dict)
+    state: ReviewState = ReviewState.PENDING
+    revision: int = Field(default=1, ge=1)
+    created_at: datetime
+    updated_at: datetime
+
+    @field_validator("source_versions")
+    @classmethod
+    def _source_versions_are_explicit(cls, value: dict[str, str]) -> dict[str, str]:
+        if not value or any(not key or not item for key, item in value.items()):
+            raise ValueError("source_versions phải có giá trị rõ ràng")
+        return value
+
+
+class ReviewDecision(_Frozen):
+    """Quyết định có audit ref thật; không suy ``teacher_verified`` từ score."""
+
+    decision_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    response_id: str = Field(min_length=1)
+    teacher_id: str = Field(min_length=1)
+    action: ReviewAction
+    old_state: ReviewState
+    new_state: ReviewState
+    candidate_revision: int = Field(ge=1)
+    proposed_band: Band | None = None
+    final_band: Band | None = None
+    reason: str | None = None
+    audit_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    recorded_at: datetime
+
+    @model_validator(mode="after")
+    def _action_shape_is_consistent(self) -> ReviewDecision:
+        if self.action is ReviewAction.APPROVE:
+            if self.new_state is not ReviewState.APPROVED or self.final_band is None:
+                raise ValueError("APPROVE cần band cuối và trạng thái APPROVED")
+        elif self.action is ReviewAction.OVERRIDE:
+            if (
+                self.new_state is not ReviewState.OVERRIDDEN
+                or self.final_band is None
+                or not self.reason
+            ):
+                raise ValueError("OVERRIDE cần band cuối, reason và trạng thái OVERRIDDEN")
+        elif self.action is ReviewAction.REJECT:
+            if self.new_state is not ReviewState.REJECTED or self.final_band is not None:
+                raise ValueError("REJECT không có band cuối và dùng trạng thái REJECTED")
+        return self
