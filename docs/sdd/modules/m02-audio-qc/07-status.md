@@ -9,9 +9,9 @@
 | Specification | 03-specification.md · v0.3 · APPROVED 28/09/2026 |
 | Test Plan | 04-test-plan.md · v0.2 · APPROVED 28/09/2026 |
 | Plan & Tasks | 05-plan.md, 06-tasks.md · v0.2 · APPROVED by Thắng 28/09/2026; Sang review PENDING |
-| Implementation | SCRUM-46 implemented at `a6da59a`; checks PASS; SCRUM-47 pending |
-| Review / Final Verification / Acceptance | Codex review pending; Sang review pending; user merge verdict pending |
-| Prompt hiện hành | M02-PROMPT-001 / SCRUM-46 · ISSUED_TO_CODEX · base 55d8952, fingerprint 7cabc5b… |
+| Implementation | SCRUM-46 and SCRUM-47 implemented (code `a6da59a`, `4a3d8ea`); all M02 task tests, regression, coverage and lint PASS |
+| Review / Final Verification / Acceptance | Codex diff reviews PASS; Sang review pending; user merge verdict pending |
+| Prompt hiện hành | M02-PROMPT-002 / SCRUM-47 · IMPLEMENTED · base 078d90f, fingerprint adb8a0c… |
 
 ## Phase 01 record
 
@@ -60,4 +60,4 @@
 
 - Current M03 AsrService accepts REVIEW but does not retain QC reasons/config in Transcript; approved M02 policy keeps REVIEW out of automatic dispatch pending M03 owner review.
 - Shared-contract changes require Sang review as M03/M04 owner before recommending PR merge; Thắng approved implementation first.
-- M02-PROMPT-001 issued to Codex. SCRUM-46 evidence: evidence/M02-EVID-001-SCRUM-46.md. Sang review and Phase 07 final review remain pending.
+- M02-PROMPT-001 issued to Codex. SCRUM-46/47 evidence: evidence/M02-EVID-001-SCRUM-46.md and evidence/M02-EVID-002-SCRUM-47.md. Codex diff reviews PASS; Sang review and user verdict pending.

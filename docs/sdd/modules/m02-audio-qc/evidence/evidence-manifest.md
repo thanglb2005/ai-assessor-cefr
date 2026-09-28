@@ -1,6 +1,6 @@
 # M02 — Evidence Manifest (danh mục bằng chứng)
 
-**Hiện trạng:** SCRUM-46 implementation evidence recorded; SCRUM-47 pending.
+**Hiện trạng:** SCRUM-46 and SCRUM-47 implementation evidence recorded; Sang review pending.
 
 | Evidence ID | Prompt ID / Task ID | Phase | Base/Head revision, fingerprint | Loại / file hoặc link | Check và kết quả thực tế | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- |
