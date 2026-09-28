@@ -96,3 +96,14 @@ def test_assessment_defaults_interaction_to_insufficient_evidence():
     assert a.interaction.level is None
     assert a.interaction.score_status == "insufficient_evidence"
     assert a.overall_score is None and a.teacher_verified is False
+
+
+def test_m08_blob_and_actor_contracts_are_strict():
+    from aicefr.contracts import Actor, ActorRole, BlobRef
+
+    actor = Actor(actor_id="fixture-a", role=ActorRole.STUDENT)
+    assert actor.role == ActorRole.STUDENT
+    with pytest.raises(ValidationError):
+        Actor(actor_id="", role=ActorRole.STUDENT)
+    with pytest.raises(ValidationError):
+        BlobRef(blob_id="../outside", sha256="0" * 64, size_bytes=1)
