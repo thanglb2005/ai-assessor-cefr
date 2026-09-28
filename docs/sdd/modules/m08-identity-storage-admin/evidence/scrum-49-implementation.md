@@ -18,3 +18,8 @@
 Mapping: M08-TEST-001 owner check precedes blob read and missing/foreign IDs share error; M08-TEST-002 withdrawal blocks new submission, preserves prior fixture; M08-TEST-003 restart, session digest, audit, checksum, SQLite rollback, blob compensation, schema and report-only orphan reconciliation; M08-TEST-004 session persistence/expiry; M08-TEST-005 repo-external data root, token absent from DB, no secret/token logs.
 
 **Known integration risk:** Nguyên's M01/M07 shared-contract review remains PENDING. No owner approval, real-data readiness or PR merge verdict is claimed.
+
+
+## Final four-task integration check
+
+After stacking SCRUM-46 → SCRUM-47 → SCRUM-48 → SCRUM-49, shared `contracts.py` and `pyproject.toml` retain all M02/M08 changes. On the integrated SCRUM-49 tree, `PYTHONPATH=src /tmp/ai-assessor-cefr-m02-venv/bin/python -m pytest -q -m 'not smoke'` exited 0 with 160 passed, 10 skipped (missing `ridge_resp_v2.json`). Combined coverage command with `--cov=aicefr.audio --cov=aicefr.qc --cov=aicefr.auth --cov=aicefr.storage --cov-branch` exited 0: 513/530 statements = 96.79%, 126/138 branches = 91.30%. Ruff over all four module source/test trees plus shared contract exited 0. No real data or main merge. Sang and Nguyên reviews remain pending.
