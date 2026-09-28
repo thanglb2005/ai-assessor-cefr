@@ -15,7 +15,7 @@ Test ở đây là **ca dự kiến**, chưa được chạy. Fixture tạo bở
 ## Chính sách chạy và bằng chứng
 
 - Tạo test cùng task triển khai; ưu tiên unit test cho logic thuần, integration test cho boundary I/O, và kiểm tra UI/API khi hành vi nhìn thấy được.
-- Lệnh dự kiến sau khi repo dự án có `pyproject.toml`: `python3 -m pytest -q tests/` và `python3 -m pytest --cov=aicefr --cov-report=term-missing`; tên test/path cuối cùng ghi trong task đã duyệt. **Hiện trạng: NOT_RUN**, vì repo dự án chưa có mã nguồn/test.
+- Khi soạn plan ngày 25/09, test chưa chạy. Ngày 28/09, chỉ dẫn trực tiếp của chủ dự án tạo direct workspace evidence với test/path thực trong `evidence/M07-EVID-DIRECT-20260928.md`; đây là technical evidence, không phải Phase 04/08 verification hay user verdict.
 - Coverage là chỉ báo để tìm nhánh quan trọng chưa được kiểm thử. Chính sách threshold/no-regression chỉ được chốt ở Phase 04/05 sau khi có stack và baseline đo được.
 - Bằng chứng Phase 06/08: command, thời điểm, exit code, số test, phần skipped/fail, coverage report nếu áp dụng, revision/fingerprint, file trong `evidence/`. Browser QA nếu có phải ghi môi trường và ảnh/trạng thái thực.
 - Test với audio có quyền sử dụng là smoke/integration riêng; không đưa audio, transcript chứa PII hoặc secret vào Git/log. Chưa có data/consent/approval thì đánh dấu `NOT_RUN` thay vì tạo kết quả thay thế.
