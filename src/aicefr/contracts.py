@@ -152,6 +152,35 @@ class DecodedAudio(_Frozen):
         return v
 
 
+# --- M08 — Stored response and audit -----------------------------------------
+
+
+class BlobRef(_Frozen):
+    blob_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    size_bytes: int = Field(gt=0)
+
+
+class ResponseRecord(_Frozen):
+    response_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    owner_id: str = Field(min_length=1)
+    task_id: str = Field(min_length=1)
+    task_version: str = Field(min_length=1)
+    blob: BlobRef
+    status: str = "submitted"
+    revision: int = Field(default=1, ge=1)
+    created_at: datetime
+
+
+class AuditEvent(_Frozen):
+    event_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    actor_id: str = Field(min_length=1)
+    action: str = Field(min_length=1)
+    object_id: str = Field(min_length=1)
+    recorded_at: datetime
+    reason: str | None = None
+
+
 # --- M03 — ASR ---------------------------------------------------------------
 
 
