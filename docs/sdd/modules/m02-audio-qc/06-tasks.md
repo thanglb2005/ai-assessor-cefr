@@ -14,4 +14,4 @@
 - Branch/PR order across tasks: SCRUM-46 → SCRUM-47 → SCRUM-48 → SCRUM-49. M02 order is SCRUM-46 → SCRUM-47. SCRUM-47 starts from the SCRUM-46 implementation commit; after SCRUM-46 merges, update SCRUM-47 against current `main` if the PR merge method requires it.
 - No task may commit audio, transcript, model, secret or actual participant data. No production QC defaults are added.
 
-**Trạng thái:** SCRUM-46 IMPLEMENTED / CHECKS PASS; SCRUM-47 PENDING. **Phase 05 verdict:** APPROVED by Thắng · 28/09/2026; Sang review PENDING.
+**Trạng thái:** SCRUM-46 and SCRUM-47 IMPLEMENTED / CHECKS PASS; Sang review PENDING. **Phase 05 verdict:** APPROVED by Thắng · 28/09/2026; Sang review PENDING.
