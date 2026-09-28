@@ -1,7 +1,7 @@
 """Hợp đồng dữ liệu dùng chung giữa các module.
 
-Hợp đồng M02/M03/M04/M05; M02 mở rộng QCResult, QCMeasurement và DecodedAudio
-để giao PCM float32 mono 16 kHz cùng reason code ổn định. Owner M01/M06/M07/M08
+Hợp đồng M02/M03/M04/M05/M08: M02 giao PCM float32 mono 16 kHz cùng QC
+measurement/reason; M08 bổ sung actor, consent và session. Owner M01/M06/M07
 bổ sung kiểu và reason code của module mình vào đây.
 
 Nguyên tắc: thiếu dữ liệu là `None` kèm reason, không bao giờ là 0 hay giá trị
@@ -11,6 +11,7 @@ trung bình.
 from __future__ import annotations
 
 import math
+from datetime import datetime
 from enum import StrEnum
 from typing import Any, Literal
 
@@ -23,6 +24,42 @@ EXPECTED_SAMPLE_RATE_HZ = 16_000
 
 class _Frozen(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
+
+
+# --- M08 — Identity and consent ----------------------------------------------
+
+
+class ActorRole(StrEnum):
+    STUDENT = "student"
+    TEACHER = "teacher"
+    ADMIN = "admin"
+
+
+class Actor(_Frozen):
+    actor_id: str = Field(min_length=1)
+    role: ActorRole
+
+
+class ConsentState(StrEnum):
+    ACTIVE = "active"
+    WITHDRAWN = "withdrawn"
+
+
+class ConsentRecord(_Frozen):
+    participant_id: str = Field(min_length=1)
+    consent_version: str = Field(min_length=1)
+    state: ConsentState
+    recorded_at: datetime
+
+
+class SessionRecord(_Frozen):
+    token_digest: str = Field(pattern=r"^[0-9a-f]{64}$")
+    actor_id: str = Field(min_length=1)
+    role: ActorRole
+    created_at: datetime
+    last_seen_at: datetime
+    idle_expires_at: datetime
+    absolute_expires_at: datetime
 
 
 class ReasonCode(StrEnum):
@@ -113,6 +150,35 @@ class DecodedAudio(_Frozen):
         if not np.isfinite(v).all():
             raise ValueError("samples phải hữu hạn")
         return v
+
+
+# --- M08 — Stored response and audit -----------------------------------------
+
+
+class BlobRef(_Frozen):
+    blob_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    size_bytes: int = Field(gt=0)
+
+
+class ResponseRecord(_Frozen):
+    response_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    owner_id: str = Field(min_length=1)
+    task_id: str = Field(min_length=1)
+    task_version: str = Field(min_length=1)
+    blob: BlobRef
+    status: str = "submitted"
+    revision: int = Field(default=1, ge=1)
+    created_at: datetime
+
+
+class AuditEvent(_Frozen):
+    event_id: str = Field(pattern=r"^[0-9a-f]{32}$")
+    actor_id: str = Field(min_length=1)
+    action: str = Field(min_length=1)
+    object_id: str = Field(min_length=1)
+    recorded_at: datetime
+    reason: str | None = None
 
 
 # --- M03 — ASR ---------------------------------------------------------------
