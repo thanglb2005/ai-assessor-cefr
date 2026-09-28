@@ -1,18 +1,17 @@
 # M02 — 06 Tasks (W2 task breakdown)
 
-> **BẢN NHÁP W2 (v0.1, 25/09/2026).** Chuẩn bị theo yêu cầu chủ dự án; Phase 01 của M02 vẫn `DRAFT/PENDING`. Nội dung dưới đây chưa là Specification/Plan được duyệt và không cấp quyền phát prompt triển khai.
+> **W2 v0.2 · 28/09/2026 · Phase 05 APPROVED by Thắng for implementation.** Sang’s M03/M04 review remains pending and must be disclosed before PR merge. M02-PROMPT-001 issued to Codex for SCRUM-46; Antigravity unavailable in this session.
 
-Task dưới đây là **bản nháp để review**, chưa phát prompt hoặc chuyển sang Antigravity. ID giữ ổn định để liên kết evidence sau này.
+| Jira / Task ID | FR/AC · Test IDs | Branch | Dependencies | Planned scope | Exit evidence |
+| --- | --- | --- | --- | --- | --- |
+| SCRUM-46 · M02-TASK-001 — Audio decoder, QC measurements và unit tests | M02-FR-001/002 / M02-AC-001/002 · M02-TEST-001–006 | `feat/SCRUM-46-M02-TASK-001-Audio-decoder-QC-va-unit-tests` | No source predecessor; Sang shared-contract review pending under Thắng Phase 05 override | Approved SoundFile/SoXR decoder, whitelist/channel policy, 16 kHz PCM output, explicit measurements/config; files from SCRUM-46 row in 05-plan | Test IDs PASS, coverage report, `ruff` if configured, privacy-safe diff, evidence with revision/fingerprint |
+| SCRUM-47 · M02-TASK-002 — QC policy và pipeline boundary tests | M02-FR-001/002 / M02-AC-001/002 · M02-TEST-007, 008 | `feat/SCRUM-47-M02-TASK-002-QC-policy-va-pipeline-boundary-tests` | SCRUM-46 implementation committed; Sang boundary review pending under Thắng Phase 05 override | Versioned PASS/REVIEW/REJECT policy and M02 pipeline gate; no edit to M03 service | Test IDs PASS; PASS-only dispatch proven with ASR spy; REJECT/REVIEW create no transcript/score; evidence with revision/fingerprint |
 
-| Task ID / owner | FR/AC và Test ID | Phạm vi file dự kiến | Đầu ra kiểm chứng |
-| --- | --- | --- | --- |
-| M02-TASK-001 / Thắng | M02-FR-002, M02-AC-002 · M02-TEST-003, M02-TEST-004 | audio decoder/QC + unit tests | Measured fields, unit và version tái lập |
-| M02-TASK-002 / Thắng | M02-FR-001, M02-AC-001 · M02-TEST-001, M02-TEST-002, M02-TEST-005 | QC policy + pipeline boundary tests | Reject/review có reason; không gọi ASR sai điều kiện |
+## Shared gates and completion
 
-## Handoff và điều kiện hoàn tất
+- Sang (M03/M04 owner) must review `QCMeasurement`, the `QCResult` extension and 16 kHz output contract; M03 must review PASS-only dispatch. Record comments/approval before recommending PR merge; Thắng explicitly deferred this review until tasks are implemented.
+- Each task gets its own prompt ID/file under the approved Phase 05 artifact and a fresh branch fingerprint. Prompt status records the actual executor and evidence; M02-PROMPT-001 was issued to Codex.
+- Branch/PR order across tasks: SCRUM-46 → SCRUM-47 → SCRUM-48 → SCRUM-49. M02 order is SCRUM-46 → SCRUM-47. SCRUM-47 starts from the SCRUM-46 implementation commit; after SCRUM-46 merges, update SCRUM-47 against current `main` if the PR merge method requires it.
+- No task may commit audio, transcript, model, secret or actual participant data. No production QC defaults are added.
 
-- Mỗi task khi được duyệt phải có prompt file riêng trong `prompts/`, mã Prompt ID, phạm vi file, artifact versions, baseline/fingerprint, check và format raw report. Không ghi `SENT`/`DONE` trước khi có thao tác và evidence thật.
-- Unit test bắt buộc cho logic có thể kiểm thử; integration/API/browser check theo Test Plan. Nếu test không áp dụng, giải thích tại task đã duyệt và dùng alternative evidence.
-- Một task chỉ được đánh dấu hoàn thành sau actual diff, kết quả chạy thật, Code/Clean Code Review, Final Verification trên revision cuối và user verdict. Metric/test báo cáo phải gắn với lệnh chạy, revision và evidence của dự án.
-
-**Trạng thái tất cả task:** DRAFT / NOT_STARTED. **Phase 05 verdict:** PENDING.
+**Trạng thái:** SCRUM-46 and SCRUM-47 IMPLEMENTED / CHECKS PASS; Sang review PENDING. **Phase 05 verdict:** APPROVED by Thắng · 28/09/2026; Sang review PENDING.
