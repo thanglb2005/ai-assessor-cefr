@@ -10,7 +10,7 @@
 | Test Plan | 04-test-plan.md · v0.2 · APPROVED 28/09/2026 |
 | Plan & Tasks | 05-plan.md, 06-tasks.md · v0.3 APPROVED for implementation 28/09/2026; Nguyên review PENDING |
 | Implementation / Review / Final Verification / Acceptance | SCRUM-48/49 implemented and verified locally / owner & user review PENDING / scoped checks PASS / PENDING |
-| Prompt hiện hành | Direct Codex implementation by user's explicit request; no Antigravity prompt issued |
+| Prompt hiện hành | Direct Codex implementation; M08-EXEC-048 recorded after code; no Antigravity prompt issued |
 
 ## Phase 01 record
 
@@ -57,7 +57,7 @@
 
 - No real user data, operational export/delete, retention, backup or encryption-at-rest in W2.
 - Nguyên (M01/M07 owner) shared schema review is PENDING; Thắng explicitly approved implementing first. No owner approval is claimed.
-- prompts/prompt-log.md: direct Codex work, no Antigravity prompt. M08-EV-048 records code/test evidence; M08-RV-048 records self-review and pending user verdict.
+- prompts/prompt-log.md: direct Codex work logged after code; no Antigravity prompt. M08-EV-048 records code/test evidence; M08-RV-048 records self-review and pending user verdict.
 
 ## SCRUM-48 implementation record
 
