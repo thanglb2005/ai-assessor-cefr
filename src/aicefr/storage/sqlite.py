@@ -245,6 +245,11 @@ class SQLiteStore:
                 ),
             )
 
+    def delete_session(self, digest: str) -> None:
+        """Revoke a session by its stored token digest; missing sessions are harmless."""
+        with self.transaction() as connection:
+            connection.execute("DELETE FROM sessions WHERE token_digest=?", (digest,))
+
     def get_consent(self, participant_id: str) -> ConsentRecord | None:
         row = self.connection.execute(
             "SELECT * FROM consents WHERE participant_id=?", (participant_id,)
@@ -333,7 +338,8 @@ class SQLiteStore:
                 parameters += (expected_status,)
             cursor = connection.execute(
                 """UPDATE responses SET status=?, status_reason=?, revision=revision+1
-                WHERE response_id=? AND revision=?""" + status_clause,
+                WHERE response_id=? AND revision=?"""
+                + status_clause,
                 parameters,
             )
             if cursor.rowcount != 1:

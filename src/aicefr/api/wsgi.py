@@ -21,6 +21,7 @@ from pydantic import ValidationError
 from aicefr.api.review import ReviewApi
 from aicefr.api.student import StudentApi, SubmissionError, SubmitRequest
 from aicefr.api.templates import (
+    LOCAL_CSS,
     render_consent,
     render_login,
     render_notice,
@@ -151,6 +152,9 @@ class StudentTeacherApp:
             "REQUEST_TOO_LARGE": "Tệp gửi lên vượt giới hạn.",
             "UNSUPPORTED_REQUEST_FORMAT": "Định dạng yêu cầu không được hỗ trợ.",
             "REQUEST_FAILED": "Không thể xử lý yêu cầu. Vui lòng thử lại.",
+            "CONSENT_VERSION_STALE": (
+                "Nội dung đồng ý đã thay đổi. Hãy đọc và xác nhận phiên bản hiện tại."
+            ),
         }
         return cls._html(
             status,
@@ -168,9 +172,16 @@ class StudentTeacherApp:
             )
         if path == "/login":
             if method == "GET":
-                return self._html(HTTPStatus.OK, render_login())
+                return self._html(HTTPStatus.OK, render_login(demo=self._demo))
             if method == "POST":
                 return self._login(environ)
+        if path == "/local.css" and method == "GET":
+            return WebResponse(
+                HTTPStatus.OK,
+                "text/css; charset=utf-8",
+                LOCAL_CSS.encode("utf-8"),
+                (("Cache-Control", "public, max-age=300"),),
+            )
         if path == "/logout" and method == "POST":
             self._require_origin(environ)
             token = self._session_token(environ, unsafe=True)
@@ -219,7 +230,7 @@ class StudentTeacherApp:
         if method == "GET" and path == "/student/upload":
             if self._auth is not None:
                 self._resolve_cookie_actor(environ, ActorRole.STUDENT)
-            return self._html(HTTPStatus.OK, render_upload_form())
+            return self._html(HTTPStatus.OK, render_upload_form(demo=self._demo))
         if method == "POST" and path == "/api/student/responses":
             return self._submit(environ, browser=False)
         if method == "POST" and path == "/student/responses":
@@ -264,7 +275,7 @@ class StudentTeacherApp:
         if candidate is None:
             raise HttpInputError(HTTPStatus.NOT_FOUND, "RESOURCE_UNAVAILABLE")
         report = self._reports.get(response_id)
-        return self._html(HTTPStatus.OK, render_review_detail(candidate, report))
+        return self._html(HTTPStatus.OK, render_review_detail(candidate, report, demo=self._demo))
 
     def _login(self, environ: dict[str, Any]) -> WebResponse:
         self._require_origin(environ)
@@ -280,7 +291,8 @@ class StudentTeacherApp:
             actor = self._auth.resolve(token)
         except AuthorizationError:
             return self._html(
-                HTTPStatus.UNAUTHORIZED, render_login("Tài khoản hoặc mật khẩu không hợp lệ.")
+                HTTPStatus.UNAUTHORIZED,
+                render_login("Tài khoản hoặc mật khẩu không hợp lệ.", demo=self._demo),
             )
         landing = (
             "/teacher/reviews"
@@ -375,6 +387,16 @@ class StudentTeacherApp:
         token = self._session_token(environ, unsafe=True)
         body = self._read_body(environ)
         request = self._multipart_submit_request(str(environ.get("CONTENT_TYPE", "")), body)
+        if self._auth is not None and self._consents is not None:
+            actor = self._auth.resolve(token, allowed_roles=frozenset({ActorRole.STUDENT}))
+            consent = self._consents.current(actor)
+            if (
+                request.consent_version != self._consent_version
+                or consent is None
+                or consent.state is not ConsentState.ACTIVE
+                or consent.consent_version != self._consent_version
+            ):
+                raise HttpInputError(HTTPStatus.FORBIDDEN, "CONSENT_VERSION_STALE")
         status = self._student_api.submit(token, request)
         if browser:
             return WebResponse(
@@ -408,18 +430,21 @@ class StudentTeacherApp:
         token = self._session_token(environ)
         if suffix == "":
             status = self._student_api.get_status(token, response_id)
-            return self._html(HTTPStatus.OK, render_student_status(status))
+            return self._html(HTTPStatus.OK, render_student_status(status, demo=self._demo))
         if suffix == "/report":
             view = self._student_api.get_report(token, response_id)
             if isinstance(view.report, DiagnosticReport):
-                return self._html(HTTPStatus.OK, render_report(view.report))
-            return self._html(HTTPStatus.ACCEPTED, render_student_status(view.status))
+                return self._html(HTTPStatus.OK, render_report(view.report, demo=self._demo))
+            return self._html(
+                HTTPStatus.ACCEPTED,
+                render_student_status(view.status, demo=self._demo),
+            )
         raise HttpInputError(HTTPStatus.NOT_FOUND, "ROUTE_NOT_FOUND")
 
     def _teacher_queue_page(self, environ: dict[str, Any]) -> WebResponse:
         assert self._review_api is not None
         queue = self._review_api.get_queue(self._session_token(environ))
-        return self._html(HTTPStatus.OK, render_review_queue(queue))
+        return self._html(HTTPStatus.OK, render_review_queue(queue, demo=self._demo))
 
     def _teacher_queue_api(self, environ: dict[str, Any]) -> WebResponse:
         assert self._review_api is not None
@@ -559,8 +584,7 @@ class StudentTeacherApp:
             audio_bytes=audio[2],
         )
 
-    @staticmethod
-    def _session_token(environ: dict[str, Any], *, unsafe: bool = False) -> str:
+    def _session_token(self, environ: dict[str, Any], *, unsafe: bool = False) -> str:
         authorization = str(environ.get("HTTP_AUTHORIZATION", ""))
         if authorization.startswith("Bearer ") and authorization[7:]:
             return authorization[7:]
@@ -569,11 +593,14 @@ class StudentTeacherApp:
             name, separator, token = value.strip().partition("=")
             if name == "aicefr_session" and separator and token:
                 if unsafe:
-                    scheme = str(environ.get("wsgi.url_scheme", "http"))
-                    host = str(environ.get("HTTP_HOST", ""))
-                    origin = str(environ.get("HTTP_ORIGIN", ""))
-                    if not host or origin != f"{scheme}://{host}":
-                        raise HttpInputError(HTTPStatus.FORBIDDEN, "CSRF_ORIGIN_REQUIRED")
+                    if self._auth is not None and self._consents is not None:
+                        self._require_origin(environ)
+                    else:
+                        scheme = str(environ.get("wsgi.url_scheme", "http"))
+                        host = str(environ.get("HTTP_HOST", ""))
+                        origin = str(environ.get("HTTP_ORIGIN", ""))
+                        if not host or origin != f"{scheme}://{host}":
+                            raise HttpInputError(HTTPStatus.FORBIDDEN, "CSRF_ORIGIN_REQUIRED")
                 return token
         raise HttpInputError(HTTPStatus.UNAUTHORIZED, "SESSION_REQUIRED")
 

@@ -26,6 +26,9 @@ class MemoryIdentityRepository:
     def put_session(self, session: SessionRecord) -> None:
         self.sessions[session.token_digest] = session
 
+    def delete_session(self, digest: str) -> None:
+        self.sessions.pop(digest, None)
+
     def get_consent(self, participant_id: str) -> ConsentRecord | None:
         return self.consents.get(participant_id)
 
