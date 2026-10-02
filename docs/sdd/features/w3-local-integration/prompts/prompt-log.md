@@ -10,3 +10,4 @@ Excel main log: [AI Prompt Log.xlsx](../../../../evidence/tc2-3-ai-usage/AI%20Pr
 | W3-PROMPT-001 | W3-TASK-001, W3-TASK-002 | gpt-6-luna / feat/W3-pipeline | 7bb327b / fingerprint trong prompt | SAVED before dispatch |
 | W3-PROMPT-002 | W3-TASK-003, W3-TASK-004 | gpt-6-luna / feat/W3-app | 7bb327b / fingerprint trong prompt | SAVED before dispatch |
 | W3-PROMPT-003 | W3-TASK-005, W3-TASK-006 | gpt-6-luna / feat/W3-speech | 7bb327b / fingerprint trong prompt | SAVED before dispatch |
+| W3-PROMPT-001-AMEND-01 | W3-TASK-001,W3-TASK-002 | gpt-6-luna / affected migration regression | baseline trong prompt | SAVED before dispatch |
