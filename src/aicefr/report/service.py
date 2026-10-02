@@ -122,6 +122,12 @@ class ReviewDecisionVerifier(Protocol):
     def verify_decision(self, decision: ReviewDecision) -> bool: ...
 
 
+class ReportRepository(Protocol):
+    def put(self, report: DiagnosticReport) -> None: ...
+
+    def get(self, response_id: str) -> DiagnosticReport | None: ...
+
+
 class MemoryReportRepository:
     """In-memory report port for fixture-driven local runs and API tests."""
 
@@ -260,7 +266,7 @@ class ReportService:
 
     def __init__(
         self,
-        repository: MemoryReportRepository,
+        repository: ReportRepository,
         builder: DiagnosticReportBuilder | None = None,
         decision_verifier: ReviewDecisionVerifier | None = None,
     ) -> None:

@@ -26,7 +26,7 @@ from aicefr.storage.paths import external_data_dir
 
 
 class SQLiteStore:
-    SCHEMA_VERSION = 2
+    SCHEMA_VERSION = 3
 
     def __init__(self, data_dir: Path | str) -> None:
         self.data_dir = external_data_dir(data_dir)
@@ -43,6 +43,11 @@ class SQLiteStore:
 
     @contextmanager
     def transaction(self) -> Iterator[sqlite3.Connection]:
+        if self.connection.in_transaction:
+            # Nested repositories join the caller-owned unit of work. The outer
+            # owner alone decides commit or rollback.
+            yield self.connection
+            return
         self.connection.execute("BEGIN IMMEDIATE")
         try:
             yield self.connection
@@ -62,6 +67,9 @@ class SQLiteStore:
             if version == 1:
                 self._upgrade_v1_to_v2()
                 version = 2
+            if version == 2:
+                self._upgrade_v2_to_v3()
+                version = 3
             if version != self.SCHEMA_VERSION:
                 raise RuntimeError("unsupported SQLite schema version")
         except Exception:
@@ -146,6 +154,17 @@ class SQLiteStore:
             COMMIT;
             """
         )
+
+    def _upgrade_v2_to_v3(self) -> None:
+        self.connection.executescript("""
+            BEGIN IMMEDIATE;
+            CREATE TABLE diagnostic_reports (
+                response_id TEXT PRIMARY KEY REFERENCES responses(response_id),
+                report_json TEXT NOT NULL
+            );
+            PRAGMA user_version=3;
+            COMMIT;
+        """)
 
     def _audit(self, connection: sqlite3.Connection, event: AuditEvent) -> None:
         connection.execute(
@@ -301,16 +320,21 @@ class SQLiteStore:
         status: ResponseStatus,
         status_reason: ReasonCode | None,
         event: AuditEvent,
+        expected_status: ResponseStatus | None = None,
     ) -> ResponseRecord:
         """Đổi trạng thái response với optimistic locking và audit cùng transaction.
 
         Đây là port nội bộ cho pipeline M01–M06, không phải API cho client.
         """
         with self.transaction() as connection:
+            status_clause = " AND status=?" if expected_status is not None else ""
+            parameters = (status, status_reason, response_id, expected_revision)
+            if expected_status is not None:
+                parameters += (expected_status,)
             cursor = connection.execute(
                 """UPDATE responses SET status=?, status_reason=?, revision=revision+1
-                WHERE response_id=? AND revision=?""",
-                (status, status_reason, response_id, expected_revision),
+                WHERE response_id=? AND revision=?""" + status_clause,
+                parameters,
             )
             if cursor.rowcount != 1:
                 raise ConcurrentResponseUpdate("response missing or revision is stale")
@@ -320,6 +344,22 @@ class SQLiteStore:
             ).fetchone()
         assert row is not None
         return self._response_from_row(row)
+
+    def claim_queued_response(self, response: ResponseRecord) -> ResponseRecord:
+        return self.update_response_status(
+            response.response_id,
+            expected_revision=response.revision,
+            expected_status=ResponseStatus.QUEUED,
+            status=ResponseStatus.RUNNING,
+            status_reason=None,
+            event=AuditEvent(
+                event_id=uuid.uuid4().hex,
+                actor_id="system-pipeline",
+                action="pipeline_started",
+                object_id=response.response_id,
+                recorded_at=datetime.now().astimezone(),
+            ),
+        )
 
     def list_audit(self) -> tuple[AuditEvent, ...]:
         rows = self.connection.execute("SELECT * FROM audit ORDER BY rowid").fetchall()

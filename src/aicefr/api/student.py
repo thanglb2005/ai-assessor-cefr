@@ -187,6 +187,11 @@ class StudentService:
                     action="pipeline_enqueue_failed",
                     reason=ReasonCode.PIPELINE_ENQUEUE_FAILED,
                 )
+            else:
+                # Synchronous local pipelines can finish during enqueue.
+                persisted = self._responses.get_response(actor, response.response_id)
+                if persisted.revision >= response.revision:
+                    response = persisted
         return self._status(response)
 
     def status(self, session_token: str, response_id: str) -> StudentStatus:
