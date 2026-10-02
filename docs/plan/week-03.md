@@ -1,6 +1,6 @@
 # W3 — 28/09–02/10/2026 — kế hoạch hoàn thiện
 
-**Trạng thái:** DRAFT. Gate W3 phụ thuộc vào diff và evidence thực tế của W2.
+**Trạng thái ngày 02/10/2026:** implementation đã được Thắng trực tiếp giao cho ba subagents `gpt-6-luna`, Codex review trên nhánh `feat/W3-local-integration`. [Scope W3](../sdd/features/w3-local-integration/07-status.md) giữ Task/Prompt/Evidence/Review hiện hành; formal verdict nghiệm thu `PENDING`. Git `main` đã đồng bộ `origin/main` tại `2b428ceea9e4459f3235d4ce67f10bab31585ebf` trước khi tách nhánh.
 
 ## Phân công đề xuất
 
@@ -27,5 +27,16 @@
 - Báo cáo tuần 3 dẫn về evidence module và nêu rõ hạn chế mô hình/chưa có validation người học nếu vẫn còn.
 
 **Điều kiện lịch:** nếu W2 không có vertical slice kiểm được, gate 02/10 phải thu hẹp hoặc dời theo quyết định của người dùng.
+
+## Lượt triển khai 02/10
+
+| Lane thực hiện | Task local | Người review | Evidence |
+| --- | --- | --- | --- |
+| Luna pipeline | W3-TASK-001/002: coordinator, SQLite report, rollback/restart | Codex | [raw-pipeline](../sdd/features/w3-local-integration/evidence/raw-pipeline.md) |
+| Luna app | W3-TASK-003/004/007: local CLI, auth/consent/UI và browser QA | Codex | [raw-app](../sdd/features/w3-local-integration/evidence/raw-app.md) |
+| Luna speech | W3-TASK-005/006: ASR/VAD adapters, scorer robustness, CI | Codex | [raw-speech-fix-01](../sdd/features/w3-local-integration/evidence/raw-speech-fix-01.md) |
+| Codex lead | W3-TASK-008: review, verification độc lập, docs/manifest/AI log | Thắng nghiệm thu cuối | [Evidence Manifest](../sdd/features/w3-local-integration/evidence/evidence-manifest.md) |
+
+Task IDs trên là local traceability; không tạo Jira keys hoặc giờ công giả. Phân công owner Thắng/Sang/Nguyên trong kế hoạch gốc được giữ để đối chiếu; automation không được xem là xác nhận giờ làm của từng người. [Local run guide](../local-run.md) cung cấp lệnh chạy demo và cấu hình offline. Không push/deploy từ lượt này; remote CI, calibration/validation trên người học và phê duyệt học thuật chỉ ghi khi có evidence/authorization thực.
 
 Hồ sơ tổng hợp theo rubric: [docs/evidence/](../evidence/README.md). Khi có artifact mới, cập nhật manifest TC tương ứng và dẫn về evidence module.

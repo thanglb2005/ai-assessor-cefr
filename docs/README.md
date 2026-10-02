@@ -4,8 +4,10 @@
 | --- | --- | --- |
 | `../AGENTS.md`, `../ANTIGRAVITY.md`, `../.agents/skills/sdd-antigravity-orchestrator/` | Một bộ quy tắc/skill SDD dùng chung cho cả ba người và điểm vào Antigravity | Dùng bản trong repo, không dựa vào skill cài riêng trên từng máy |
 | `plan/three-week-roadmap.md` | Tổng quan 3 tuần và các quyết định còn mở | Dẫn tới ba kế hoạch tuần riêng |
-| `plan/week-01.md`, `week-02.md`, `week-03.md` | Kế hoạch/record theo tuần | W1 DONE; W2 chưa xác minh; W3 DRAFT |
+| `plan/week-01.md`, `week-02.md`, `week-03.md` | Kế hoạch/record theo tuần | W1 DONE; W2 có implementation/evidence theo từng module; W3 review/verification local |
 | `sdd/modules/<slug>/` | SDD độc lập theo 8 module M01–M08 | Mỗi module có Prompt Log, Evidence Manifest, Review Records và Status local |
+| `sdd/features/w3-local-integration/` | Scope tích hợp W3, ba lane Luna, Codex review | Quyền implement trực tiếp từ Thắng; formal verdict PENDING |
+| `local-run.md` | Cài đặt, CLI/demo, cấu hình model local và restart | Audio/model/DB ngoài Git; không tự tải weights khi chạy |
 | `sdd/prompt-log.md` | Chỉ mục log prompt của 8 module | Prompt thật nằm trong prompts/ của từng module |
 | `evidence/` | Hồ sơ minh chứng theo rubric và checklist 12 mục | Dẫn tới artifact gốc, không nhân đôi số liệu |
 | `design/week-01/` | Hai bản hình sơ đồ lớp do nhóm đưa vào | Dùng bản sáng để review; bản tối là biến thể trình bày |
@@ -39,4 +41,4 @@ Trước khi sử dụng báo cáo tuần 1 làm căn cứ nghiệm thu, cần r
 
 ## Prompt Antigravity và evidence
 
-Bộ hồ sơ nộp theo rubric nằm tại [docs/evidence/](evidence/README.md); M06 Diagnostic Report là chức năng tạo báo cáo cho một bài nói. Hồ sơ rubric có thư mục riêng cho TC1, TC2.1–TC2.7, TC3–TC6 và hồ sơ quy trình. Skill SDD quy định prompt, raw report, evidence và review thuộc scope module. Xem [chỉ mục Prompt Log](sdd/prompt-log.md), rồi mở prompts/prompt-log.md và evidence/evidence-manifest.md của module tương ứng. Prompt phải được lưu thành file và ghi log trước khi bàn giao; bản chat hoặc lời nhắc dùng skill không tự lưu file. Status module dẫn tới Prompt ID/evidence/review mới nhất. Hiện các module có bộ SDD W2 bản nháp nhưng vẫn ở Phase 01 DRAFT; chưa có prompt triển khai nào được phát hành.
+Bộ hồ sơ nộp theo rubric nằm tại [docs/evidence/](evidence/README.md); M06 Diagnostic Report tạo báo cáo cho một bài nói. Hồ sơ rubric có thư mục riêng cho TC1, TC2.1–TC2.7, TC3–TC6 và hồ sơ quy trình. Prompt, raw report, evidence và review nằm trong scope/module. Xem [chỉ mục Prompt Log](sdd/prompt-log.md) và [W3 Prompt Log](sdd/features/w3-local-integration/prompts/prompt-log.md). Prompt phải được lưu thành file và ghi log trước khi bàn giao. Status từng module/scope dẫn tới record mới nhất; W3 không tự thay nghiệm thu W2 đang PENDING. Workbook `evidence/tc2-3-ai-usage/AI Prompt Log.xlsx`, sheet Thắng, ghi prompt thực tế của lượt W3.
