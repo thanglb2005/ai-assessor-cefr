@@ -1,6 +1,6 @@
 # Prompt Log — chỉ mục
 
-Prompt và evidence chính thức thuộc scope root của từng module. File này chỉ dẫn đường, không thay log/Status local. Hiện chưa có prompt Antigravity nào được phát hành.
+Prompt và evidence chính thức thuộc scope root của từng module/feature. File này chỉ dẫn đường, không thay log/Status local. Trạng thái phát hành đọc từ log của từng scope; W3 dùng subagents Luna theo chỉ dẫn trực tiếp của Thắng.
 
 | Module | Prompt Log | Evidence Manifest | Status |
 | --- | --- | --- | --- |
@@ -12,5 +12,8 @@ Prompt và evidence chính thức thuộc scope root của từng module. File n
 | M06 | [prompts/M06](modules/m06-diagnostic-report/prompts/prompt-log.md) | [evidence/M06](modules/m06-diagnostic-report/evidence/evidence-manifest.md) | [status/M06](modules/m06-diagnostic-report/07-status.md) |
 | M07 | [prompts/M07](modules/m07-teacher-review/prompts/prompt-log.md) | [evidence/M07](modules/m07-teacher-review/evidence/evidence-manifest.md) | [status/M07](modules/m07-teacher-review/07-status.md) |
 | M08 | [prompts/M08](modules/m08-identity-storage-admin/prompts/prompt-log.md) | [evidence/M08](modules/m08-identity-storage-admin/evidence/evidence-manifest.md) | [status/M08](modules/m08-identity-storage-admin/07-status.md) |
+| W3 integration | [prompts/W3](features/w3-local-integration/prompts/prompt-log.md) | [evidence/W3](features/w3-local-integration/evidence/evidence-manifest.md) | [status/W3](features/w3-local-integration/07-status.md) |
 
 Quy trình: Phase 05 APPROVED → lưu prompt file và log trong module → xác minh fingerprint → bàn giao Antigravity → lưu raw report và evidence trong module → Codex review actual diff → cập nhật Status. Bản chat đơn thuần không tự tạo file prompt hoặc evidence.
+
+Ngoại lệ W3 02/10/2026: Thắng trực tiếp authorize triển khai/ủy nhiệm ba Luna, Codex review và branch local. Formal verdict chưa có không được ghi APPROVED. Prompt gốc, amendments và corrections đã lưu file/Excel trước dispatch; workbook sheet Thắng là log AI chính của lượt này.
