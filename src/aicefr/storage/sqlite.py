@@ -346,20 +346,42 @@ class SQLiteStore:
         return self._response_from_row(row)
 
     def claim_queued_response(self, response: ResponseRecord) -> ResponseRecord:
-        return self.update_response_status(
-            response.response_id,
-            expected_revision=response.revision,
-            expected_status=ResponseStatus.QUEUED,
-            status=ResponseStatus.RUNNING,
-            status_reason=None,
-            event=AuditEvent(
-                event_id=uuid.uuid4().hex,
-                actor_id="system-pipeline",
-                action="pipeline_started",
-                object_id=response.response_id,
-                recorded_at=datetime.now().astimezone(),
-            ),
-        )
+        """CAS-claim a queued row only when the submitted provenance still matches."""
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                """UPDATE responses SET status=?, status_reason=NULL, revision=revision+1
+                WHERE response_id=? AND owner_id=? AND task_id=? AND task_version=?
+                AND blob_id=? AND sha256=? AND size_bytes=? AND revision=? AND status=?""",
+                (
+                    ResponseStatus.RUNNING,
+                    response.response_id,
+                    response.owner_id,
+                    response.task_id,
+                    response.task_version,
+                    response.blob.blob_id,
+                    response.blob.sha256,
+                    response.blob.size_bytes,
+                    response.revision,
+                    ResponseStatus.QUEUED,
+                ),
+            )
+            if cursor.rowcount != 1:
+                raise ConcurrentResponseUpdate("response provenance or revision is stale")
+            self._audit(
+                connection,
+                AuditEvent(
+                    event_id=uuid.uuid4().hex,
+                    actor_id="system-pipeline",
+                    action="pipeline_started",
+                    object_id=response.response_id,
+                    recorded_at=datetime.now().astimezone(),
+                ),
+            )
+            row = connection.execute(
+                "SELECT * FROM responses WHERE response_id=?", (response.response_id,)
+            ).fetchone()
+        assert row is not None
+        return self._response_from_row(row)
 
     def list_audit(self) -> tuple[AuditEvent, ...]:
         rows = self.connection.execute("SELECT * FROM audit ORDER BY rowid").fetchall()
