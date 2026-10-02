@@ -1,20 +1,22 @@
 # W3 — Prompt Log
 
-Prompts are saved before dispatch; full text at the linked file. Executor: Codex subagent gpt-6-luna per Thắng's direct instruction. Root Codex owns review. This log does not imply acceptance.
+Ngày 02/10/2026. Mọi prompt đầy đủ đã được lưu file và Excel **trước khi dispatch**. Executor là ba subagents `gpt-6-luna` theo yêu cầu trực tiếp của Thắng; root Codex review actual code và tự chạy final checks. Base revision/fingerprint/file boundary nằm trong từng prompt; amendments/notes cùng correction attempt không tạo nghiệm thu mới.
 
-| Prompt ID | Task IDs | Executor / branch | Base / fingerprint | Status |
-| --- | --- | --- | --- | --- |
+| Prompt ID / full text | W3-TASK | Executor branch | Trạng thái |
+| --- | --- | --- | --- |
+| [W3-PROMPT-001](W3-PROMPT-001-pipeline.md) | 001,002 | gpt-6-luna / feat/W3-pipeline | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-002](W3-PROMPT-002-app.md) | 003,004 | gpt-6-luna / feat/W3-app | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-003](W3-PROMPT-003-speech.md) | 005,006 | gpt-6-luna / feat/W3-speech | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-001-AMEND-01](W3-PROMPT-001-AMEND-01.md) | 001,002 | gpt-6-luna / feat/W3-pipeline | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-001-AMEND-02](W3-PROMPT-001-AMEND-02.md) | 001,002 | gpt-6-luna / feat/W3-pipeline | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-003-FIX-01](W3-PROMPT-003-FIX-01.md) | 005,006 | gpt-6-luna / feat/W3-speech | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-001-FIX-01](W3-PROMPT-001-FIX-01.md) | 001,002 | gpt-6-luna / feat/W3-pipeline | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-002-FIX-01](W3-PROMPT-002-FIX-01.md) | 003,004,007 | gpt-6-luna / feat/W3-app-review | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-002-FIX-01-NOTE-01](W3-PROMPT-002-FIX-01-NOTE-01.md) | 007 | gpt-6-luna / feat/W3-app-review | DISPATCHED sau lưu file/Excel |
+| [W3-PROMPT-002-FIX-01-NOTE-02](W3-PROMPT-002-FIX-01-NOTE-02.md) | 003,004,007 | gpt-6-luna / feat/W3-app-review | DISPATCHED sau lưu file/Excel |
 
-Excel main log: [AI Prompt Log.xlsx](../../../../evidence/tc2-3-ai-usage/AI%20Prompt%20Log.xlsx), sheet Thắng. Local worktrees/commits only, no push.
+[User audio reply](W3-USER-002-audio-rights.md) ghi đúng trả lời “có quyền”: RECORDED, không phải prompt dispatch, không xác nhận model path/ground truth/acceptance.
 
-| W3-PROMPT-001 | W3-TASK-001, W3-TASK-002 | gpt-6-luna / feat/W3-pipeline | 7bb327b / fingerprint trong prompt | DISPATCHED sau lưu file/Excel |
-| W3-PROMPT-002 | W3-TASK-003, W3-TASK-004 | gpt-6-luna / feat/W3-app | 7bb327b / fingerprint trong prompt | DISPATCHED sau lưu file/Excel |
-| W3-PROMPT-003 | W3-TASK-005, W3-TASK-006 | gpt-6-luna / feat/W3-speech | 7bb327b / fingerprint trong prompt | DISPATCHED sau lưu file/Excel |
-| W3-PROMPT-001-AMEND-01 | W3-TASK-001,W3-TASK-002 | gpt-6-luna / affected migration regression | baseline trong prompt | DISPATCHED sau lưu file/Excel |
-| W3-PROMPT-001-AMEND-02 | W3-TASK-001,W3-TASK-002 | gpt-6-luna / schema regression expectations | baseline trong prompt | DISPATCHED sau lưu file/Excel |
-| W3-PROMPT-003-FIX-01 | W3-TASK-005,W3-TASK-006 | gpt-6-luna / bundled correction ASR provenance và deterministic VAD tests | baseline trong prompt | DISPATCHED sau lưu file/Excel |
-| W3-PROMPT-001-FIX-01 | W3-TASK-001,W3-TASK-002 | gpt-6-luna / bundled correction transactional pipeline và failure evidence | baseline trong prompt | DISPATCHED sau lưu file/Excel |
-| W3-PROMPT-002-FIX-01 | W3-TASK-003,W3-TASK-004,W3-TASK-007 | gpt-6-luna / bundled correction app auth consent và browser QA | baseline trong prompt | DISPATCHED sau lưu file/Excel |
-| W3-USER-002-audio-rights | W3-TASK-005 | Thắng / xác nhận quyền sử dụng audio | reply thực tế 02/10/2026 | RECORDED user reply; không phải prompt agent |
-| W3-PROMPT-002-FIX-01-NOTE-01 | W3-TASK-007 | gpt-6-luna / review observations trong QA correction đang chạy | baseline trong prompt | SAVED before dispatch |
-| W3-PROMPT-002-FIX-01-NOTE-02 | W3-TASK-003,W3-TASK-004,W3-TASK-007 | gpt-6-luna / dependency baseline update, không che old Silero failure | baseline trong prompt | SAVED before dispatch |
+Excel chính: [AI Prompt Log.xlsx](../../../../evidence/tc2-3-ai-usage/AI%20Prompt%20Log.xlsx), sheet **Thắng**, rows 18–29 cho user instruction, 10 dispatched prompt/amendment/correction/notes và audio reply. Cột tool dùng `Codex` đúng summary formulas; `gpt-6-luna` ghi trong activity/full prompt. Giữ rows lịch sử và sheets Sang/Nguyên/Tổng hợp; không thêm fake Jira key/giờ công. [Audit full text và workbook](../evidence/final/ai-log-audit.json).
+
+Source/results/review: [Evidence Manifest](../evidence/evidence-manifest.md), [Review](../reviews/review-01.md), [Final Verification](../08-final-verification.md). Tất cả branch/commits local; không push/deploy. User verdict PENDING.

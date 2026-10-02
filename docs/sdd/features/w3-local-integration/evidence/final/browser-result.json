@@ -1,0 +1,29 @@
+{
+  "result": "PASS",
+  "viewport_checks": 11,
+  "desktop_viewport": "1280x800",
+  "mobile_viewport": "390x844",
+  "observed_http_statuses": [
+    200,
+    303,
+    403,
+    404
+  ],
+  "expected_denial_statuses": [
+    403,
+    404
+  ],
+  "audio_mime_and_sha256_verified": true,
+  "response_count_after_withdrawal": 1,
+  "console_error_count": 0,
+  "failed_request_count": 0,
+  "external_request_count": 0,
+  "screenshots_sha256": {
+    "browser-qa-desktop-student-report.png": "5c34409b7ad872eee257da8624e0e87e544ddb6a7d05ab23497bd5a39a1a2411",
+    "browser-qa-desktop-teacher-review.png": "6b305a3a5cc0c9a0c1e291d42d0b75eb2e8c57925650244a03dfe3acba02e07c",
+    "browser-qa-mobile-student-upload.png": "6fbf017044d5a18fbec3d629b9359f5eaeb1e10c3c9ed00917c2c3ac4038a49d",
+    "browser-qa-mobile-teacher-detail.png": "e87650491f2e2889cee9731d76e8205002c18169c453dcf64670f579a658d795"
+  },
+  "generated_audio_sha256": "72ad0f4e1e0dc50a87b7ccf4e803e4b3f04a69c98b4ada33de3db59bdc643d1f",
+  "asr_vad_real_smoke": "NOT_RUN; QC REVIEW bypasses ASR/VAD model execution"
+}

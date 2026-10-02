@@ -28,4 +28,3 @@ Each implementation prompt was saved in scope, copied to its isolated worktree, 
 - Speech: 077da2ddbf9d18bdd92d48ed0d434619ee942398cbc3656b7400662205490881.
 
 Each worktree includes baseline AI log/prompt metadata changes that agents must not commit; these are managed and committed by root. Executor gpt-6-luna; root Codex reviews actual commits. User acceptance PENDING.
-

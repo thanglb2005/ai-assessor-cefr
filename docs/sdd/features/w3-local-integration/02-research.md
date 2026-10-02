@@ -18,4 +18,3 @@ Dùng stdlib WSGI/SQLite và existing service contracts; không thêm production
 ## Rủi ro
 
 SQLite single-process demo phải chạy server tuần tự; report/review cùng connection cần transaction-aware put, không mở nested BEGIN. Không claim real ASR smoke từ mocked engines. Product/data-governance decisions ngoài scope giữ pending.
-

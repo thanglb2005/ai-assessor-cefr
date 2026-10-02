@@ -1,0 +1,11 @@
+usage: python -m aicefr.local [-h] {init-demo,serve} ...
+
+Ứng dụng chấm nói local
+
+positional arguments:
+  {init-demo,serve}
+    init-demo        Tạo một tài khoản fixture local
+    serve            Chạy giao diện local trên loopback
+
+options:
+  -h, --help         show this help message and exit

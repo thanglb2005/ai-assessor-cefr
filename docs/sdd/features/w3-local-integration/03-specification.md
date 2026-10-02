@@ -27,4 +27,3 @@ Login/logout issue HttpOnly SameSite session cookie; unsafe cookie requests requ
 ## Error and recovery
 
 Configuration/model paths validate before use; path traversal/symlink escapes fail closed. Model artifact hash/provenance not relaxed. Optional dependency missing never triggers network download. Reopening runtime restores accounts, sessions, consent, report, queue and final teacher result. Browser QA checks critical journeys at desktop/mobile without making up screenshots.
-

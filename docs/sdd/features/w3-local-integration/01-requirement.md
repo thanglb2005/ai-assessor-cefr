@@ -11,7 +11,7 @@ RESEARCH MODE: RUN — khảo sát revision hiện hành và API chính thức c
 
 ## Authorization (Quyền triển khai)
 
-Thắng trực tiếp yêu cầu: “bạn hãy promt r gửi cho các subagent luna 6 đi làm task hết của w3 đi, promt gì thì lưu vào các file theo chuẩn quy trình AI log, bạn là người reviewcode, tạo nhánh rieegn nha”. Đây là quyền triển khai, delegation bằng Luna và local branch/commit cho lượt này, thay executor và giới hạn read-only subagents của skill. Codex giữ vai trò reviewer. Không diễn giải chỉ dẫn thành các verdict APPROVED lịch sử hoặc nghiệm thu; các verdict cuối vẫn PENDING. Không có quyền push/deploy.
+Thắng trực tiếp yêu cầu: “bạn hãy promt r gửi cho các subagent luna 6 đi làm task  hết của w3 đi, promt gì thì lưu vào các file theo chuẩn quy trình AI log, bạn là người reviewcode, tạo nhánh rieegn nha”. Đây là quyền triển khai, delegation bằng Luna và local branch/commit cho lượt này, thay executor và giới hạn read-only subagents của skill. Codex giữ vai trò reviewer. Không diễn giải chỉ dẫn thành các verdict APPROVED lịch sử hoặc nghiệm thu; các verdict cuối vẫn PENDING. Không có quyền push/deploy.
 
 ## Requirement và Acceptance Criteria
 
@@ -28,4 +28,3 @@ Thắng trực tiếp yêu cầu: “bạn hãy promt r gửi cho các subagent 
 Giữ overall score/band và 5 coverage rows; Interaction=null/insufficient_evidence. Local demo chỉ dùng fixture/account giả danh. Ngưỡng QC demo phải ghi test/demo-only, cấu hình runtime thật truyền tường minh. Không chọn retention/export/delete policy, encryption, consent hay dữ liệu người học thật; không training/fine-tune, đổi band map, cloud hay production. ASR thật cần weight local + audio có quyền; không tải model/audio tự động.
 
 USER VERDICT (nghiệm thu): PENDING.
-

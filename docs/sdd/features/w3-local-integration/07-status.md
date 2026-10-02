@@ -1,23 +1,30 @@
 # W3 — Status
 
 SCOPE ID/TYPE/ROOT: W3 / feature / docs/sdd/features/w3-local-integration/
-Current phase: 07 — Codex review/corrections, authorized directly by Thắng, 02/10/2026.
-Operating mode: Standard artifacts + explicit executor/delegation override.
+Current phase: 07/08 technical review và verification đã hoàn tất; package 09 đã chuẩn bị, user verdict PENDING.
+Operating mode: Standard artifacts + direct user override cho Luna implementation và Codex review.
 Base source revision: 2b428ceea9e4459f3235d4ce67f10bab31585ebf
+Final product source revision: ffb325cc5ba8127f8c76a137a53e15a3dc0599b0
+Last evidence HEAD before final documentation: 6ae8b4060f0fa189d7f9a18dbe63c41c214c412e
 Integration branch: feat/W3-local-integration
-Specification/Test Plan/Plan/Tasks versions: v0.1
-Prompt/evidence/review paths: prompts/, evidence/, reviews/
+Specification/Test Plan/Plan versions: v0.1; Tasks cập nhật implementation thực tế.
 User-modified files on entry: none.
-Baseline: without model path 189 passed, 10 skipped; with hash-verified internal Ridge artifact AICEFR_MODEL_DIR set, 199 passed, 0 skipped. Ruff src/tests PASS.
-Research: RUN — existing contracts + official local-engine API verification.
-Implementation authority: latest user request quoted in 01-requirement; permits writing subagents, branch/local commits, setup/tests and corrections.
-Phase 01/03/04/05 formal verdicts: PENDING; implementation uses explicit latest direct instruction, not invented sign-off.
-Phase 07/08/09 verdicts: PENDING.
-Current Task: W3-TASK-001–008; initial implementation integrated, bundled corrections/browser QA in progress.
-WORKSPACE FINGERPRINT: <SELF>
-Fingerprint: per isolated worktree/prompt, sdd-workspace-v2, no exclusions; see prompts/prompt-log.md.
-Next action: resolve review findings, independently run browser/local ASR smoke and final required checks.
-Intermediate integration regression: 236 passed, 0 skipped with pinned external Ridge artifact at 80c6707; not final acceptance evidence.
-Real ASR smoke: RUNNING — user confirmed audio use rights; four pinned Whisper files verified outside Git; optional CPU ASR/VAD dependencies imported successfully. Actual result to be recorded after execution.
-Data boundary: generated fixture/accounts; real-data policies deferred.
+Research: RUN — source/contracts và API chính thức của local adapters đã đối chiếu.
+Implementation authority: latest user request trong 01-requirement; permits writing Luna subagents, local branch/commits, setup/tests và corrections.
+Phase 01/03/04/05/07/08/09 formal verdicts: PENDING; không ghi APPROVED thay Thắng.
+Current tasks: W3-TASK-001–008 IMPLEMENTED, technical checks PASS, task acceptance PENDING.
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL
+USER VERDICT: PENDING
+WORKSPACE FINGERPRINT: ac30965ba60e1e27d1c57a1504e971c2caf07a4e83facaf5151feb66824f3e3c
+
+Fingerprint dùng `sdd-workspace-v2` cho snapshot hồ sơ cuối trước commit, HEAD `6ae8b40`; metadata files là Status và Final Verification, không thêm exclusions. Đây là snapshot trước commit docs, không phải fingerprint của HEAD sau commit. [Final Verification](08-final-verification.md) ghi source/test/script/workflow subtree IDs để kiểm chứng source không đổi sau các commit evidence/docs.
+
+Baseline: 189 passed/10 skipped không có model path; 199 passed/0 skipped với pinned Ridge. Final regression: **265 passed/0 skipped/0 failed** với artifact; **254 passed/11 skipped/0 failed** không có artifact path. M02: 94.74% line/89.36% branch; M08: 97.27% line/88.71% branch, đạt policy 90/85. Global 91.58% line/78.67% branch là số đo, không tạo global gate mới.
+
+Browser: Codex rerun Chromium desktop/mobile, 11 DOM/viewport checks PASS, không console error/failed/external request; có ảnh và hashes. Real smoke: local WAV qua factory→QC→Whisper→Silero→Ridge→SQLite report COMPLETED/ESTIMATED, 151 grounded comments/0 invalid evidence; restart/session/logout PASS. MP3 adapter sample có native decoder warnings; giữ limitation tại evidence, không nhận là clean MP3 run. WER/CEFR accuracy/calibration chưa đo.
+
+Prompt/evidence/review: [Prompt Log](prompts/prompt-log.md), [Evidence Manifest](evidence/evidence-manifest.md), [Review](reviews/review-01.md), [Final Verification](08-final-verification.md), [Acceptance](09-acceptance.md).
+Data boundary: fixture accounts/generated browser audio; actual local smoke dùng audio được Thắng xác nhận có quyền. Không commit raw audio/model/session/database; không push/deploy. Remote CI NOT_RUN; real learner governance và học thuật nằm ngoài scope local integration.
+Next action: Thắng review package và ghi verdict; không còn implementation/check bắt buộc đang chạy.
 Last updated: 02/10/2026 Asia/Ho_Chi_Minh.

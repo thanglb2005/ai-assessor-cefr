@@ -1,0 +1,29 @@
+{
+  "python": "3.12.3",
+  "platform": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "packages": {
+    "numpy": "2.5.3",
+    "pydantic": "2.13.5",
+    "soundfile": "0.14.0",
+    "soxr": "1.1.0",
+    "torch": "2.11.0+cpu",
+    "torchaudio": "2.11.0+cpu",
+    "faster-whisper": "1.2.1",
+    "ctranslate2": "4.8.2",
+    "silero-vad": "6.2.1",
+    "pytest": "9.1.1",
+    "pytest-cov": "7.1.0",
+    "coverage": "7.16.2",
+    "ruff": "0.16.10",
+    "playwright": "1.63.0",
+    "openpyxl": "3.1.5"
+  },
+  "libsndfile": "1.2.2",
+  "chromium": "153.0.8010.12",
+  "venv": "/tmp/aicefr-w3-venv",
+  "browser_cache": "/tmp/aicefr-w3-browsers",
+  "whisper_directory": "/tmp/aicefr-w3-models/faster-whisper-small",
+  "ridge_sha256": "7cdeb2a04aa0db770d52d6ff20b49cc371b9cb690f0ace89e5233b5d65bb521a",
+  "whisper_revision": "536b0662742c02347bc0e980a01041f333bce120",
+  "source_revision": "ffb325cc5ba8127f8c76a137a53e15a3dc0599b0"
+}
