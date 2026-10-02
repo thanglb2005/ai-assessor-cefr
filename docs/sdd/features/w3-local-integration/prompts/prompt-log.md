@@ -16,3 +16,4 @@ Excel main log: [AI Prompt Log.xlsx](../../../../evidence/tc2-3-ai-usage/AI%20Pr
 | W3-PROMPT-001-FIX-01 | W3-TASK-001,W3-TASK-002 | gpt-6-luna / bundled correction transactional pipeline và failure evidence | baseline trong prompt | DISPATCHED sau lưu file/Excel |
 | W3-PROMPT-002-FIX-01 | W3-TASK-003,W3-TASK-004,W3-TASK-007 | gpt-6-luna / bundled correction app auth consent và browser QA | baseline trong prompt | DISPATCHED sau lưu file/Excel |
 | W3-USER-002-audio-rights | W3-TASK-005 | Thắng / xác nhận quyền sử dụng audio | reply thực tế 02/10/2026 | RECORDED user reply; không phải prompt agent |
+| W3-PROMPT-002-FIX-01-NOTE-01 | W3-TASK-007 | gpt-6-luna / review observations trong QA correction đang chạy | baseline trong prompt | SAVED before dispatch |
