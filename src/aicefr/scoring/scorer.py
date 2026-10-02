@@ -8,6 +8,7 @@ nghiệm, `teacher_verified=False` cho đến khi giảng viên xác nhận (M07
 from __future__ import annotations
 
 import logging
+import math
 from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
@@ -114,11 +115,19 @@ class RidgeScorer:
         # Bước 3: transcript phải OK.
         if transcript.status is not AsrStatus.OK:
             return self._not_evaluated(features, tuple(transcript.reasons))
+        if (len(art.scale) != len(art.feature_order)
+                or any(not math.isfinite(value) or value <= 0 for value in art.scale)):
+            return self._not_evaluated(features, (ReasonCode.MODEL_ARTIFACT_INVALID,))
         # Bước 4: provenance.
         mismatches = provenance_mismatches(features, art)
         if mismatches:
             return self._not_evaluated(features, mismatches)
+        names = features.names()
+        if names != art.feature_order or len(set(names)) != len(names):
+            return self._not_evaluated(features, (ReasonCode.FEATURE_VERSION_MISMATCH,))
         values = {v.name: v.value for v in features.values}
+        if any(value is not None and not math.isfinite(value) for value in values.values()):
+            return self._not_evaluated(features, (ReasonCode.FEATURE_NOT_COMPUTABLE,))
         # Bước 5: không đặc trưng nào None.
         if any(values[name] is None for name in art.feature_order):
             return self._not_evaluated(features, (ReasonCode.FEATURE_NOT_COMPUTABLE,))
@@ -140,6 +149,8 @@ class RidgeScorer:
             )
         # Bước 7–8: điểm, band, near-boundary.
         score = predict(values, art)
+        if not math.isfinite(score):
+            return self._not_evaluated(features, (ReasonCode.MODEL_ARTIFACT_INVALID,))
         near = near_boundary(score, art.band_thresholds, art.boundary_margin)
         return Assessment(
             response_id=features.response_id,

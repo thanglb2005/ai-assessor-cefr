@@ -136,7 +136,7 @@ class FeatureExtractor:
         if transcript_ok:
             measures.update(text_features(transcript.words, duration))
             n_words = len(normalize_tokens(transcript.words))
-        segments = self._segments(audio)
+        segments = self._segments(audio, transcript.response_id)
         if segments is None:
             measures.update(dict.fromkeys(VAD_FEATURES, _NOT_COMPUTABLE))
         else:
@@ -146,14 +146,14 @@ class FeatureExtractor:
                 measures[name] = _NOT_COMPUTABLE
         return measures
 
-    def _segments(self, audio: DecodedAudio) -> list[tuple[float, float]] | None:
+    def _segments(self, audio: DecodedAudio, response_id: str) -> list[tuple[float, float]] | None:
         """None khi không có VAD hoặc VAD lỗi — không dùng VAD dự phòng."""
         if self._vad is None:
             return None
         try:
             return list(self._vad.segments(audio.samples, audio.sample_rate_hz))
         except Exception:
-            log.exception("VAD %s lỗi", self._vad.name)
+            log.warning("VAD lỗi response_id=%s status=FEATURES_INCOMPLETE", response_id)
             return None
 
     def _value(self, name: str, measure: Measure) -> FeatureValue:

@@ -33,18 +33,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Bỏ qua khi repo chưa có pyproject.toml
-        if: hashFiles('pyproject.toml') == ''
-        run: echo "Chưa có pyproject.toml (SCRUM-14) nên chưa có test để chạy."
       - uses: actions/setup-python@v5
-        if: hashFiles('pyproject.toml') != ''
         with:
           python-version: "3.11"
       - name: Cài đặt
-        if: hashFiles('pyproject.toml') != ''
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[dev]" || pip install -e . pytest pytest-cov
+          pip install -e ".[dev]"
       - name: Chạy test (không gồm smoke)
-        if: hashFiles('pyproject.toml') != ''
-        run: python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch --cov-report=term-missing
+        run: python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch --cov-report=term-missing --cov-report=json:coverage.json
+      - name: Ruff
+        run: ruff check src tests scripts
