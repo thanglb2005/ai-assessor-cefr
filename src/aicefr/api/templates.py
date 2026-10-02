@@ -21,11 +21,16 @@ def render_upload_form(error: str | None = None) -> str:
     error_html = ""
     if error:
         error_html = f'<p role="alert">{escape(error)}</p>'
-    return """<!doctype html>
+    return (
+        """<!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><title>Nộp bài nói</title></head>
-<body><main><h1>Nộp bài nói</h1>""" + error_html + """
+<body><main><h1>Nộp bài nói</h1>"""
+        + error_html
+        + """
 <p>Kết quả là ước lượng phục vụ học tập và có thể cần giảng viên duyệt.</p>
-<form method="post" action="/api/student/responses" enctype="multipart/form-data">
+<p>Chỉ tiếp tục khi bạn đã đồng ý xử lý dữ liệu cho bài này.</p>
+<p>Có thể rút lại đồng ý tại <a href="/student/consent">trang đồng ý</a>.</p>
+<form method="post" action="/student/responses" enctype="multipart/form-data">
   <label for="task-id">Mã bài</label><input id="task-id" name="task_id" required>
   <label for="task-version">Phiên bản bài</label>
   <input id="task-version" name="task_version" required>
@@ -34,7 +39,36 @@ def render_upload_form(error: str | None = None) -> str:
   <label for="audio">Tệp âm thanh</label>
   <input id="audio" name="audio" type="file" accept="audio/*" required>
   <button type="submit">Nộp bài</button>
-</form></main></body></html>"""
+</form>"""
+        + render_logout_form()
+        + "</main></body></html>"
+    )
+
+
+def render_login(error: str | None = None) -> str:
+    message = f'<p role="alert">{escape(error)}</p>' if error else ""
+    return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Đăng nhập</title></head>
+<body><main><h1>Đăng nhập</h1>{message}<form method="post" action="/login">
+<label for="actor-id">Tài khoản</label>
+<input id="actor-id" name="actor_id" required autocomplete="username">
+<label for="password">Mật khẩu</label>
+<input id="password" name="password" type="password" required autocomplete="current-password">
+<button type="submit">Đăng nhập</button></form></main></body></html>"""
+
+
+def render_consent(version: str, active: bool, demo: bool) -> str:
+    state = "Bạn đã đồng ý phiên bản hiện tại." if active else "Bạn chưa đồng ý phiên bản hiện tại."
+    warning = "<p><strong>Trình diễn local với dữ liệu giả.</strong></p>" if demo else ""
+    return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đồng ý xử lý dữ liệu</title></head>
+<body><main><h1>Đồng ý xử lý dữ liệu</h1>{warning}<p>{state}</p>
+<p>Phiên bản nội dung: {escape(version)}. Bạn có thể rút lại đồng ý bất cứ lúc nào.</p>
+<form method="post" action="/student/consent/accept"><button type="submit">Đồng ý</button></form>
+<form method="post" action="/student/consent/withdraw">
+<button type="submit">Rút lại đồng ý</button></form>
+<p><a href="/student/upload">Nộp bài</a></p>{render_logout_form()}</main></body></html>"""
 
 
 def render_student_status(status: StudentStatus) -> str:
@@ -48,7 +82,19 @@ def render_student_status(status: StudentStatus) -> str:
 <title>Trạng thái bài nộp</title></head><body><main>
 <h1>Trạng thái bài nộp</h1><dl><dt>Mã bài nộp</dt><dd>{escape(status.response_id)}</dd>
 <dt>Trạng thái</dt><dd>{escape(status.status.value)}</dd></dl>{reason}{report_link}
-</main></body></html>"""
+{render_logout_form()}</main></body></html>"""
+
+
+def render_notice(title: str, message: str) -> str:
+    return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{escape(title)}</title></head>
+<body><main><h1>{escape(title)}</h1><p role="alert">{escape(message)}</p>
+<p><a href="/login">Đăng nhập</a></p></main></body></html>"""
+
+
+def render_logout_form() -> str:
+    return '<form method="post" action="/logout"><button type="submit">Đăng xuất</button></form>'
 
 
 def render_report(report: DiagnosticReport) -> str:
@@ -73,7 +119,7 @@ def render_report(report: DiagnosticReport) -> str:
 <h1>Báo cáo chẩn đoán</h1><p>{verification}</p><p>{overall_label}: {escape(overall)}</p>
 {teacher_result}
 <p>Interaction: insufficient_evidence</p><h2>Coverage</h2><ul>{coverage}</ul>
-</main></body></html>"""
+{render_logout_form()}</main></body></html>"""
 
 
 def _coverage_row(criterion: str, coverage: float | None) -> str:
@@ -87,7 +133,34 @@ def render_review_queue(candidates: tuple[ReviewCandidate, ...]) -> str:
         rows = "<li>Không có bài cần duyệt.</li>"
     return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
 <title>Hàng đợi giảng viên</title></head><body><main>
-<h1>Hàng đợi giảng viên</h1><ul>{rows}</ul></main></body></html>"""
+<h1>Hàng đợi giảng viên</h1><ul>{rows}</ul>{render_logout_form()}</main></body></html>"""
+
+
+def render_review_detail(candidate: ReviewCandidate, report: DiagnosticReport | None) -> str:
+    if report is None:
+        report_html = "<p>Báo cáo chưa sẵn sàng.</p>"
+    else:
+        report_html = render_report(report)
+    action_form = ""
+    if candidate.state.value in {"PENDING", "IN_REVIEW"}:
+        path_id = quote(candidate.response_id, safe="")
+        action_form = f"""<form method="post" action="/teacher/reviews/{path_id}/decision">
+<input type="hidden" name="expected_revision" value="{candidate.revision}">
+<label for="decision">Quyết định</label><select id="decision" name="action">
+<option value="APPROVE">Duyệt</option><option value="OVERRIDE">Sửa band</option>
+<option value="REJECT">Từ chối</option></select>
+<label for="final-band">Band cuối khi override</label><select id="final-band" name="final_band">
+<option value="">Không áp dụng</option><option value="A2">A2</option>
+<option value="B1">B1</option><option value="B2">B2</option></select>
+<label for="reason">Lý do</label><textarea id="reason" name="reason"></textarea>
+<button type="submit">Lưu quyết định</button></form>"""
+    return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>Duyệt bài</title></head>
+<body><main><h1>Duyệt bài</h1><p>Trạng thái: {escape(candidate.state.value)}</p>
+<p>Revision: {candidate.revision}</p>{report_html}
+<p><a href="/teacher/reviews/{quote(candidate.response_id, safe="")}/audio">Nghe audio</a></p>
+{action_form}<p><a href="/teacher/reviews">Quay lại hàng đợi</a></p>
+{render_logout_form()}</main></body></html>"""
 
 
 def _review_row(candidate: ReviewCandidate) -> str:
@@ -109,5 +182,7 @@ def _review_row(candidate: ReviewCandidate) -> str:
 <option value="B2">B2</option></select></label>
 <label>Lý do <textarea name="reason"></textarea></label>
 <button type="submit">Lưu quyết định</button></form>"""
+    audio = f'<p><a href="/teacher/reviews/{path_id}/audio">Nghe audio</a></p>'
+    detail = f'<p><a href="/teacher/reviews/{path_id}">Xem báo cáo và duyệt</a></p>'
     return f"""<li><p>{response_id} — {escape(candidate.state.value)}
-(revision {revision})</p>{controls}</li>"""
+(revision {revision})</p>{detail}{audio}{controls}</li>"""
