@@ -23,6 +23,8 @@ Mỗi prompt ghi một dòng trong sheet của người thực hiện: Thắng, 
 
 Ba dòng mẫu `abc` đã được xóa nội dung ngày 25/09/2026 để không bị tính như prompt thật. Các bản ghi khởi tạo ngày 25/09 được giữ; lượt W3 02/10 ghi thêm user instruction, prompt gốc, amendments/corrections và xác nhận quyền audio vào sheet Thắng, với full text và file evidence. Tool column dùng `Codex` để summary formulas hiện có đếm đúng; executor `gpt-6-luna` và vai trò Codex review ghi trong activity/prompt. Không ghi giờ công hay hoạt động của Sang/Nguyên thay họ. Chỉ dùng số liệu sau khi mỗi dòng có prompt/evidence thật; templates chưa có ngày không được tính như prompt thực.
 
+Ngày 02/10/2026, Thắng xác nhận tám prompt Codex W2 `W2-P01–W2-P08` đã được sử dụng thực tế ngày **28/09/2026**. Các hàng 10–17 trong sheet Thắng đã bỏ nhãn `MẪU`/`CHƯA GỬI`, dùng tool `Codex` và điền ngày 28/09/2026; giữ nguyên nội dung prompt. Yêu cầu đính chính được ghi ở hàng 30 với ngày nhận yêu cầu 02/10/2026.
+
 ## Còn thiếu / cần xác minh
 
 Lượt W3 dùng Luna, không giả mạo prompt Antigravity. Link Jira cho local W3 Task IDs và tệp AI rules có nguồn gốc W1 chưa có để xác minh. Bộ rule/skill trong repo là bản dùng chung cho W2; authority override W3 ghi rõ tại Requirement, không thay log hay user acceptance.
