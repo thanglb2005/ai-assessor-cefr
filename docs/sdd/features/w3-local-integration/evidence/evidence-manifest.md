@@ -6,3 +6,5 @@
 
 Raw reports, commands/logs, browser evidence and final verification are added as measured. Nothing here constitutes user acceptance.
 
+
+| W3-EV-MODEL-BASE | 199 passed, 0 skipped with external pinned Ridge artifact; no source/model copy | Measured 02/10/2026 |
