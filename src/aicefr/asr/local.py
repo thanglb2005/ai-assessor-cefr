@@ -2,11 +2,27 @@
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 from typing import Any
 
 from aicefr.asr.service import EngineResult, ModelUnavailableError, RawWord
 from aicefr.contracts import DecodedAudio
+
+_SMALL_MODEL_SHA256 = {
+    "model.bin": "3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671",
+    "config.json": "b55496ac7940a7ae47d2c01eab40edfd8701feec1229d9cce3b40014383fb828",
+    "tokenizer.json": "fb7b63191e9bb045082c79fd742a3106a12c99513ab30df4a0d47fa6cb6fd0ab",
+    "vocabulary.txt": "34ce3fe1c5041027b3f8d42912270993f986dbc4bb34cf27f951e34a1e453913",
+}
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 class FasterWhisperEngine:
@@ -29,11 +45,20 @@ class FasterWhisperEngine:
     def _load(self) -> Any:
         if self._model is not None:
             return self._model
-        required = ("model.bin", "config.json", "tokenizer.json", "preprocessor_config.json")
+        required = tuple(_SMALL_MODEL_SHA256)
         if not self.model_dir.is_dir() or any(
             not (self.model_dir / name).is_file() for name in required
         ):
             raise ModelUnavailableError("local ASR model directory unavailable")
+        if self.weight_name == "small":
+            try:
+                if any(
+                    _sha256_file(self.model_dir / name) != expected
+                    for name, expected in _SMALL_MODEL_SHA256.items()
+                ):
+                    raise ModelUnavailableError("local ASR model provenance mismatch")
+            except OSError as exc:
+                raise ModelUnavailableError("local ASR model unavailable") from exc
         try:
             from importlib.metadata import version as package_version
 

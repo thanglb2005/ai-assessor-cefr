@@ -19,8 +19,8 @@ class SileroVadEngine:
     def __init__(self, *, threshold: float = 0.5, min_silence_ms: int = 150) -> None:
         if not math.isfinite(threshold) or not 0 < threshold < 1:
             raise ValueError("threshold must be finite and between 0 and 1")
-        if isinstance(min_silence_ms, bool) or min_silence_ms <= 0:
-            raise ValueError("min_silence_ms must be positive")
+        if type(min_silence_ms) is not int or min_silence_ms <= 0:
+            raise ValueError("min_silence_ms must be a positive integer")
         self.threshold = float(threshold)
         self.min_silence_ms = int(min_silence_ms)
         self._model: Any = None
@@ -32,6 +32,8 @@ class SileroVadEngine:
     def _load(self) -> Any:
         if self._model is not None:
             return self._model
+        if self.version == "unavailable":
+            raise VadUnavailableError("Silero package version unavailable")
         try:
             from silero_vad import get_speech_timestamps, load_silero_vad
             model = load_silero_vad(onnx=False)

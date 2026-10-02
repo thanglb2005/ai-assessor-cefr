@@ -3,15 +3,28 @@ from types import ModuleType, SimpleNamespace
 import pytest
 from tests.asr.fixtures import audio
 
-from aicefr.asr.local import FasterWhisperEngine
+from aicefr.asr.local import _SMALL_MODEL_SHA256, FasterWhisperEngine
 from aicefr.asr.service import AsrService, ModelUnavailableError
-from aicefr.contracts import QCResult, QCStatus
+from aicefr.contracts import QCResult, QCStatus, ReasonCode
 
 
 def model_dir(tmp_path):
-    for filename in ("model.bin", "config.json", "tokenizer.json", "preprocessor_config.json"):
+    for filename in ("model.bin", "config.json", "tokenizer.json", "vocabulary.txt"):
         (tmp_path / filename).write_text("fixture")
     return tmp_path
+
+
+def mock_small_hashes(monkeypatch, mismatched=()):
+    calls = []
+
+    def fake_hash(path):
+        calls.append(path.name)
+        if path.name in mismatched:
+            return "0" * 64
+        return _SMALL_MODEL_SHA256[path.name]
+
+    monkeypatch.setattr("aicefr.asr.local._sha256_file", fake_hash)
+    return calls
 
 
 def test_missing_local_model_refuses_without_import_or_download(tmp_path):
@@ -22,6 +35,7 @@ def test_missing_local_model_refuses_without_import_or_download(tmp_path):
 
 def test_local_adapter_passes_offline_english_word_timestamp_options(monkeypatch, tmp_path):
     seen = {}
+    mock_small_hashes(monkeypatch)
 
     class Model:
         def transcribe(self, samples, **kwargs):
@@ -60,6 +74,52 @@ def test_unknown_weight_identity_is_preserved_for_refusal(monkeypatch, tmp_path)
     monkeypatch.setattr("importlib.metadata.version", lambda _: "1.0")
     result = FasterWhisperEngine(model_dir(tmp_path), weight_name="small.en").transcribe(audio())
     assert result.weight_name == "Systran/faster-whisper-small.en"
+
+
+def test_small_weight_hash_mismatch_refuses_before_engine_import(monkeypatch, tmp_path):
+    model_dir(tmp_path)
+    calls = mock_small_hashes(monkeypatch, mismatched=("model.bin",))
+    with pytest.raises(ModelUnavailableError, match="provenance mismatch"):
+        FasterWhisperEngine(tmp_path).transcribe(audio())
+    assert calls == ["model.bin"]
+
+
+def test_small_weight_is_hashed_once_and_loaded_once(monkeypatch, tmp_path):
+    hashes = mock_small_hashes(monkeypatch)
+    loads = []
+
+    class Model:
+        def transcribe(self, *_args, **_kwargs):
+            return iter(()), object()
+
+    module = ModuleType("faster_whisper")
+    module.WhisperModel = lambda *_args, **_kwargs: (loads.append(True) or Model())
+    monkeypatch.setitem(__import__("sys").modules, "faster_whisper", module)
+    monkeypatch.setattr("importlib.metadata.version", lambda _: "1.2.3")
+    engine = FasterWhisperEngine(model_dir(tmp_path))
+    engine.transcribe(audio())
+    engine.transcribe(audio())
+    assert hashes == list(_SMALL_MODEL_SHA256)
+    assert len(loads) == 1
+
+
+def test_noncanonical_identity_never_gets_small_alias(monkeypatch, tmp_path):
+    model_dir(tmp_path)
+    module = ModuleType("faster_whisper")
+    module.WhisperModel = lambda *_args, **_kwargs: SimpleNamespace(
+        transcribe=lambda *_args, **_kwargs: (iter(()), object())
+    )
+    monkeypatch.setitem(__import__("sys").modules, "faster_whisper", module)
+    monkeypatch.setattr("importlib.metadata.version", lambda _: "1.2.3")
+    engine = FasterWhisperEngine(tmp_path, weight_name="small.en")
+    raw = engine.transcribe(audio())
+    assert raw.weight_name == "Systran/faster-whisper-small.en"
+    assert raw.weight_name != "Systran/faster-whisper-small"
+    transcript = AsrService(lambda: engine, trained_asr_model="whisper-small").transcribe(
+        "r-unknown", audio(), QCResult(status=QCStatus.PASS, qc_config_version="test")
+    )
+    assert transcript.asr_model is None
+    assert ReasonCode.ASR_VERSION_MISMATCH in transcript.reasons
 
 
 def test_asr_engine_exception_message_and_traceback_are_not_logged(caplog):

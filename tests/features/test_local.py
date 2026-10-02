@@ -1,3 +1,4 @@
+from importlib.metadata import PackageNotFoundError
 from types import ModuleType
 
 import numpy as np
@@ -49,10 +50,24 @@ def test_silero_rejects_noncontract_audio(values, rate):
         SileroVadEngine().segments(values, rate)
 
 
-def test_missing_silero_package_is_controlled_error(monkeypatch):
-    monkeypatch.setattr("aicefr.features.local.version", lambda _: "missing")
+def test_missing_silero_import_is_controlled_and_does_not_load_model(monkeypatch):
+    monkeypatch.setattr("aicefr.features.local.version", lambda _: "6.2.1")
+    monkeypatch.setitem(__import__("sys").modules, "silero_vad", None)
     engine = SileroVadEngine()
+    assert engine.version == "6.2.1"
     with pytest.raises(VadUnavailableError):
+        engine.segments(np.zeros(1024, dtype=np.float32), 16_000)
+
+
+def test_missing_silero_distribution_version_refuses_with_explicit_value(monkeypatch):
+    def package_missing(_name):
+        raise PackageNotFoundError
+
+    monkeypatch.setattr("aicefr.features.local.version", package_missing)
+    monkeypatch.setitem(__import__("sys").modules, "silero_vad", ModuleType("silero_vad"))
+    engine = SileroVadEngine()
+    assert engine.version == "unavailable"
+    with pytest.raises(VadUnavailableError, match="version unavailable"):
         engine.segments(np.zeros(1024, dtype=np.float32), 16_000)
 
 
@@ -61,3 +76,7 @@ def test_invalid_silero_configuration_rejected():
         SileroVadEngine(threshold=float("nan"))
     with pytest.raises(ValueError):
         SileroVadEngine(min_silence_ms=0)
+    with pytest.raises(ValueError):
+        SileroVadEngine(min_silence_ms=True)
+    with pytest.raises(ValueError):
+        SileroVadEngine(min_silence_ms=150.0)
