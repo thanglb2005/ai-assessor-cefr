@@ -117,4 +117,4 @@ Ngay tâm bậc B1 (3,25) xác suất sai band vẫn khoảng 1/3, vì B1 rộng
 - Chốt giữa B và C cùng lúc chốt metric cho Bản cam kết (W5–W6).
 - Kiểm lại EA-01 đến EA-05 trên bài sinh viên thật khi có nhãn giảng viên.
 
-**User decision:** PENDING.
+**User decision (03/10/2026, Sang):** Option A cho W4; chốt B hay C ở W5–W6 cùng metric Bản cam kết.
