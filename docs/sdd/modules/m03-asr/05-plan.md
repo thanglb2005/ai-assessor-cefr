@@ -39,11 +39,11 @@ Data flow, trạng thái, lỗi và reason code theo đúng [Specification](03-s
 | --- | --- | --- | --- | --- |
 | DEP-01 | `pyproject.toml`, layout `src/aicefr/` + `tests/`, `pytest`, `pytest-cov`, marker `smoke` | Thắng (Sang làm thay) | **Đã có** trên `main` a92fafe (PR #6, 26/09/2026) | — |
 | DEP-02 | Contract chung có `Word`, `Transcript`, `AsrStatus` theo M03 Spec và reason code `ASR_FAILED`, `ASR_EMPTY_TRANSCRIPT`, `ASR_HALLUCINATION`, `ASR_VERSION_MISMATCH` | Thắng (Sang làm thay) | **Đã có** — `src/aicefr/contracts.py` trên `main` a92fafe (PR #6, 26/09/2026) | — |
-| DEP-03 | M02 xác nhận DecodedAudio 16 kHz mono (M03-O-002) | Thắng | **Chưa xác nhận** | TASK-002 |
+| DEP-03 | M02 xác nhận DecodedAudio 16 kHz mono (M03-O-002) | Thắng | **Đạt** 28/09/2026 — PR #11 (M02-TASK-001) đưa `audio/decoder.py` lên `main`: mọi audio ra 16 kHz mono (`_OUTPUT_RATE_HZ = 16_000`, resample bằng soxr) | TASK-002 |
 | DEP-04 | Dependency `faster-whisper` trong `pyproject.toml` | Thắng (Sang làm thay) | **Đã có** — extra `asr` trong `pyproject.toml` | — |
 | DEP-05 | Weight `whisper-small` dạng CTranslate2 tải có chủ đích, ghi nguồn/license/SHA-256 — **thao tác của Sang**, không giao Antigravity | Sang | **Đã làm** — [M03-EV-001](evidence/evidence-manifest.md#m03-ev-001--weight-whisper-small-ctranslate2), 26/09/2026 | — |
 | DEP-06 | Audio có quyền dùng cho smoke, đặt ngoài repo | Sang | Chưa có | TASK-002 |
-| DEP-07 | `trained_with.asr_model` từ loader của M05 | Sang (M05-TASK-002) | Chưa có | TASK-004 (có thể dùng dict giả trong test) |
+| DEP-07 | `trained_with.asr_model` từ loader của M05 | Sang (M05-TASK-002) | **Đã có** — M05-TASK-002 nghiệm thu 27/09/2026 | TASK-004 (có thể dùng dict giả trong test) |
 
 ## Required checks mỗi task
 
@@ -85,6 +85,8 @@ Type hints cho mọi API public; hàm thuần tách khỏi I/O; ngưỡng là h�
 | 9. Evidence/report và quyền rõ | PASS |
 
 **CODEX CHECK RESULT:** PASS cho TASK-001, 003, 004 (kiểm lại 26/09/2026 sau khi DEP-01/02 có trên `main`); TASK-002 vẫn BLOCKED bởi DEP-03, DEP-06. **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05; chỉ phát prompt cho task READY, TASK-002 chờ đủ dependency. **User verdict Phase 05:** APPROVED 26/09/2026 (Sang).
+
+**Cập nhật dependency 03/10/2026:** DEP-03 đã đạt (PR #11). M03-TASK-002 chỉ còn BLOCKED bởi DEP-06 (audio có quyền dùng). Bản kiểm Definition of Ready ở trên giữ nguyên như đã ghi ngày 26/09/2026.
 
 ## Lịch sử phiên bản
 
