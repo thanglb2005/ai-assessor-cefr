@@ -18,7 +18,7 @@ CHECKLIST RESULT: scope/traceability PASS; design PASS; functionality PASS sau c
   simplicity PASS; responsibility/coupling PASS; duplication/dead code PASS; naming PASS;
   comments/docs MINOR (README, FINDING-05); style PASS (ruff); error/security PASS (log không lộ transcript/vector,
   artifact chỉ JSON có hash ghim); tests PASS (hành vi, biên, regression) sau FINDING-01
-FINDINGS: FINDING-07-A1-01 MAJOR RESOLVED, FINDING-07-A1-02 MINOR RESOLVED, FINDING-07-A1-03 MINOR OPEN, FINDING-07-A1-07 NIT RESOLVED
+FINDINGS: FINDING-07-A1-01 MAJOR RESOLVED, FINDING-07-A1-02 MINOR RESOLVED, FINDING-07-A1-03 MINOR RESOLVED 03/10/2026 (SCRUM-50), FINDING-07-A1-07 NIT RESOLVED
 CHECKS RERUN BY CODEX: `pytest -q -m "not smoke"` → 123 passed, 10 skipped;
   `AICEFR_MODEL_DIR=… python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch` → 133 passed, 99 %;
   `ruff check src tests`, `ruff format --check src tests` sạch
@@ -58,8 +58,8 @@ LOCATION: asr/service.py (QC REJECT) → scoring/scorer.py bước 3
 OBSERVED EVIDENCE: QC `REJECT` → Transcript `NOT_RUN`, reasons rỗng → Assessment `NOT_EVALUATED` không kèm reason nào.
 RISK/FAILED AC: M06 không có lý do để hiển thị. Spec M03 chưa định reason cho nhánh này; mã lỗi QC thuộc M02.
 REQUIRED CHANGE: Follow-up: owner M02 (Thắng) công bố reason code QC trong contract, M03 chép sang Transcript.
-STATUS: ACCEPTED_RISK — chủ dự án chấp nhận để làm follow-up (26/09/2026)
-RESOLUTION EVIDENCE: —
+STATUS: RESOLVED 03/10/2026 — ban đầu ACCEPTED_RISK (26/09/2026); M02 đã công bố mã `QC_*` trong contract, M03 chép `QCResult.reasons` sang Transcript (SCRUM-50)
+RESOLUTION EVIDENCE: M03-EV-003 (`asr/service.py`, M03-TEST-005 mở rộng); chờ owner review lại trong PR
 ```
 ```text
 FINDING ID: FINDING-07-A1-07

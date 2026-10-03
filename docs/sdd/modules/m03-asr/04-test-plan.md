@@ -16,7 +16,7 @@
 | M03-TEST-002 | FR-001 / AC-001 | Unit | Một word không có probability | Word đó `prob is None` (không phải `0.0`); các word khác giữ giá trị — regression REF-03 |
 | M03-TEST-003 | FR-002 / AC-001 | Unit (failure) | Engine raise exception; engine timeout | `status=ASR_FAILED`, reason `ASR_FAILED`, `words` rỗng |
 | M03-TEST-004 | FR-002 / AC-001 | Unit (invalid) | Bốn biến thể timestamp: `start<0`; `end<start`; word sau bắt đầu trước word trước; `end > duration` | Mỗi biến thể → `ASR_FAILED`; không trả words |
-| M03-TEST-005 | FR-002 / AC-001 | Unit | QC `REJECT` | `status=NOT_RUN`; spy xác nhận engine **không** được gọi |
+| M03-TEST-005 | FR-002 / AC-001 | Unit | QC `REJECT` có hai lý do | `status=NOT_RUN`; spy xác nhận engine **không** được gọi; `reasons` bằng đúng `QCResult.reasons`, giữ thứ tự; nối sang M05 ra `NOT_EVALUATED` với đúng lý do QC |
 | M03-TEST-006 | FR-001 / AC-002 | Unit (failure) | Thư mục model không tồn tại | `NOT_RUN` + `ASR_FAILED`; không có lời gọi tải (loader giả ghi nhận 0 lần tải) |
 | M03-TEST-007 | FR-002 / AC-001 | Unit (boundary) | Transcript rỗng khi QC `PASS` | `UNRELIABLE` + `ASR_EMPTY_TRANSCRIPT` |
 | M03-TEST-008 | FR-002 / AC-001 | Unit (boundary) | Lặp một token 6 lần / 7 lần liên tiếp | 6 → `OK`; 7 → `UNRELIABLE` + `ASR_HALLUCINATION` |
@@ -70,3 +70,4 @@ Command, thời điểm, exit code, số test pass/fail/skip, coverage report, r
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu (5 ca) |
 | v0.2 | 26/09/2026 | **APPROVED** Phase 04. Theo Spec v0.2: 16 unit + 2 smoke, ca biên cho từng luật hallucination, regression REF-03/F-04 |
+| v0.2.1 | 03/10/2026 | Mở rộng M03-TEST-005 theo Spec v0.2.1 (lý do QC đi theo transcript). Chờ owner xác nhận ở Phase 07 |
