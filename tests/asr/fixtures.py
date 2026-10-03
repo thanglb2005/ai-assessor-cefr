@@ -26,8 +26,8 @@ def audio(duration=60.0):
                         duration_s=duration, audio_sha256="b" * 64)  # fmt: skip
 
 
-def qc(status=QCStatus.PASS):
-    return QCResult(status=status, qc_config_version="qc-v1")
+def qc(status=QCStatus.PASS, reasons=()):
+    return QCResult(status=status, reasons=reasons, qc_config_version="qc-v1")
 
 
 class FakeAsrEngine:

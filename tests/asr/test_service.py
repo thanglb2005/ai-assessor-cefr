@@ -65,9 +65,43 @@ def test_qc_reject_does_not_call_engine():
     """M03-TEST-005."""
     eng = FakeAsrEngine()
     loader = CountingLoader(eng)
-    t = service(loader=loader).transcribe("r1", audio(), qc(QCStatus.REJECT))
+    rejected = qc(QCStatus.REJECT, (ReasonCode.QC_TOO_SHORT, ReasonCode.QC_SILENCE_REJECT))
+    t = service(loader=loader).transcribe("r1", audio(), rejected)
     assert t.status is AsrStatus.NOT_RUN
     assert loader.calls == 0 and eng.calls == 0
+    # Follow-up 07-A1-03: lý do QC đi theo transcript, giữ nguyên thứ tự.
+    assert t.reasons == (ReasonCode.QC_TOO_SHORT, ReasonCode.QC_SILENCE_REJECT)
+    assert (t.text, t.words) == ("", ())
+
+
+def test_qc_reject_reasons_reach_the_scorer(tmp_path):
+    """M03-TEST-005 (nối M05): bài QC REJECT ra NOT_EVALUATED kèm đúng lý do QC."""
+    import hashlib
+    import json
+
+    from aicefr.contracts import AssessmentStatus, FeatureSet
+    from aicefr.scoring.artifact import load_artifact
+    from aicefr.scoring.scorer import RidgeScorer
+
+    payload = {
+        "model_version": "fake", "feature_version": "v3", "unit_of_inference": "mot bai noi",
+        "trained_with": {"asr_model": "whisper-small"}, "feature_order": ["a"], "mean": [0.0],
+        "scale": [1.0], "coef": [0.0], "intercept": 3.0, "feature_lo": [0.0],
+        "feature_hi": [1.0], "ood_tolerance": 0.5,
+        "band_thresholds": {"A2_B1": 2.75, "B1_B2": 3.75}, "boundary_margin": 0.5,
+    }  # fmt: skip
+    path = tmp_path / "fake.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    art = load_artifact(path, hashlib.sha256(path.read_bytes()).hexdigest())
+    t = service().transcribe("r1", audio(), qc(QCStatus.REJECT, (ReasonCode.QC_TOO_SHORT,)))
+    fs = FeatureSet(
+        response_id="r1", values=(), feature_version="v3", asr_model=None,
+        vad_name=None, vad_version=None, vad_threshold=None, vad_min_silence_ms=None,
+        transcript_ref="r1", audio_sha256=t.audio_sha256,
+    )  # fmt: skip
+    a = RidgeScorer(artifact=art).score(fs, t)
+    assert a.status is AssessmentStatus.NOT_EVALUATED
+    assert a.reasons == (ReasonCode.QC_TOO_SHORT,)
 
 
 def test_qc_review_still_runs_engine():

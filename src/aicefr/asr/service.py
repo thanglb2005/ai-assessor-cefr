@@ -86,7 +86,8 @@ class AsrService:
             "audio_sha256": audio.audio_sha256,
         }
         if qc.status is QCStatus.REJECT:
-            return Transcript(status=AsrStatus.NOT_RUN, **base)
+            # Chép lý do QC của M02 để M05/M06 báo được vì sao bài không chấm.
+            return Transcript(status=AsrStatus.NOT_RUN, reasons=qc.reasons, **base)
         try:
             engine = self._load_engine()
         except ModelUnavailableError:
