@@ -52,7 +52,7 @@ Fact: `.gitignore` của repo có dòng `models/`, nên đường dẫn kiểu `
 | DEP-01 | Skeleton `pyproject.toml`/`tests/`, `pytest-cov` | Thắng (Sang làm thay) | **Đã có** trên `main` a92fafe (PR #6, 26/09/2026) | — |
 | DEP-02 | Contract chung có `Assessment`, `CriterionCoverage`, `Interaction`, `AssessmentStatus` theo M05 Spec; reason code hiện có + **mới** `FEATURE_VERSION_MISMATCH`, `MODEL_ARTIFACT_INVALID` | Thắng (Sang làm thay) | **Đã có** — `src/aicefr/contracts.py` | — |
 | DEP-03 | P05-D-001 được chốt | Sang | **Đã chốt** — Option B, 26/09/2026 | — |
-| DEP-04 | FeatureSet thật từ extractor | Sang (M04-TASK-002) | Chưa có | TASK-004 |
+| DEP-04 | FeatureSet thật từ extractor | Sang (M04-TASK-002) | **Đã có** — M04-TASK-002 nghiệm thu 27/09/2026 | TASK-004 |
 
 ## Required checks mỗi task
 
@@ -88,6 +88,8 @@ Prompt `prompts/`, raw report/coverage `evidence/`, review `reviews/`; Shared wo
 | 7. Dependency sẵn sàng | PASS — TASK-002 và 001 không còn dependency ngoài; TASK-004 làm sau M04-TASK-002 (DEP-04) |
 
 **CODEX CHECK RESULT:** PASS (kiểm lại 26/09/2026 sau khi DEP-01/02 có trên `main`). **CODEX RECOMMENDATION:** RECOMMEND APPROVAL Phase 05. **User verdict Phase 05:** APPROVED 26/09/2026 (Sang).
+
+**Cập nhật dependency 03/10/2026:** DEP-04 đã có; M05-TASK-004 đã implement, xem [M05-EV-003](evidence/evidence-manifest.md).
 
 ## Lịch sử phiên bản
 
