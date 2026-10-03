@@ -16,4 +16,4 @@
 
 Như [M03 Tasks](../m03-asr/06-tasks.md#handoff-và-hoàn-tất).
 
-**Trạng thái (26/09/2026):** TASK-001, 002 đã implement, chờ Phase 07; TASK-003 `BLOCKED` chờ DEP-03 (16 kHz) và DEP-06 (audio). **Phase 05 verdict:** APPROVED 26/09/2026 (Sang).
+**Trạng thái (03/10/2026):** TASK-001, 002 VERIFIED (nghiệm thu 27/09/2026). TASK-003 `BLOCKED` chỉ còn chờ DEP-06 (audio có quyền dùng); DEP-03 đạt 28/09/2026. **Phase 05 verdict:** APPROVED 26/09/2026 (Sang).

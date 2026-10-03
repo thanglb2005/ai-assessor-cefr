@@ -18,4 +18,4 @@
 - Mỗi task một prompt trong `prompts/` (mẫu `antigravity-handoff.md` §3), có base revision và fingerprint `sdd-workspace-v2`.
 - Task chỉ xong khi có actual diff, lệnh test/coverage chạy thật, Phase 07 review, Phase 08 trên revision cuối và user verdict.
 
-**Trạng thái (26/09/2026):** TASK-001, 003, 004 đã implement, chờ Phase 07; TASK-002 `BLOCKED` chờ DEP-03 (16 kHz) và DEP-06 (audio). **Phase 05 verdict:** APPROVED 26/09/2026 (Sang).
+**Trạng thái (03/10/2026):** TASK-001, 003, 004 VERIFIED (nghiệm thu 27/09/2026). TASK-002 `BLOCKED` chỉ còn chờ DEP-06 (audio có quyền dùng); DEP-03 đạt 28/09/2026. **Phase 05 verdict:** APPROVED 26/09/2026 (Sang).
