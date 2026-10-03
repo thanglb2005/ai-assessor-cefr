@@ -3,16 +3,16 @@
 | Mục | Trạng thái |
 | --- | --- |
 | Lifecycle | proposed |
-| Phase hiện tại | 09 — Acceptance APPROVED (W2); M05-TASK-004 ở Phase 06, chờ Phase 07 |
+| Phase hiện tại | 09 — Acceptance APPROVED: W2 (27/09/2026) và M05-TASK-004 (03/10/2026) |
 | Requirement | [01-requirement.md](01-requirement.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Research mode | **`RUN`** (chọn tại Phase 01); [02-research.md](02-research.md) review cùng Phase 03 |
 | Specification | [03-specification.md](03-specification.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · **APPROVED** 26/09/2026; task READY/BLOCKED theo dependency — xem 06-tasks.md |
 | Implementation | M05-TASK-002, M05-TASK-001 đã implement (Claude, theo yêu cầu chủ dự án); evidence [M05-EV-001, M05-EV-002](evidence/evidence-manifest.md). M05-TASK-004 implement 03/10/2026, evidence [M05-EV-003](evidence/evidence-manifest.md) |
-| Review | Phase 07 A1 **APPROVED** 26/09/2026, [review-log](reviews/review-log.md) |
-| Final Verification | Phase 08 evidence [M05-EV-P08](evidence/evidence-manifest.md) trên main 74afca9 — **APPROVED** 27/09/2026 |
-| Acceptance | Phase 09 **APPROVED** 27/09/2026 — nghiệm thu scope M05 cho W2 |
+| Review | Phase 07 A1 **APPROVED** 26/09/2026; A2 (M05-TASK-004) **APPROVED** 03/10/2026, [review-log](reviews/review-log.md) |
+| Final Verification | Phase 08 [M05-EV-P08](evidence/evidence-manifest.md) trên main 74afca9 — **APPROVED** 27/09/2026; [M05-EV-P08-A2](evidence/evidence-manifest.md) trên main ae72d57 — **APPROVED** 03/10/2026 |
+| Acceptance | Phase 09 **APPROVED** 27/09/2026 (W2) và 03/10/2026 (M05-TASK-004) — xong scope M05 của W3 |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
 ## Phase 01 record
@@ -150,10 +150,60 @@ VERIFIED/APPROVED BY: User (Sang)
 USER VERDICT AT: 27/09/2026
 ```
 
+## Đợt A2 — M05-TASK-004 (W3, 03/10/2026)
+
+```text
+PHASE RECORD ID: M05-07-A2
+PHASE: 07 — Implementation Review
+SUBJECT: M05-TASK-004 (SCRUM-29), review record 07-M05-A2
+CHECKS: verify evidence M05-EV-003 PASS; checklist code + test PASS
+FINDINGS: không có
+DEVIATIONS: Test Plan v0.2.1 (dòng 022) — cần user chấp nhận
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL — kèm chấp nhận Test Plan v0.2.1
+USER VERDICT: APPROVED — chấp nhận Test Plan v0.2.1
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 03/10/2026
+NEXT ACTION: Phase 08 trên main ae72d57 (ae72d57b03de0ae9333e8b549484d026feb3177c)
+```
+
+```text
+PHASE RECORD ID: M05-08-A2
+PHASE: 08 — Final Verification
+SUBJECT: M05-TASK-004 trên main ae72d57 (ae72d57b03de0ae9333e8b549484d026feb3177c), fingerprint 8835acf872d8c0ab…
+CHECKS: 0 failed trên final head; 11 skipped đều cần artifact thật (P05-D-001) và PASS khi có artifact
+  (203 passed); `aicefr.scoring` 100 % line/branch; M05-TEST-022 ↔ tests/scoring/test_integration_features.py;
+  CI run 37113044170 trên ae72d57, Python 3.11: 192 passed, 11 skipped
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL
+USER VERDICT: APPROVED — M05-TASK-004 chuyển Verified
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 03/10/2026
+NEXT ACTION: Phase 09 — Acceptance
+```
+
+| AC | Evidence bổ sung đợt A2 | Kết quả |
+| --- | --- | --- |
+| M05-AC-001 | Không đổi | ĐẠT |
+| M05-AC-002 | M05-TEST-022: FeatureSet thật từ M04 đi qua scorer, ngoài phân bố thì không có điểm (M05-EV-003, EV-P08-A2) | ĐẠT |
+| M05-AC-003 | M05-TEST-022 (b): VAD lệch đi từ M04 sang M05 vẫn không cho band | ĐẠT |
+
+**Error analysis W3 (SCRUM-53):** mục "Error analysis W3" trong [02-research.md](02-research.md); quyết định M05-O-004 = Option A cho W4, chốt B hay C ở W5–W6 cùng metric Bản cam kết.
+
+```text
+PHASE RECORD ID: M05-09-A2
+PHASE: 09 — Acceptance
+CODEX CHECK RESULT: PASS — 3/3 AC đạt; M05-TASK-001, 002, 004 Verified; TASK-003 WITHDRAWN
+CODEX RECOMMENDATION: RECOMMEND APPROVAL — nghiệm thu M05-TASK-004, đóng scope M05 của W3
+USER VERDICT: APPROVED — nghiệm thu M05-TASK-004; đóng scope M05 của W3
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 03/10/2026
+```
+
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
 
-- [Prompt Log](prompts/prompt-log.md): chưa phát prompt.
-- [Evidence Manifest](evidence/evidence-manifest.md): chưa có implementation/test evidence của repo dự án.
-- [Review Records](reviews/review-log.md): chưa có Phase 07 review.
+- [Prompt Log](prompts/prompt-log.md): chưa phát prompt Antigravity; mọi implementation do Claude làm theo yêu cầu chủ dự án, ghi trong Evidence Manifest.
+- [Evidence Manifest](evidence/evidence-manifest.md): evidence Phase 06 và Phase 08 của từng đợt.
+- [Review Records](reviews/review-log.md): Phase 07 A1 (26/09/2026), A2 (03/10/2026).
 - [Kế hoạch W2](../../../plan/week-02.md); [nguồn tài liệu](../../../sources/README.md).

@@ -1,12 +1,13 @@
 # M03 — Evidence Manifest (danh mục bằng chứng)
 
-**Hiện trạng (03/10/2026):** M03-EV-001 (weight ASR), M03-EV-002 (TASK-003, 004, 001) đã qua Phase 07–09. M03-EV-003 (follow-up 07-A1-03, SCRUM-50) mới ở Phase 06, chưa qua Phase 07. Báo cáo và hình W1 cấp dự án nằm ở docs/reports/week-01/ và docs/design/week-01/.
+**Hiện trạng (03/10/2026):** M03-EV-001 (weight ASR), M03-EV-002 (TASK-003, 004, 001) và M03-EV-003 (follow-up 07-A1-03, SCRUM-50) đều đã qua Phase 07–09; Final Verification ở M03-EV-P08 và M03-EV-P08-A2.
 
 | Evidence ID | Prompt ID / Task ID | Phase | Base/Head revision, fingerprint | Loại / file hoặc link | Check và kết quả thực tế | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- |
 | M03-EV-001 | SCRUM-21 (việc tay M03-O1 / DEP-05) | 05 — chuẩn bị dependency | Không áp dụng (tải ngoài repo, không đổi source) | Weight ASR, xem mục dưới | SHA-256 `model.bin` khớp giá trị LFS chính thức trên Hugging Face | RECORDED |
 | M03-EV-002 | M03-TASK-003, 004, 001 (Jira SCRUM-18, 19, 20); Claude implement theo yêu cầu chủ dự án | 06 | base `e92c1cf` trên `main` | `src/aicefr/asr/`, `tests/asr/`, xem mục dưới | Test ID 001–016 chạy thật; coverage `aicefr.asr` ≥ 99 % line/branch | RECORDED — chờ Phase 07 |
-| M03-EV-003 | Follow-up 07-A1-03 (Jira SCRUM-50); Claude implement theo yêu cầu chủ dự án, không qua prompt Antigravity | 06 | base `2b428ce` trên `main` | `src/aicefr/asr/service.py`, `tests/asr/test_service.py`, `tests/asr/fixtures.py`, xem mục dưới | M03-TEST-005 mở rộng chạy thật; `asr/service.py` 100 % line/branch | RECORDED — chưa qua Phase 07 |
+| M03-EV-003 | Follow-up 07-A1-03 (Jira SCRUM-50); Claude implement theo yêu cầu chủ dự án, không qua prompt Antigravity | 06 | base `2b428ce` trên `main` | `src/aicefr/asr/service.py`, `tests/asr/test_service.py`, `tests/asr/fixtures.py`, xem mục dưới | M03-TEST-005 mở rộng chạy thật; `asr/service.py` 100 % line/branch | VERIFIED — Phase 07–09 APPROVED 03/10/2026 |
+| M03-EV-P08-A2 | Follow-up 07-A1-03 (SCRUM-50) | 08 | main ae72d57 (ae72d57b03de0ae9333e8b549484d026feb3177c); fingerprint `8835acf872d8c0ab…` | Xem mục dưới | 192 passed + 11 skipped (CI), 203 passed (có artifact), 0 failed | APPROVED 03/10/2026 |
 
 Lưu tại đây raw report của Antigravity, command output/test/coverage, ảnh browser QA và final verification khi phát sinh. File lớn có thể lưu ngoài Git nhưng phải có link ổn định, checksum và quyền truy cập cho người review. Mỗi evidence gắn đúng Prompt ID, Task ID, AC/Test ID và revision. Redact secret/PII/audio/transcript thật; không ghi PASS cho lệnh chưa chạy. Cập nhật 07-status.md trỏ tới evidence mới nhất.
 
@@ -105,3 +106,22 @@ UT EVIDENCE
 | M03-TEST-005 (nối M05) | `test_qc_reject_reasons_reach_the_scorer`: `RidgeScorer` trả `NOT_EVALUATED` với reason `QC_TOO_SHORT` | PASS |
 
 **Ghi chú:** `process_audio` của M02 không gọi ASR khi QC không PASS, nên nhánh này chỉ chạy khi coordinator gọi M03 trực tiếp với kết quả REJECT. Sửa ở M03 để hợp đồng đúng dù coordinator gọi theo cách nào.
+
+## M03-EV-P08-A2 — Phase 08 Final Verification (follow-up 07-A1-03)
+
+```text
+UT EVIDENCE
+- Final head/fingerprint: main ae72d57 (ae72d57b03de0ae9333e8b549484d026feb3177c); sdd-workspace-v2 8835acf872d8c0abd3cc94e897723bc7a9c05fe3956400ee0b6bf577d7ab8af7
+  (232 file, git status sạch, không metadata file)
+- Test files và AC/Test ID mapping: tests/asr/test_service.py ↔ M03-TEST-005 (hai test); các Test ID khác không đổi
+- Command: env -u AICEFR_MODEL_DIR python -m pytest -q -m "not smoke"
+           AICEFR_MODEL_DIR=<thư mục artifact> python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch
+- Passed/failed/skipped: không artifact 192 passed, 11 skipped; có artifact 203 passed; 0 failed
+- Coverage metrics/policy/delta: `asr/service.py` 100 %, `aicefr.asr` 99–100 % line/branch — đạt TP-D-001
+- Coverage report path: ngoài repo (chạy trên máy Sang); tóm tắt ở đây
+- Critical uncovered branches/risk: Không có
+- Codex rerun: có — máy Sang (macOS 26.4, Python 3.12.14) và CI GitHub run 37113044170 trên ae72d57, Python 3.11: 192 passed, 11 skipped; ruff check sạch
+- CODEX CHECK RESULT: PASS
+- CODEX RECOMMENDATION: RECOMMEND APPROVAL
+- USER VERDICT: APPROVED (Sang, 03/10/2026)
+```

@@ -10,9 +10,9 @@
 | Test Plan | [04-test-plan.md](04-test-plan.md) · v0.2 · **APPROVED** 26/09/2026 |
 | Plan & Tasks | [05-plan.md](05-plan.md), [06-tasks.md](06-tasks.md) · v0.2 · **APPROVED** 26/09/2026; task READY/BLOCKED theo dependency — xem 06-tasks.md |
 | Implementation | M03-TASK-003, 004, 001 đã implement (Claude, theo yêu cầu chủ dự án); evidence [M03-EV-002](evidence/evidence-manifest.md). TASK-002 BLOCKED, chỉ còn chờ DEP-06 (audio có quyền dùng); DEP-03 đạt 28/09/2026 |
-| Review | Phase 07 A1 **APPROVED** 26/09/2026, [review-log](reviews/review-log.md) |
-| Final Verification | Phase 08 evidence [M03-EV-P08](evidence/evidence-manifest.md) trên main 74afca9 — **APPROVED** 27/09/2026 |
-| Acceptance | Phase 09 **APPROVED** 27/09/2026 — nghiệm thu phần đã làm (AC-001, AC-003); AC-002 và M03-TASK-002 để mở |
+| Review | Phase 07 A1 **APPROVED** 26/09/2026; A2 (follow-up 07-A1-03) **APPROVED** 03/10/2026, [review-log](reviews/review-log.md) |
+| Final Verification | Phase 08 [M03-EV-P08](evidence/evidence-manifest.md) trên main 74afca9 — **APPROVED** 27/09/2026; [M03-EV-P08-A2](evidence/evidence-manifest.md) trên main ae72d57 — **APPROVED** 03/10/2026 |
+| Acceptance | Phase 09 **APPROVED** 27/09/2026 và 03/10/2026 (follow-up 07-A1-03) — nghiệm thu phần đã làm (AC-001, AC-003); AC-002 và M03-TASK-002 để mở |
 | Prompt hiện hành | NONE ISSUED; base revision/fingerprint NOT_SET |
 
 ## Phase 01 record
@@ -149,10 +149,57 @@ VERIFIED/APPROVED BY: User (Sang)
 USER VERDICT AT: 27/09/2026
 ```
 
+## Đợt A2 — follow-up 07-A1-03 (W3, 03/10/2026)
+
+```text
+PHASE RECORD ID: M03-07-A2
+PHASE: 07 — Implementation Review
+SUBJECT: Follow-up 07-A1-03 (SCRUM-50), review record 07-M03-A2
+CHECKS: verify evidence M03-EV-003 PASS; checklist code + test PASS
+FINDINGS: 07-A2-01 NIT, 07-A2-02 MINOR liên module
+DEVIATIONS: Spec v0.2.1, Test Plan v0.2.1 — cần user chấp nhận
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL — kèm chấp nhận v0.2.1, NIT, và follow-up MINOR cho coordinator
+USER VERDICT: APPROVED — chấp nhận v0.2.1, NIT 07-A2-01 và follow-up 07-A2-02
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 03/10/2026
+NEXT ACTION: Phase 08 trên main ae72d57 (ae72d57b03de0ae9333e8b549484d026feb3177c)
+```
+
+```text
+PHASE RECORD ID: M03-08-A2
+PHASE: 08 — Final Verification
+SUBJECT: Follow-up 07-A1-03 trên main ae72d57 (ae72d57b03de0ae9333e8b549484d026feb3177c), fingerprint 8835acf872d8c0ab…
+CHECKS: 0 failed trên final head; `asr/service.py` 100 % line/branch; M03-TEST-005 ↔ tests/asr/test_service.py;
+  CI run 37113044170 trên ae72d57, Python 3.11: 192 passed, 11 skipped
+CODEX CHECK RESULT: PASS
+CODEX RECOMMENDATION: RECOMMEND APPROVAL
+USER VERDICT: APPROVED
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 03/10/2026
+NEXT ACTION: Phase 09 — Acceptance
+```
+
+| AC | Evidence bổ sung đợt A2 | Kết quả |
+| --- | --- | --- |
+| M03-AC-001 | M03-TEST-005 mở rộng: QC REJECT → NOT_RUN kèm lý do QC, engine không được gọi (M03-EV-003, EV-P08-A2) | ĐẠT |
+| M03-AC-002 | Không đổi — M03-TASK-002 chỉ còn chờ DEP-06 (audio có quyền dùng) | PENDING (AC cho phép trạng thái chờ) |
+| M03-AC-003 | Không đổi | ĐẠT |
+
+```text
+PHASE RECORD ID: M03-09-A2
+PHASE: 09 — Acceptance
+CODEX CHECK RESULT: PASS cho phần đã làm; FINDING-07-A1-03 RESOLVED; M03-TASK-002 vẫn BLOCKED
+CODEX RECOMMENDATION: RECOMMEND APPROVAL cho follow-up 07-A1-03; AC-002 và TASK-002 để mở
+USER VERDICT: APPROVED — nghiệm thu follow-up 07-A1-03; AC-002 và M03-TASK-002 để mở
+VERIFIED/APPROVED BY: User (Sang)
+USER VERDICT AT: 03/10/2026
+```
+
 **Lý do trạng thái:** chủ dự án yêu cầu chuẩn bị đầy đủ tài liệu W2 để review một lượt. Việc có file nháp không vượt checkpoint tuần tự của skill SDD; các phase vẫn phải được duyệt theo thứ tự trước implementation/handoff.
 
 
-- [Prompt Log](prompts/prompt-log.md): chưa phát prompt.
-- [Evidence Manifest](evidence/evidence-manifest.md): chưa có implementation/test evidence của repo dự án.
-- [Review Records](reviews/review-log.md): chưa có Phase 07 review.
+- [Prompt Log](prompts/prompt-log.md): chưa phát prompt Antigravity; mọi implementation do Claude làm theo yêu cầu chủ dự án, ghi trong Evidence Manifest.
+- [Evidence Manifest](evidence/evidence-manifest.md): evidence Phase 06 và Phase 08 của từng đợt.
+- [Review Records](reviews/review-log.md): Phase 07 A1 (26/09/2026), A2 (03/10/2026).
 - [Kế hoạch W2](../../../plan/week-02.md); [nguồn tài liệu](../../../sources/README.md).
