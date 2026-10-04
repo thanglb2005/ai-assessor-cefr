@@ -12,7 +12,7 @@ AI Usage Log, prompt gốc, mục đích dùng AI, file sinh ra, phần người
 | --- | --- | --- |
 | [AI Prompt Log.xlsx](AI%20Prompt%20Log.xlsx) | Mỗi người ghi prompt vào sheet Thắng, Sang hoặc Nguyên; sheet Tổng hợp đếm theo người và công cụ AI | Đang cập nhật |
 | [AI Usage Log](ai-usage-log.md) | Bốn bản ghi Codex lúc khởi tạo; prompt mới ghi trong Excel | Lịch sử |
-| [AI Usage Log của Sang W1–W3](sang/README.md) ([CSV đầy đủ](sang/ai-usage-log-sang-W1-W3.csv)) | Bản xuất 53 dòng từ ba tab Sang trong Google Sheet, mỗi dòng có PR/commit; kèm 7 lỗi của AI đã phát hiện và sửa, quy trình kiểm soát đầu ra AI | Đủ W1–W3 (04/10/2026) |
+| [AI Usage Log của Sang W1–W3](sang/README.md) ([CSV đầy đủ](sang/ai-usage-log-sang-W1-W3.csv)) | Bản xuất 55 dòng từ ba tab Sang trong Google Sheet, mỗi dòng có PR/commit; kèm 7 lỗi của AI đã phát hiện và sửa, quy trình kiểm soát đầu ra AI | Đủ W1–W3 (04/10/2026) |
 | [Prompt Log các module](../../sdd/prompt-log.md) | Log Antigravity theo scope | Chưa có prompt phát hành |
 | [AGENTS.md](../../../AGENTS.md) và [skill SDD chung](../../../.agents/skills/sdd-antigravity-orchestrator/SKILL.md) | Quy tắc/skill nhóm dùng từ bàn giao W2 | Đã lưu trong repo; không thay log prompt hay chứng minh file rule W1 |
 

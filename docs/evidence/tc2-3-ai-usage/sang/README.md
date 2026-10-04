@@ -8,8 +8,8 @@
 | --- | --- | ---: |
 | W1 (14–20/09) | [`Sang(Week 1)`](https://docs.google.com/spreadsheets/d/1CxQkn5DaPVDHiWztkcvAdlL1kD1P6JRxtN2zTIeMhOU/edit#gid=187665897) | 14 |
 | W2 (21–27/09) | [`Sang`](https://docs.google.com/spreadsheets/d/1CxQkn5DaPVDHiWztkcvAdlL1kD1P6JRxtN2zTIeMhOU/edit#gid=1592849438) | 17 |
-| W3 (28/09–04/10) | [`Sang(Week 3)`](https://docs.google.com/spreadsheets/d/1CxQkn5DaPVDHiWztkcvAdlL1kD1P6JRxtN2zTIeMhOU/edit#gid=1773459286) | 22 |
-| **Tổng** | | **53** |
+| W3 (28/09–04/10) | [`Sang(Week 3)`](https://docs.google.com/spreadsheets/d/1CxQkn5DaPVDHiWztkcvAdlL1kD1P6JRxtN2zTIeMhOU/edit#gid=1773459286) | 24 |
+| **Tổng** | | **55** |
 
 - **Bản đầy đủ:** [ai-usage-log-sang-W1-W3.csv](ai-usage-log-sang-W1-W3.csv), đủ 9 cột theo mẫu: ngày, người tạo, công cụ, phiên bản model, công việc, prompt, minh chứng, nội dung AI tạo ra, phần Sang sửa hoặc hoàn thiện.
 - **Dòng 28/09:** có ở cả tab `Sang` lẫn `Sang(Week 3)`; trong bản xuất chỉ tính một lần, vào W3.
@@ -89,7 +89,9 @@
 | 19 | 10/3/2026 | M03/M05 — merge PR W3 và lập hồ sơ Phase 07–09 đợt A2 | <https://github.com/thanglb2005/ai-assessor-cefr/pull/28> (commit 21cfbd4) |
 | 20 | 10/3/2026 | Repo gốc — merge chuỗi PR #1 → #4 | <https://github.com/ThanhSangLouis/ai-assessor-cefr/pull/1> → #4 (merge commit 00968bf, 45efe67, 57f8c96, 6784d7d) |
 | 21 | 10/3/2026 | Nghiên cứu — mô tả pipeline fine-tune các mô hình của đồ án | Tệp _bao-cao/pipeline-finetune.md (lưu nội bộ) |
-| 22 | 10/3/2026 | Chuẩn bị trình bày — nhật ký AI tuần 3 và slide trình bày sơ đồ lớp cho giảng viên hướng dẫn | <https://claude.ai/artifact/LSpMy9C45E9XKjLEiFgJkx> |
+| 22 | 10/3/2026 | Chuẩn bị trình bày — nhật ký AI tuần 3 và bộ slide sơ đồ lớp cho giảng viên hướng dẫn | <https://claude.ai/artifact/LSpMy9C45E9XKjLEiFgJkx> |
+| 23 | 10/4/2026 | Quản lý dự án — đọc email bộ môn và Rubric V2-1, soạn báo cáo tiến độ nộp bù W1–W3 | Tệp _bao-cao/bao-cao-tien-do-W1-W3-Sang.md (lưu nội bộ); Rubric V2-1: <https://docs.google.com/document/d/1pm4i8QKyQGpcG0xYNuwMi21oZoUkc2Jk> |
+| 24 | 10/4/2026 | AI log — bổ sung tab Sang(Week 1) và đưa AI log W1–W3 vào evidence của repo | <https://github.com/thanglb2005/ai-assessor-cefr/pull/29> (commit 4a15e19) |
 
 
 ## Lỗi của AI đã tự phát hiện và sửa (TC2.3)
