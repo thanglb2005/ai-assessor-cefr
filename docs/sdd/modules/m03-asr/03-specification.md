@@ -20,7 +20,7 @@
 
 ## Hành vi
 
-1. Chỉ chạy khi `QCResult.status ∈ {PASS, REVIEW}`; `REJECT` → `NOT_RUN`, không gọi engine.
+1. Chỉ chạy khi `QCResult.status ∈ {PASS, REVIEW}`; `REJECT` → `NOT_RUN`, không gọi engine, `reasons` = `QCResult.reasons` của M02 (chép nguyên, giữ thứ tự) để M05/M06 báo được lý do.
 2. Decode config khởi đầu (có version `asr-decode-v1`): `word_timestamps=true`, `language="en"`, `condition_on_previous_text=false`, `compression_ratio_threshold=2.4`, log-prob threshold `-1.0`, `no_speech_threshold=0.6` (Research F-02). Engine: faster-whisper (CTranslate2) model `small` cho mọi môi trường (M03-O-001); tham số riêng của engine (ví dụ `vad_filter`) ghi trong `asr-decode-v1` và evidence smoke.
 3. Giữ filler và thứ tự lời nói trong `text`/`words`; không chuẩn hóa, không thêm từ.
 4. Engine không trả probability cho một word → `prob = null` (không bao giờ 0.0 — REF-03).
@@ -46,6 +46,7 @@
 | Timestamp âm, `end < start`, không đơn điệu, vượt duration | `ASR_FAILED` | `ASR_FAILED` | Giữ diagnostic metadata, không giữ words |
 | Hallucination (bảng trên) | `UNRELIABLE` | `ASR_HALLUCINATION` | M04 không tính đặc trưng text (M03-FR-002); chuyển review |
 | Model không có local | `NOT_RUN` | `ASR_FAILED` | Owner tải có chủ đích, ghi evidence |
+| QC `REJECT` | `NOT_RUN` | Các mã `QC_*` của M02, chép từ `QCResult.reasons` | Sinh viên thu lại; M02 bảo đảm REJECT luôn có ít nhất một lý do |
 
 ## Bảo mật, riêng tư, accessibility
 
@@ -83,3 +84,4 @@
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu |
 | v0.2 | 26/09/2026 | **APPROVED** Phase 03. Theo Requirement v0.2: `whisper-small`, bảng ánh xạ identifier, `prob=null`, bộ phát hiện hallucination có ngưỡng, bảng lỗi; M03-O-001 chốt, M03-O-002 thành phụ thuộc M02 |
+| v0.2.1 | 03/10/2026 | Follow-up 07-A1-03 (SCRUM-50): QC `REJECT` chép `QCResult.reasons` sang Transcript; thêm dòng bảng lỗi. Không đổi FR/AC; chờ owner xác nhận ở Phase 07 |

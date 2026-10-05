@@ -84,3 +84,37 @@ Ngay tâm bậc B1 (3,25) xác suất sai band vẫn khoảng 1/3, vì B1 rộng
 | M05-REF-10 | Nhánh DeBERTa | scoring-audit | — | Nhánh nghiên cứu riêng, ngoài W2 | — | **REJECT** cho W2 |
 
 **CODEX CHECK RESULT:** fact/inference/option tách riêng. **User decision (26/09/2026):** M05-O-001 → Option A (giữ 0,5); M05-O-002 → Option A (không chia cửa sổ W2).
+
+## Error analysis W3 (SCRUM-53, 03/10/2026)
+
+**Cách làm.**
+- Dự đoán out-of-fold, GroupKFold 5 theo người nói, trên phần P3/P4 của tập dev S&I.
+- Mô hình dựng lại khớp tuyệt đối artifact `ridge_resp_v2` đang dùng.
+- Phân tích lỗi theo nhãn, band, phần thi, thời lượng, độ tin cậy ASR và tỉ lệ im lặng.
+- Đo hành vi của luật từ chối ngoài phân bố và luật biên band.
+- Thử giãn điểm hậu kỳ bằng CV lồng nhau.
+
+**Số liệu ở đâu.** Số liệu chi tiết là thống kê suy ra từ corpus. Theo license S&I, số liệu này chỉ lưu nội bộ cho tới khi CUP&A cho phép công bố, và người giữ là Sang. Mục này chỉ ghi kết luận định tính.
+
+| ID | Kết luận (định tính) | Hệ quả cho M05 |
+| --- | --- | --- |
+| EA-01 | Điểm bị co về giữa thang: bài yếu bị chấm cao, bài giỏi bị chấm thấp. Band thấp nhất hiếm khi được nhận ra; một phần đáng kể bài B1 bị đẩy lên B2 | Rủi ro lớn nhất với nhóm đích: người yếu nhận band cao hơn thực tế. Báo cáo người học phải nêu điểm là ước lượng thử nghiệm |
+| EA-02 | Lỗi nặng tập trung ở bài nói trôi chảy nhưng nhãn thấp, và bài ngắn nhưng nhãn cao | 18 đặc trưng đo lượng và độ trôi, không đo độ chính xác ngữ pháp, từ vựng, nội dung. Đây là giới hạn của tập đặc trưng, không sửa được bằng tinh chỉnh tham số |
+| EA-03 | Lỗi không phụ thuộc rõ vào thời lượng, độ tin cậy ASR hay tỉ lệ im lặng; P4 kém hơn P3 một chút | Lỗi mang tính hệ thống của mô hình, không do bài ghi xấu |
+| EA-04 | Bài bị luật ngoài phân bố từ chối đúng là bài mà mô hình chấm kém hơn. Phần bài được tự cho band (ngoài vùng biên ±`boundary_margin`) có độ chính xác band cao | Giữ luật OOD và luật biên (M05-O-001 Option A). Đổi lại, phần lớn bài phải qua giảng viên duyệt |
+| EA-05 | Giãn điểm hậu kỳ (khớp phương sai) giúp nhận ra band thấp tốt hơn nhưng tăng sai số trung bình và tăng số bài sai hai band. Hồi quy tuyến tính nhãn theo dự đoán gần như không đổi gì | Đánh đổi thiết kế, xem M05-O-004 |
+
+### Option cho M05-O-004 (bù co điểm về giữa thang)
+
+| Option | Mô tả | Ưu | Nhược |
+| --- | --- | --- | --- |
+| A | Giữ nguyên `ridge_resp_v2` và luật biên; ghi rõ EA-01, EA-02 là giới hạn | Không đổi code; phần tự cho band vẫn chính xác | Người yếu vẫn dễ được chấm cao khi bài ngoài vùng biên |
+| B | Mô hình mới có version riêng, kèm bước giãn điểm (khớp phương sai hoặc isotonic) học bằng CV lồng nhau | Nhận ra band thấp tốt hơn | Sai số trung bình tăng; phải hiệu chỉnh lại khoảng tin cậy, cập nhật Spec/Test Plan M05 |
+| C | Thêm đặc trưng độ chính xác (ngữ pháp, từ vựng theo CEFR) | Sửa đúng gốc EA-02 | Khối lượng lớn; phụ thuộc nhãn và license |
+
+**Đề xuất:**
+- **Option A** cho demo W4.
+- Chốt giữa B và C cùng lúc chốt metric cho Bản cam kết (W5–W6).
+- Kiểm lại EA-01 đến EA-05 trên bài sinh viên thật khi có nhãn giảng viên.
+
+**User decision (03/10/2026, Sang):** Option A cho W4; chốt B hay C ở W5–W6 cùng metric Bản cam kết.

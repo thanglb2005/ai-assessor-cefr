@@ -43,7 +43,7 @@ Cả ba vector nằm trong khoảng chấp nhận OOD. Đây là giá trị ki�
 | M05-TEST-019 | FR-001 / AC-001 | Unit | ART-FAKE có `scale = 0` cho một đặc trưng | Dùng 1 thay cho scale; không chia 0 |
 | M05-TEST-020 | FR-002 / AC-001 | Unit | Hàm tính coverage (gọi trực tiếp, vì Assessment có đặc trưng thiếu luôn là `NOT_EVALUATED`) với một đặc trưng fluency `None` | fluency = 0,80 (4/5) + `FEATURE_NOT_COMPUTABLE` trên dòng đó |
 | M05-TEST-021 | FR-001 / AC-001 | Unit (privacy) | `caplog` khi chấm `FS(mean)` có `response_id` | Log có `response_id`, status, reason, `model_version`; không có vector đặc trưng |
-| M05-TEST-022 | FR-001 / AC-002 | Integration (không model nặng) | FeatureSet do M04 dựng từ fixture chuẩn (M04 FX) → M05 trên ART-REAL | Chuỗi chạy không lỗi; kết quả `NOT_EVALUATED` + `OUT_OF_DISTRIBUTION` với **đúng một** đặc trưng lệch: `log_uniq` = 2,4849 < `accepted_low` 2,770 (fixture chỉ 11 từ khác nhau) — kiểm hợp đồng M04→M05, không kiểm điểm |
+| M05-TEST-022 | FR-001 / AC-002 | Integration (không model nặng) | FeatureSet do M04 dựng từ fixture chuẩn (M04 FX) → M05. (a) ART-REAL, SKIP khi thiếu artifact; (b) hai biến thể ART-FAKE chạy trên CI: khoảng nhận rộng và VAD lệch cấu hình | (a) `NOT_EVALUATED` + `OUT_OF_DISTRIBUTION` với **đúng một** đặc trưng lệch: `log_uniq` của fixture (2,4849, chỉ 11 từ khác nhau) thấp hơn `accepted_low` đọc từ artifact. (b) Tên/thứ tự/provenance khớp nên đi hết 8 bước; VAD lệch thì `VAD_VERSION_MISMATCH` đi từ M04 sang M05. Kiểm hợp đồng M04→M05, không kiểm điểm |
 
 Metric chất lượng model (PCC/RMSE trên pipeline dự án) cần dữ liệu có quyền dùng và protocol được duyệt → **không** thuộc Test Plan W2; báo cáo chỉ trích metric của artifact kèm nguồn.
 
@@ -78,3 +78,4 @@ Metric chất lượng model (PCC/RMSE trên pipeline dự án) cần dữ liệ
 | --- | --- | --- |
 | v0.1 | 25/09/2026 | Bản nháp đầu (6 ca) |
 | v0.2 | 26/09/2026 | **APPROVED** Phase 04. Theo Spec v0.2: 21 unit + 1 integration, giá trị vàng trên artifact thật, ca biên band/near-boundary/OOD |
+| v0.2.1 | 03/10/2026 | Chỉ sửa dòng M05-TEST-022: thêm hai biến thể ART-FAKE chạy trên CI (hợp đồng tên/thứ tự/provenance, VAD lệch) và đọc `accepted_low` từ artifact thay vì ghi số. Không đổi FR/AC; chờ owner xác nhận khi review Phase 07 của M05-TASK-004 |

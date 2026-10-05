@@ -4,11 +4,11 @@ PHASE RECORD ID: W3-08-A01
 SCOPE ID/TYPE/ROOT: W3 / feature / docs/sdd/features/w3-local-integration/
 SUBJECT: W3-TASK-001–008 sau correction review
 BASE REVISION: 2b428ceea9e4459f3235d4ce67f10bab31585ebf
-FINAL PRODUCT SOURCE REVISION: ffb325cc5ba8127f8c76a137a53e15a3dc0599b0
+W3 SOURCE REVISION MEASURED BY THE FINAL REGRESSION: ffb325cc5ba8127f8c76a137a53e15a3dc0599b0
 EVIDENCE HEAD: 6ae8b4060f0fa189d7f9a18dbe63c41c214c412e
 WORKSPACE FINGERPRINT: ac30965ba60e1e27d1c57a1504e971c2caf07a4e83facaf5151feb66824f3e3c
-CODEX CHECK RESULT: PASS
-CODEX RECOMMENDATION: RECOMMEND APPROVAL
+CODEX CHECK RESULT: PASS at the measured W3 source; regression at the current merge head is pending.
+CODEX RECOMMENDATION: RECOMMEND APPROVAL after merge-head CI passes.
 USER VERDICT: PENDING
 VERIFIED/APPROVED BY: chưa có user verdict
 Ngày chạy: 02/10/2026, Asia/Ho_Chi_Minh. Reviewer: Codex, độc lập với raw reports của ba Luna.
@@ -83,6 +83,12 @@ Actual smoke dùng WAV được phép, SHA256 `5bb09620a28f6935902f1cab9180ce819
 
 Reviewer smoke attempt đầu dừng ở assertion dùng nhầm field `DiagnosticReport.evidence_refs`; report thực tế có `comments` và `evidence_issues`. [Log thất bại](evidence/final/local-pipeline-smoke-attempt-01.log) được giữ. Chỉ sửa reviewer harness rồi rerun toàn luồng; không sửa product để làm test pass. [Adapter smoke trước đó](evidence/real-speech-smoke.md) giữ MP3 native decoder warnings và independent decoder cross-check; không claim clean MP3/bit-exact equivalence. WER/CEFR accuracy/calibration **NOT_MEASURED**; filename CEFR không dùng làm ground truth.
 
+## Kiểm tra đồng bộ main ngày 05/10/2026
+
+`origin/main` tại `8032e55d911745e9cd4267f6a9c5dcae8d24b440` có 13 commits mới từ baseline W3 `2b428ce`. `git merge-tree origin/main HEAD` báo đúng một content conflict ở README AI log. Mình đã kết hợp mục AI Usage Log của Sang từ main với các link W3 và cập nhật ngày/prompt log. `src/aicefr/asr/service.py` được auto-merge sạch: main chuyển QC reject reasons sang transcript; W3 giữ log exception an toàn. Main đi kèm thay đổi fixture, assertion chuyển QC reasons tới scorer và tests integration scoring. Không còn conflict marker; `git diff --check origin/main` PASS. Hai đường dẫn duy nhất bị sửa bởi cả hai nhánh là README này và ASR service.
+
+Các con số 265-pass/254-pass, coverage, browser và real-model ở mục trên được đo tại W3 source revision `ffb325c`, trước khi đồng bộ commit main. Environment hiện tại không có pytest cài sẵn, nên chưa rerun regression tại merge head; không ghi kết quả cũ như test cho merge head. Khi PR được mở, CI của nhánh đã tích hợp cần xác nhận các thay đổi upstream cùng W3.
+
 ## Traceability và kết luận kỹ thuật
 
 | Test IDs | Tests / evidence cuối |
@@ -93,4 +99,4 @@ Reviewer smoke attempt đầu dừng ở assertion dùng nhầm field `Diagnosti
 | TEST-007 | scripts/qa/w3_app_browser.py + final browser result/ảnh |
 | TEST-008 | regression, Ruff, guards, compile/build/CLI, AI log audit, CI actual diff |
 
-[Review cycle](reviews/review-01.md) đã resolve W3-RV-001–010; [hash manifest](evidence/final/artifact-hashes.json) cho phép đối chiếu evidence. Không còn implementation/check bắt buộc đang chạy. Remote Actions execution và deployment NOT_RUN; real learner operations/calibration ngoài scope. Tiếp theo: user review [Acceptance package](09-acceptance.md) và ghi verdict, không tự đánh dấu scope accepted.
+[Review cycle](reviews/review-01.md) đã resolve W3-RV-001–010; [hash manifest](evidence/final/artifact-hashes.json) cho phép đối chiếu evidence. Merge với `origin/main` không còn conflict nhưng regression chưa được chạy tại merge head; review CI sau khi PR được mở. Deployment NOT_RUN; real learner operations/calibration ngoài scope. User verdict vẫn PENDING.

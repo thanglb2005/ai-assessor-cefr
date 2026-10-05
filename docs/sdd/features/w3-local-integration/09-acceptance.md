@@ -5,8 +5,8 @@ SCOPE ID/TYPE/ROOT: W3 / feature / docs/sdd/features/w3-local-integration/
 SUBJECT: local integration, W3-TASK-001–008
 BASE / PRODUCT SOURCE REVISION: 2b428ce → ffb325cc5ba8127f8c76a137a53e15a3dc0599b0
 FINGERPRINT: dẫn tới snapshot và subtree IDs trong Final Verification
-CODEX CHECK RESULT: PASS — technical evidence
-CODEX RECOMMENDATION: RECOMMEND APPROVAL cho phạm vi W3 local integration
+CODEX CHECK RESULT: PASS cho W3 source đã đo; regression tại merge head hiện tại đang chờ CI.
+CODEX RECOMMENDATION: RECOMMEND APPROVAL cho W3 sau khi CI tại merge head PASS.
 USER VERDICT: PENDING
 VERIFIED/APPROVED BY: chưa có user verdict
 USER VERDICT AT: chưa có
@@ -23,6 +23,8 @@ Thắng đã trực tiếp giao implementation/review/delegation như [Requireme
 
 Evidence cuối và commands: [Final Verification](08-final-verification.md). Review/corrections: [Review](reviews/review-01.md). Hướng dẫn thử sản phẩm: [Local run guide](../../../local-run.md).
 
+Đồng bộ main ngày 05/10 phát hiện và đã xử lý conflict README AI log; ASR source/test mới từ main ghép sạch. Bộ regression/coverage được ghi phía trên đo tại W3 source commit trước lần sync này. Cần đọc CI của PR trên merge head hiện tại trước khi acceptance; chưa có kết quả CI mới.
+
 Giới hạn cần đọc trước verdict: model/calibration/WER/CEFR accuracy chưa đo; local fixture demo không được xem là vận hành dữ liệu người học thật. MP3 sample có native decoder warnings, đã giữ log. Uncovered branches và phạm vi scan secrets được ghi trong Final Verification; chưa được user xác nhận risk acceptance. Remote CI/deploy chưa chạy. Không push/deploy từ lượt này.
 
-Next action: Thắng xem evidence và ghi verdict cho scope W3. Không có mandatory code finding hoặc required technical check đang mở.
+Next action: kiểm tra CI của PR trên merge head đã đồng bộ main; sau đó Thắng xem evidence và ghi verdict cho scope W3.

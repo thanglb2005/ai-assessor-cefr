@@ -1,11 +1,13 @@
 # M05 — Evidence Manifest (danh mục bằng chứng)
 
-**Hiện trạng:** có evidence Phase 06 của M05-TASK-002 (M05-EV-001) và M05-TASK-001 (M05-EV-002); chưa qua Phase 07 review. Báo cáo và hình W1 cấp dự án nằm ở docs/reports/week-01/ và docs/design/week-01/.
+**Hiện trạng (03/10/2026):** M05-TASK-002 (M05-EV-001), M05-TASK-001 (M05-EV-002) và M05-TASK-004 (M05-EV-003) đều đã qua Phase 07–09; Final Verification ở M05-EV-P08 và M05-EV-P08-A2.
 
 | Evidence ID | Prompt ID / Task ID | Phase | Base/Head revision, fingerprint | Loại / file hoặc link | Check và kết quả thực tế | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- |
 | M05-EV-001 | M05-TASK-002 (Jira SCRUM-27); Claude implement theo yêu cầu chủ dự án, không qua prompt Antigravity | 06 | base `9884170` trên `main` | PR `[SCRUM-27]`, xem mục dưới | Test ID 005–007, 015–019 chạy thật; coverage `aicefr.scoring` 100 % line/branch | RECORDED — chờ Phase 07 |
 | M05-EV-002 | M05-TASK-001 (Jira SCRUM-28); Claude implement theo yêu cầu chủ dự án | 06 | trên nhánh của M05-EV-001 | `scoring/scorer.py`, `scoring/coverage.py`, `tests/scoring/test_scorer.py` | Test ID 001–004, 008–014, 020, 021 chạy thật; coverage `aicefr.scoring` 100 % line/branch | RECORDED — chờ Phase 07 |
+| M05-EV-003 | M05-TASK-004; Claude implement theo yêu cầu chủ dự án, không qua prompt Antigravity | 06 | base `2b428ce` trên `main` | `tests/scoring/test_integration_features.py`, xem mục dưới | M05-TEST-022 chạy thật cả hai chế độ (có và không có ART-REAL) | VERIFIED — Phase 07–09 APPROVED 03/10/2026 |
+| M05-EV-P08-A2 | M05-TASK-004 | 08 | main ae72d57 (ae72d57b03de0ae9333e8b549484d026feb3177c); fingerprint `8835acf872d8c0ab…` | Xem mục dưới | 192 passed + 11 skipped (CI), 203 passed (có artifact), 0 failed | APPROVED 03/10/2026 |
 
 Lưu tại đây raw report của Antigravity, command output/test/coverage, ảnh browser QA và final verification khi phát sinh. File lớn có thể lưu ngoài Git nhưng phải có link ổn định, checksum và quyền truy cập cho người review. Mỗi evidence gắn đúng Prompt ID, Task ID, AC/Test ID và revision. Redact secret/PII/audio/transcript thật; không ghi PASS cho lệnh chưa chạy. Cập nhật 07-status.md trỏ tới evidence mới nhất.
 
@@ -77,3 +79,43 @@ UT EVIDENCE
 ```
 
 **Ngoài Phase 08 này:** M05-TASK-004 (integration M04→M05, M05-TEST-022) READY, chưa làm — không thuộc W2.
+
+## M05-EV-003 — M05-TASK-004 integration M04 → M05
+
+**Môi trường:** macOS 26.4, Python 3.12.14 (`.venv` qua uv), base `2b428ce`. Artifact thật đặt ngoài repo (P05-D-001), SHA-256 khớp hằng ghim trong `scoring/artifact.py`.
+
+| Lệnh | Kết quả |
+| --- | --- |
+| `env -u AICEFR_MODEL_DIR python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch` (giống CI) | 191 passed, 11 skipped (bản ART-REAL của M05-TEST-022 báo SKIPPED, không tính PASS); `aicefr.scoring` 100 % line/branch |
+| `AICEFR_MODEL_DIR=<thư mục artifact> python -m pytest -q -m "not smoke"` | 202 passed, 0 skipped |
+| `ruff check .` | sạch |
+| `ruff format --check tests/scoring/test_integration_features.py` | sạch (19 file khác trên `main` chưa format, ngoài vùng M03–M05, CI hiện không kiểm format) |
+
+| Test ID | Test | Kết quả |
+| --- | --- | --- |
+| M05-TEST-022 (a) | `test_fixture_features_reach_the_real_model_and_only_log_uniq_is_out_of_range` (ART-REAL): `NOT_EVALUATED`, reason duy nhất `OUT_OF_DISTRIBUTION`, đúng một mục OOD `log_uniq` "low"; ngưỡng đọc từ artifact, không ghi số vào test | PASS (ART-REAL) · SKIPPED trên CI |
+| M05-TEST-022 (b) | `test_extractor_output_is_accepted_by_the_scorer` (ART-FAKE khoảng nhận rộng): tên/thứ tự/provenance khớp, đi hết 8 bước, `ESTIMATED` B1 | PASS |
+| M05-TEST-022 (b) | `test_vad_setting_mismatch_travels_from_m04_to_m05`: VAD ngưỡng 0,3 → M04 gắn `VAD_VERSION_MISMATCH`, M05 trả `NOT_EVALUATED` | PASS |
+
+**Ghi chú:** test chỉ thêm file, không đổi code `src/`. Hai biến thể (b) được thêm vào M05-TEST-022 trong [Test Plan](../04-test-plan.md) để hợp đồng M04→M05 vẫn được kiểm trên CI khi không có artifact thật.
+
+## M05-EV-P08-A2 — Phase 08 Final Verification (M05-TASK-004)
+
+```text
+UT EVIDENCE
+- Final head/fingerprint: main ae72d57 (ae72d57b03de0ae9333e8b549484d026feb3177c); sdd-workspace-v2 8835acf872d8c0abd3cc94e897723bc7a9c05fe3956400ee0b6bf577d7ab8af7
+  (232 file, git status sạch, không metadata file)
+- Test files và AC/Test ID mapping: tests/scoring/test_integration_features.py ↔ M05-TEST-022 (a, b);
+  M05-TEST-001–021 không đổi
+- Command: env -u AICEFR_MODEL_DIR python -m pytest -q -m "not smoke"
+           AICEFR_MODEL_DIR=<thư mục artifact> python -m pytest -q -m "not smoke" --cov=aicefr --cov-branch
+- Passed/failed/skipped: không artifact 192 passed, 11 skipped; có artifact 203 passed; 0 failed
+- Coverage metrics/policy/delta: `aicefr.scoring` 100 % line/branch — đạt TP-D-001. Toàn repo 89 % vì đã có
+  code M01/M02/M06/M07/M08 từ W3; không tính vào policy của M05
+- Coverage report path: ngoài repo (chạy trên máy Sang); tóm tắt ở đây
+- Critical uncovered branches/risk: Không có
+- Codex rerun: có — máy Sang (macOS 26.4, Python 3.12.14) và CI GitHub run 37113044170 trên ae72d57, Python 3.11: 192 passed, 11 skipped; ruff check sạch
+- CODEX CHECK RESULT: PASS
+- CODEX RECOMMENDATION: RECOMMEND APPROVAL
+- USER VERDICT: APPROVED (Sang, 03/10/2026)
+```
