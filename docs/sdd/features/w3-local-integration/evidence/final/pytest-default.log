@@ -1,0 +1,15 @@
+........................................................................ [ 27%]
+.....................s...................................s.............. [ 54%]
+...............................s........s..ss.............sssss......... [ 81%]
+.................................................                        [100%]
+=========================== short test summary info ============================
+SKIPPED [1] tests/features/test_extractor.py:68: cần ridge_resp_v2.json trong $AICEFR_MODEL_DIR
+SKIPPED [1] tests/local/test_factory_integration.py:117: artifact path unavailable
+SKIPPED [1] tests/scoring/test_artifact.py:22: cần ridge_resp_v2.json trong $AICEFR_MODEL_DIR
+SKIPPED [1] tests/scoring/test_artifact.py:89: cần ridge_resp_v2.json trong $AICEFR_MODEL_DIR
+SKIPPED [1] tests/scoring/test_ridge.py:23: cần ridge_resp_v2.json trong $AICEFR_MODEL_DIR
+SKIPPED [1] tests/scoring/test_ridge.py:29: cần ridge_resp_v2.json trong $AICEFR_MODEL_DIR
+SKIPPED [1] tests/scoring/test_ridge.py:79: cần ridge_resp_v2.json trong $AICEFR_MODEL_DIR
+SKIPPED [3] tests/scoring/test_scorer.py:62: cần ridge_resp_v2.json trong $AICEFR_MODEL_DIR
+SKIPPED [1] tests/scoring/test_scorer.py:90: cần ridge_resp_v2.json trong $AICEFR_MODEL_DIR
+254 passed, 11 skipped in 5.96s

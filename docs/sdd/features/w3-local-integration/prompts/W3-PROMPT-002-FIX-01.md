@@ -1,0 +1,25 @@
+# W3-PROMPT-002-FIX-01 — Integrated app correction và browser QA
+
+PROMPT ID: W3-PROMPT-002-FIX-01
+TASK IDS: W3-TASK-003, W3-TASK-004, W3-TASK-007
+SCOPE ROOT: docs/sdd/features/w3-local-integration/
+REPO ROOT: /tmp/aicefr-w3-app-review
+BRANCH: feat/W3-app-review
+BASE HEAD: 80c6707 (root integrated initial A/B/C commits)
+AUTHORIZATION: chỉ dẫn trực tiếp của Thắng; gpt-6-luna implement/browser QA, Codex review; USER VERDICT PENDING.
+
+Làm trong worktree MỚI trên đây, không trong /tmp/aicefr-w3-app cũ. Read original prompt và actual integrated source. Verify BASE HEAD trước sửa; root giữ workbook/status/evidence tổng hợp. Không git switch/reset/rebase/cherry-pick/push hoặc tạo subagent. Source commit riêng rồi raw evidence. Venv /tmp/aicefr-w3-venv, PYTHONPATH=src bắt buộc. ASR/VAD deps do root cài, không tự pip vào shared venv. Lane A/C đang correction trong worktrees khác.
+
+Allowed: original app files (src/aicefr/local/**, api/wsgi.py, api/templates.py, auth/service.py, tests/local/**, tests/api/test_local_sessions.py) và thêm auth/memory.py, SQLiteStore.delete_session region trong storage/sqlite.py (không sửa migration/transaction/schema thuộc A), tests/auth/test_logout.py. Browser harness tests/browser/** hoặc scripts/qa/**, scope evidence/raw-app-fix-01.md, browser-qa.md và screenshots PNG. Không sửa root SDD/README/workbook hoặc lane A/C code. Pipeline interface đã ghép trong baseline.
+
+MAJOR-01: AuthService.SessionRepository mới có delete_session, nhưng MemoryIdentityRepository và SQLiteStore hiện không implement. AuthService(..., repo) với các repository chính sẽ AttributeError khi logout. Implement revocation idempotent digest-only tại cả repositories, tests với memory và SQLiteStore trực tiếp chứng minh logout token cũ bị deny, token khác còn valid, restart vẫn revoked. Giữ wrapper hiện có nếu cần, không weaken auth.
+
+MAJOR-02: Consent UI so current configured version nhưng submit cho request tự chọn consent_version, có thể dùng old active consent sau config upgrade. Enforce current configured consent version tại local HTTP submit boundary (config chỉ áp dụng khi Auth/Consent local app đã được lắp ráp, giữ compatibility API adapter cũ). Reject stale consent version trước khi persist/enqueue và test zero blob/response mutation. Không auto-consent.
+
+MAJOR-03: Factory chưa có integration test chạy trên các module đã ghép (line coverage 38%). Test create_runtime với SQLite services thật: missing model controlled NOT_EVALUATED + reason + report/review; generated audio QC REVIEW không gọi ASR; configured artifact loads/pin, default Silero lazy adapter; persist/reopen, teacher report/audio role/foreign denial. Test malformed config/path/startup controlled và CLI loopback only/no unsafe startup. M02/M08 retain >=90% line >=85% branch on packages chính; đo factory/WSGI/new templates và critical branches, không đổi exclusions/threshold.
+
+Bundle UI: render_review_detail đang nhúng cả <!doctype>/<html>/<body> của render_report trong HTML khác, tạo DOM invalid/duplicate logout. Tách report body renderer dùng lại, mỗi page chỉ một document. Thêm viewport cho upload/status/report/queue, readable layout trên 390px không horizontal overflow, form labels/mobile focus. Fixture/demo limit hiện chỉ thấy ở consent; hiển thị rõ trên student/teacher pages khi demo mode mà không đổi public render defaults/tests cũ. Wording dùng dữ liệu kiểm thử do nhóm tạo/tài khoản fixture, không mô tả repo nội bộ như sản phẩm clone. Không thêm UI framework/dependencies.
+
+Browser QA thật trên final app source (W3-TEST-007): PLAYWRIGHT_BROWSERS_PATH=/tmp/aicefr-w3-browsers, Chromium headless shell đã cài; launch/socket cần exec require_escalated, nêu justification chạy local browser W3. Có thể dùng generated WAV >1s với ~70% silence để QC REVIEW, pipeline thực không ASR, report null/NOT_EVALUATED, teacher override B1 với reason fixture, AI overall giữ null và teacher final riêng. Default runtime KHÔNG fake transcript/scorer. Hai browser contexts student/teacher; kiểm login→consent→upload→status/report→teacher queue/detail/audio GET (valid MIME/bytes)→claim/override→student refreshed report teacher_verified; logout/revocation, student teacher-route deny/foreign-report deny, consent withdrawn prevents new submission. Desktop 1280x800 và mobile390x844. Capture screenshots actual, console errors/network failed/status assertions; raw request body/password/session/audio không lưu. Generated fixture/model/audio nằm /tmp ngoài Git. Hãy viết harness tái chạy được cho root review, kiểm try/finally stop server/close runtime. HTTP server SQLite chạy cùng thread với runtime connection (hoặc tạo runtime trong server thread); tránh check_same_thread crash. Root sẽ re-run harness/view screenshots độc lập.
+
+Chạy full regression artifact-enabled + Ruff. Report source commit, commands/exits, coverage actual, browser viewport/results/screenshot hashes, fixture boundaries/ASR thật không đo bởi browser. Không claim user acceptance/remote CI/deploy. Return source/evidence commit SHA và cách root re-run QA.

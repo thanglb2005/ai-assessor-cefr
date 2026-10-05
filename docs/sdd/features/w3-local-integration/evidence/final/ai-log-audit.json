@@ -1,0 +1,165 @@
+{
+  "result": "PASS",
+  "baseline_revision": "2b428ceea9e4459f3235d4ce67f10bab31585ebf",
+  "preserved": [
+    {
+      "sheet": "Thắng",
+      "rows": "1–17",
+      "values_styles_links_preserved": true
+    },
+    {
+      "sheet": "Nguyên",
+      "rows": "1–1000",
+      "values_styles_links_preserved": true
+    },
+    {
+      "sheet": "Sang",
+      "rows": "1–1000",
+      "values_styles_links_preserved": true
+    },
+    {
+      "sheet": "Tổng hợp",
+      "rows": "1–14",
+      "values_styles_links_preserved": true
+    }
+  ],
+  "new_records": [
+    {
+      "row": 18,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3: yêu cầu delegation gpt-6-luna, nhánh riêng và Codex review",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/01-requirement.md",
+        "docs/sdd/features/w3-local-integration/06-tasks.md"
+      ],
+      "full_text_matches_file": "actual user instruction"
+    },
+    {
+      "row": 19,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-001: giao gpt-6-luna pipeline",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-001-pipeline.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 20,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-002: giao gpt-6-luna app",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-002-app.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 21,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-003: giao gpt-6-luna speech",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-003-speech.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 22,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-001-AMEND-01: affected migration regression",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-001-AMEND-01.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 23,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-001-AMEND-02: schema regression expectations",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-001-AMEND-02.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 24,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-003-FIX-01: bundled correction ASR provenance và deterministic VAD tests",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-003-FIX-01.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 25,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-001-FIX-01: bundled correction transactional pipeline và failure evidence",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-001-FIX-01.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 26,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-002-FIX-01: bundled correction app auth consent và browser QA",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-002-FIX-01.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 27,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-USER-002-audio-rights: actual user reply: có quyền, local audio smoke",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-USER-002-audio-rights.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 28,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-002-FIX-01-NOTE-01: review observations trong QA correction đang chạy",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-002-FIX-01-NOTE-01.md"
+      ],
+      "full_text_matches_file": true
+    },
+    {
+      "row": 29,
+      "date": "2026-10-02",
+      "person": "Thắng",
+      "tool": "Codex",
+      "activity": "W3-PROMPT-002-FIX-01-NOTE-02: dependency baseline update, không che old Silero failure",
+      "evidence": [
+        "docs/sdd/features/w3-local-integration/prompts/W3-PROMPT-002-FIX-01-NOTE-02.md"
+      ],
+      "full_text_matches_file": true
+    }
+  ],
+  "summary_formulas_preserved": true,
+  "summary_formula_count": 7,
+  "workbook_zip_parse": "PASS",
+  "limits": "Kiểm workbook/cell/full text/path; không tự tạo Jira key/giờ công hoặc user verdict."
+}

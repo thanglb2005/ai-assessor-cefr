@@ -41,6 +41,7 @@ class ReportInput(_Frozen):
     features: FeatureSet | None = None
     evidence_refs: tuple[EvidenceRef, ...] = ()
     comment_requests: tuple[CommentRequest, ...] = ()
+    source_versions: dict[str, str] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def _all_artifacts_match_response(self) -> ReportInput:
@@ -97,6 +98,24 @@ class EvidenceValidator:
             word = transcript.words[reference.word_index]
             if reference.start_s != word.start_s or reference.end_s != word.end_s:
                 return "EVIDENCE_WORD_TIMESTAMP_MISMATCH"
+        if reference.source is EvidenceSource.FEATURE_SET:
+            parts = reference.evidence_id.split(":", maxsplit=2)
+            if len(parts) != 3 or parts[0] != "feature" or report_input.features is None:
+                return "EVIDENCE_FEATURE_REFERENCE_INVALID"
+            try:
+                expected_value = float.fromhex(parts[2])
+            except ValueError:
+                return "EVIDENCE_FEATURE_REFERENCE_INVALID"
+            actual_value = next(
+                (value.value for value in report_input.features.values if value.name == parts[1]),
+                None,
+            )
+            if (
+                actual_value is None
+                or not math.isfinite(actual_value)
+                or actual_value != expected_value
+            ):
+                return "EVIDENCE_FEATURE_VALUE_MISMATCH"
         return None
 
     @staticmethod
@@ -120,6 +139,12 @@ class UnverifiedReviewDecision(PermissionError):
 
 class ReviewDecisionVerifier(Protocol):
     def verify_decision(self, decision: ReviewDecision) -> bool: ...
+
+
+class ReportRepository(Protocol):
+    def put(self, report: DiagnosticReport) -> None: ...
+
+    def get(self, response_id: str) -> DiagnosticReport | None: ...
 
 
 class MemoryReportRepository:
@@ -170,7 +195,7 @@ class DiagnosticReportBuilder:
             comments=tuple(comments),
             evidence_issues=tuple(issues),
             limitations=limitations,
-            source_versions=self._source_versions(report_input),
+            source_versions=self._source_versions(report_input) | report_input.source_versions,
         )
 
     def apply_review(self, report: DiagnosticReport, decision: ReviewDecision) -> DiagnosticReport:
@@ -250,6 +275,10 @@ class DiagnosticReportBuilder:
         values = {"assessment": report_input.assessment.provenance.model_version or "unavailable"}
         if report_input.transcript is not None:
             values["transcript"] = report_input.transcript.decode_config_version
+            values["asr_engine"] = (
+                f"{report_input.transcript.engine}@{report_input.transcript.engine_version}"
+            )
+            values["asr_model"] = report_input.transcript.asr_model or "unavailable"
         if report_input.features is not None:
             values["feature_set"] = report_input.features.feature_version
         return values
@@ -260,7 +289,7 @@ class ReportService:
 
     def __init__(
         self,
-        repository: MemoryReportRepository,
+        repository: ReportRepository,
         builder: DiagnosticReportBuilder | None = None,
         decision_verifier: ReviewDecisionVerifier | None = None,
     ) -> None:

@@ -1,0 +1,19 @@
+Đã kiểm tra 165 file Markdown.
+16 link trỏ ra ngoài repo (bỏ qua):
+  docs/sources/code-survey.md: ../../../ai-assessor-cefr-thamchie/pyproject.toml
+  docs/sources/code-survey.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/api/main.py
+  docs/sources/code-survey.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/storage/repository.py
+  docs/sources/code-survey.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/contracts.py
+  docs/sources/code-survey.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/pipeline.py
+  docs/sources/code-survey.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/scoring/scorer.py
+  docs/sources/code-survey.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/report/comments.py
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/scoring/scorer.py
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/pipeline.py
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/scoring/models/ridge_resp_v1.json
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/scoring/models/ridge_resp_v2.json
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/scoring/models/ridge_v3.json
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/tools/train_scorer.py
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/src/aicefr/contracts.py
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/docs/plan/QUYET_DINH.md
+  docs/sources/scoring-audit.md: ../../../ai-assessor-cefr-thamchie/docs/plan/QUYET_DINH.md
+Không có link hỏng trong repo.

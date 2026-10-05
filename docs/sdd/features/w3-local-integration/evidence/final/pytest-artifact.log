@@ -1,0 +1,64 @@
+........................................................................ [ 27%]
+........................................................................ [ 54%]
+........................................................................ [ 81%]
+.................................................                        [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                 Stmts   Miss Branch BrPart  Cover   Missing
+--------------------------------------------------------------------------------
+src/aicefr/__init__.py                   1      0      0      0   100%
+src/aicefr/api/__init__.py               0      0      0      0   100%
+src/aicefr/api/review.py                19      0      0      0   100%
+src/aicefr/api/student.py              116      5     22      4    93%   44, 60, 92, 181-182, 193->195
+src/aicefr/api/templates.py             81      5     14      5    89%   127-134, 154, 166->178, 191->195, 195->207
+src/aicefr/api/wsgi.py                 395     92    152     44    73%   93, 111, 118-128, 170, 175, 176->178, 179, 189, 219, 232, 256, 259, 270, 276, 283, 288, 317, 356, 374-375, 383, 393->400, 402, 415-424, 428, 434-442, 452, 458-471, 476, 490-494, 502-508, 512-513, 515, 517, 523, 527, 534-535, 537, 540, 543, 549, 554-555, 557, 562, 567, 571, 574-577, 579, 594->592, 605, 612, 619, 624-626
+src/aicefr/asr/__init__.py               0      0      0      0   100%
+src/aicefr/asr/hallucination.py         69      0     26      1    99%   84->88
+src/aicefr/asr/identity.py              12      0      4      0   100%
+src/aicefr/asr/local.py                 58     12     14      0    81%   21-25, 61, 66-67, 74-76, 96-97
+src/aicefr/asr/service.py               72      0     10      0   100%
+src/aicefr/asr/validation.py            16      0     10      0   100%
+src/aicefr/audio/__init__.py             4      0      0      0   100%
+src/aicefr/audio/config.py              52      6     24      4    87%   39-40, 47, 55, 65, 69
+src/aicefr/audio/decoder.py             92      5     42      5    93%   72, 75, 90, 113, 123
+src/aicefr/audio/pipeline.py            23      0      2      0   100%
+src/aicefr/auth/__init__.py              0      0      0      0   100%
+src/aicefr/auth/memory.py               24      0      2      0   100%
+src/aicefr/auth/service.py              99      6     20      2    93%   102, 122-123, 129-130, 169
+src/aicefr/contracts.py                279      8     30      6    94%   127, 156, 388, 412, 419-422
+src/aicefr/features/__init__.py          0      0      0      0   100%
+src/aicefr/features/extractor.py        79      0     20      0   100%
+src/aicefr/features/local.py            48      5     14      3    87%   34, 50, 52, 62-63
+src/aicefr/features/pauses.py           24      0      4      0   100%
+src/aicefr/features/text.py             24      0      2      0   100%
+src/aicefr/local/__init__.py             2      0      0      0   100%
+src/aicefr/local/__main__.py            75     21     16      4    68%   67-68, 82-84, 92, 94, 100-113, 117
+src/aicefr/local/app.py                107     19     14      4    78%   69, 72-78, 81, 122->188, 133-135, 149, 216-218, 224-225, 228-231, 235
+src/aicefr/pipeline/__init__.py          2      0      0      0   100%
+src/aicefr/pipeline/coordinator.py     126      1     32      1    99%   157
+src/aicefr/qc/__init__.py                3      0      0      0   100%
+src/aicefr/qc/measurements.py           16      1      2      1    89%   29
+src/aicefr/qc/policy.py                 38      0     24      0   100%
+src/aicefr/report/__init__.py            0      0      0      0   100%
+src/aicefr/report/contracts.py          77      6     12      6    87%   55, 57, 111, 115, 117, 119
+src/aicefr/report/service.py           166     16     60     12    88%   54, 83, 89, 91, 95, 97, 100, 104, 107-108, 203, 237-243, 245-251, 313
+src/aicefr/report/sqlite.py             17      0      2      0   100%
+src/aicefr/review/__init__.py            0      0      0      0   100%
+src/aicefr/review/routing.py            16      1      4      1    90%   62
+src/aicefr/review/service.py           132     22     26      8    80%   40, 42, 44, 108, 113, 133, 175-195, 209, 242-248, 254
+src/aicefr/review/sqlite.py             90      8     20      8    85%   115, 145, 179, 240, 262, 264, 273, 297
+src/aicefr/scoring/__init__.py           0      0      0      0   100%
+src/aicefr/scoring/artifact.py          86      1     26      1    98%   108
+src/aicefr/scoring/coverage.py          19      0      4      0   100%
+src/aicefr/scoring/ridge.py             43      0     14      0   100%
+src/aicefr/scoring/scorer.py            78      2     28      2    96%   127, 153
+src/aicefr/storage/__init__.py           0      0      0      0   100%
+src/aicefr/storage/blob.py              60      1     10      2    96%   49->59, 73
+src/aicefr/storage/paths.py             11      0      4      0   100%
+src/aicefr/storage/service.py           39      0      0      0   100%
+src/aicefr/storage/sqlite.py           133      3     26      3    96%   74, 338, 346
+--------------------------------------------------------------------------------
+TOTAL                                 2923    246    736    127    89%
+Coverage JSON written to file /tmp/aicefr-w3-final/coverage.json
+265 passed in 8.58s

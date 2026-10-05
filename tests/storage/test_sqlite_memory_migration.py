@@ -6,6 +6,8 @@ import sqlite3
 import uuid
 from datetime import UTC, datetime
 
+import pytest
+
 from aicefr.auth.service import AccountRecord
 from aicefr.contracts import (
     Actor,
@@ -16,7 +18,7 @@ from aicefr.contracts import (
     ResponseRecord,
     ResponseStatus,
 )
-from aicefr.storage.sqlite import SQLiteStore
+from aicefr.storage.sqlite import ConcurrentResponseUpdate, SQLiteStore
 
 
 def _memory_store() -> SQLiteStore:
@@ -60,7 +62,8 @@ def test_m01_sqlite_schema_v2_persists_status_reason_with_optimistic_locking():
         event=_audit(record.response_id),
     )
 
-    assert store.connection.execute("PRAGMA user_version").fetchone()[0] == 2
+    version = store.connection.execute("PRAGMA user_version").fetchone()[0]
+    assert version == SQLiteStore.SCHEMA_VERSION == 3
     assert store.get_response(record.response_id) == updated
     assert updated.status is ResponseStatus.FAILED
     assert updated.status_reason is ReasonCode.ASR_FAILED
@@ -98,4 +101,23 @@ def test_m01_sqlite_migrates_legacy_submitted_status_to_queued_without_data_loss
     assert migrated is not None
     assert migrated.status is ResponseStatus.QUEUED
     assert migrated.status_reason is None
-    assert store.connection.execute("PRAGMA user_version").fetchone()[0] == 2
+    version = store.connection.execute("PRAGMA user_version").fetchone()[0]
+    assert version == SQLiteStore.SCHEMA_VERSION == 3
+
+
+def test_pipeline_claim_is_queued_only_and_revision_checked():
+    store = _memory_store()
+    actor = Actor(actor_id="fixture-student", role=ActorRole.STUDENT)
+    store.add_account(AccountRecord(actor, "fixture-hash"))
+    record = ResponseRecord(
+        response_id="e" * 32, owner_id=actor.actor_id,
+        task_id="fixture-task", task_version="v1",
+        blob=BlobRef(blob_id="f" * 32, sha256="1" * 64, size_bytes=1),
+        created_at=datetime(2026, 9, 28, tzinfo=UTC),
+    )
+    store.save_response(record, _audit(record.response_id))
+    claimed = store.claim_queued_response(record)
+    assert claimed.status is ResponseStatus.RUNNING
+    with pytest.raises(ConcurrentResponseUpdate):
+        store.claim_queued_response(record)
+    assert store.get_response(record.response_id) == claimed

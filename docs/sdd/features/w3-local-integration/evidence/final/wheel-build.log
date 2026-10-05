@@ -1,0 +1,10 @@
+WARNING: The directory '/home/thanglvc/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.
+Processing /home/thanglvc/Documents/HCMUTE/TLCN/ai-assessor-cefr
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: aicefr
+  Building wheel for aicefr (pyproject.toml): started
+  Building wheel for aicefr (pyproject.toml): finished with status 'done'
+  Created wheel for aicefr: filename=aicefr-0.1.0-py3-none-any.whl size=79022 sha256=247c680cf964c614d3955a115c3086b8da4485c327d8e1d469c52ce2d57846ef
+  Stored in directory: /tmp/pip-ephem-wheel-cache-fibxju44/wheels/fd/83/68/8b3bfe9d02d2efce88c79edc57db376ad09d5dea7a005d3c73
+Successfully built aicefr

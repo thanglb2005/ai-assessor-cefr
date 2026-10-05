@@ -94,8 +94,8 @@ class AsrService:
             return Transcript(status=AsrStatus.NOT_RUN, reasons=(ReasonCode.ASR_FAILED,), **base)
         try:
             result = engine.transcribe(audio)
-        except Exception:  # timeout hoặc lỗi engine: không tạo transcript
-            log.exception("engine ASR lỗi response_id=%s", response_id)
+        except Exception:  # lỗi engine có thể chứa transcript/path; không ghi chi tiết
+            log.warning("engine ASR lỗi response_id=%s status=ASR_FAILED", response_id)
             return Transcript(status=AsrStatus.ASR_FAILED, reasons=(ReasonCode.ASR_FAILED,), **base)
 
         asr_model = resolve_asr_model(result.weight_name, self.weight_map)

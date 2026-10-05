@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/aicefr-w3-full-pipeline-smoke.py", line 34, in <module>
+    assert report.evidence_refs and report.comments and not report.evidence_issues
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/aicefr-w3-venv/lib/python3.12/site-packages/pydantic/main.py", line 1042, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'DiagnosticReport' object has no attribute 'evidence_refs'. Did you mean: 'evidence_issues'?

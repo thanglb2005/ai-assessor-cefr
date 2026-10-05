@@ -1,0 +1,101 @@
+{
+  "global": {
+    "covered_lines": 2677,
+    "num_statements": 2923,
+    "covered_branches": 579,
+    "num_branches": 736,
+    "excluded_lines": 101,
+    "line_percent": 91.58,
+    "branch_percent": 78.67
+  },
+  "M02": {
+    "covered_lines": 216,
+    "num_statements": 228,
+    "covered_branches": 84,
+    "num_branches": 94,
+    "excluded_lines": 3,
+    "line_percent": 94.74,
+    "branch_percent": 89.36
+  },
+  "M08": {
+    "covered_lines": 356,
+    "num_statements": 366,
+    "covered_branches": 55,
+    "num_branches": 62,
+    "excluded_lines": 13,
+    "line_percent": 97.27,
+    "branch_percent": 88.71
+  },
+  "pipeline": {
+    "covered_lines": 125,
+    "num_statements": 126,
+    "covered_branches": 31,
+    "num_branches": 32,
+    "excluded_lines": 0,
+    "line_percent": 99.21,
+    "branch_percent": 96.88
+  },
+  "report_sqlite": {
+    "covered_lines": 17,
+    "num_statements": 17,
+    "covered_branches": 2,
+    "num_branches": 2,
+    "excluded_lines": 0,
+    "line_percent": 100.0,
+    "branch_percent": 100.0
+  },
+  "wsgi": {
+    "covered_lines": 303,
+    "num_statements": 395,
+    "covered_branches": 94,
+    "num_branches": 152,
+    "excluded_lines": 0,
+    "line_percent": 76.71,
+    "branch_percent": 61.84
+  },
+  "templates": {
+    "covered_lines": 76,
+    "num_statements": 81,
+    "covered_branches": 9,
+    "num_branches": 14,
+    "excluded_lines": 3,
+    "line_percent": 93.83,
+    "branch_percent": 64.29
+  },
+  "local_app": {
+    "covered_lines": 88,
+    "num_statements": 107,
+    "covered_branches": 6,
+    "num_branches": 14,
+    "excluded_lines": 0,
+    "line_percent": 82.24,
+    "branch_percent": 42.86
+  },
+  "asr_local": {
+    "covered_lines": 46,
+    "num_statements": 58,
+    "covered_branches": 12,
+    "num_branches": 14,
+    "excluded_lines": 0,
+    "line_percent": 79.31,
+    "branch_percent": 85.71
+  },
+  "features_local": {
+    "covered_lines": 43,
+    "num_statements": 48,
+    "covered_branches": 11,
+    "num_branches": 14,
+    "excluded_lines": 0,
+    "line_percent": 89.58,
+    "branch_percent": 78.57
+  },
+  "report_service": {
+    "covered_lines": 150,
+    "num_statements": 166,
+    "covered_branches": 48,
+    "num_branches": 60,
+    "excluded_lines": 8,
+    "line_percent": 90.36,
+    "branch_percent": 80.0
+  }
+}

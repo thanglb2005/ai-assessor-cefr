@@ -40,6 +40,7 @@ class AccountRepository(Protocol):
 class SessionRepository(Protocol):
     def get_session(self, digest: str) -> SessionRecord | None: ...
     def put_session(self, session: SessionRecord) -> None: ...
+    def delete_session(self, digest: str) -> None: ...
 
 
 class ConsentRepository(Protocol):
@@ -114,6 +115,14 @@ class AuthService:
         )
         return token
 
+    def logout(self, token: str) -> None:
+        """Revoke one opaque session token without retaining the raw token."""
+        try:
+            digest = _digest(token)
+        except UnicodeEncodeError:
+            return
+        self._sessions.delete_session(digest)
+
     def resolve(self, token: str, *, allowed_roles: frozenset[ActorRole] | None = None) -> Actor:
         try:
             session = self._sessions.get_session(_digest(token))
@@ -154,6 +163,11 @@ class ConsentService:
         )
         self._consents.put_consent(record)
         return record
+
+    def current(self, actor: Actor) -> ConsentRecord | None:
+        if actor.role != ActorRole.STUDENT:
+            raise AuthorizationError("access denied")
+        return self._consents.get_consent(actor.actor_id)
 
     def withdraw(self, actor: Actor) -> ConsentRecord:
         current = self._consents.get_consent(actor.actor_id)

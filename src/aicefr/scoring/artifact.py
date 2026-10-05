@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 from dataclasses import dataclass
 from pathlib import Path
@@ -81,7 +82,7 @@ def load_artifact(path: Path, expected_sha256: str = RIDGE_RESP_V2_SHA256) -> Mo
     try:
         data = json.loads(raw.decode("utf-8"))
         artifact = _build(path.stem, digest, data)
-    except (ValueError, KeyError, TypeError) as exc:
+    except (ValueError, KeyError, TypeError, OverflowError, AttributeError) as exc:
         raise ModelArtifactError(
             ReasonCode.MODEL_ARTIFACT_INVALID, f"artifact {path.name} sai cấu trúc: {exc}"
         ) from exc
@@ -92,13 +93,32 @@ def load_artifact(path: Path, expected_sha256: str = RIDGE_RESP_V2_SHA256) -> Mo
 
 def _build(name: str, digest: str, data: dict[str, Any]) -> ModelArtifact:
     order = tuple(str(n) for n in data["feature_order"])
+    if not order or any(not value for value in order) or len(set(order)) != len(order):
+        raise ValueError("feature_order must contain unique non-empty names")
     vectors = {f: tuple(float(x) for x in data[f]) for f in _VECTOR_FIELDS}
     for field, values in vectors.items():
         if len(values) != len(order):
             raise ValueError(f"{field} có {len(values)} phần tử, feature_order có {len(order)}")
+        if not all(math.isfinite(value) for value in values):
+            raise ValueError(f"{field} phải chứa số hữu hạn")
+    if any(
+        low > high
+        for low, high in zip(vectors["feature_lo"], vectors["feature_hi"], strict=True)
+    ):
+        raise ValueError("feature_lo không được lớn hơn feature_hi")
     thresholds = {str(k): float(v) for k, v in data["band_thresholds"].items()}
     if set(thresholds) != {"A2_B1", "B1_B2"}:
         raise ValueError(f"band_thresholds phải gồm A2_B1, B1_B2, nhận {sorted(thresholds)}")
+    if (not all(math.isfinite(value) and 1.0 <= value <= 6.0 for value in thresholds.values())
+            or thresholds["A2_B1"] >= thresholds["B1_B2"]):
+        raise ValueError("band thresholds must be finite, ordered, and within [1, 6]")
+    intercept = float(data["intercept"])
+    tolerance = float(data["ood_tolerance"])
+    margin = float(data["boundary_margin"])
+    if not all(math.isfinite(value) for value in (intercept, tolerance, margin)):
+        raise ValueError("scalar model values must be finite")
+    if tolerance < 0 or margin < 0:
+        raise ValueError("tolerance and margin must be non-negative")
     return ModelArtifact(
         name=name,
         sha256=digest,
@@ -109,10 +129,10 @@ def _build(name: str, digest: str, data: dict[str, Any]) -> ModelArtifact:
         unit_of_inference=str(data.get("unit_of_inference") or ""),
         trained_with=dict(data.get("trained_with") or {}),
         feature_order=order,
-        intercept=float(data["intercept"]),
-        ood_tolerance=float(data["ood_tolerance"]),
+        intercept=intercept,
+        ood_tolerance=tolerance,
         band_thresholds=thresholds,
-        boundary_margin=float(data["boundary_margin"]),
+        boundary_margin=margin,
         **vectors,
     )
 

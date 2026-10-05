@@ -26,7 +26,7 @@ from aicefr.storage.paths import external_data_dir
 
 
 class SQLiteStore:
-    SCHEMA_VERSION = 2
+    SCHEMA_VERSION = 3
 
     def __init__(self, data_dir: Path | str) -> None:
         self.data_dir = external_data_dir(data_dir)
@@ -43,6 +43,11 @@ class SQLiteStore:
 
     @contextmanager
     def transaction(self) -> Iterator[sqlite3.Connection]:
+        if self.connection.in_transaction:
+            # Nested repositories join the caller-owned unit of work. The outer
+            # owner alone decides commit or rollback.
+            yield self.connection
+            return
         self.connection.execute("BEGIN IMMEDIATE")
         try:
             yield self.connection
@@ -62,6 +67,9 @@ class SQLiteStore:
             if version == 1:
                 self._upgrade_v1_to_v2()
                 version = 2
+            if version == 2:
+                self._upgrade_v2_to_v3()
+                version = 3
             if version != self.SCHEMA_VERSION:
                 raise RuntimeError("unsupported SQLite schema version")
         except Exception:
@@ -147,6 +155,17 @@ class SQLiteStore:
             """
         )
 
+    def _upgrade_v2_to_v3(self) -> None:
+        self.connection.executescript("""
+            BEGIN IMMEDIATE;
+            CREATE TABLE diagnostic_reports (
+                response_id TEXT PRIMARY KEY REFERENCES responses(response_id),
+                report_json TEXT NOT NULL
+            );
+            PRAGMA user_version=3;
+            COMMIT;
+        """)
+
     def _audit(self, connection: sqlite3.Connection, event: AuditEvent) -> None:
         connection.execute(
             "INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?)",
@@ -226,6 +245,11 @@ class SQLiteStore:
                 ),
             )
 
+    def delete_session(self, digest: str) -> None:
+        """Revoke a session by its stored token digest; missing sessions are harmless."""
+        with self.transaction() as connection:
+            connection.execute("DELETE FROM sessions WHERE token_digest=?", (digest,))
+
     def get_consent(self, participant_id: str) -> ConsentRecord | None:
         row = self.connection.execute(
             "SELECT * FROM consents WHERE participant_id=?", (participant_id,)
@@ -301,22 +325,66 @@ class SQLiteStore:
         status: ResponseStatus,
         status_reason: ReasonCode | None,
         event: AuditEvent,
+        expected_status: ResponseStatus | None = None,
     ) -> ResponseRecord:
         """Đổi trạng thái response với optimistic locking và audit cùng transaction.
 
         Đây là port nội bộ cho pipeline M01–M06, không phải API cho client.
         """
         with self.transaction() as connection:
+            status_clause = " AND status=?" if expected_status is not None else ""
+            parameters = (status, status_reason, response_id, expected_revision)
+            if expected_status is not None:
+                parameters += (expected_status,)
             cursor = connection.execute(
                 """UPDATE responses SET status=?, status_reason=?, revision=revision+1
-                WHERE response_id=? AND revision=?""",
-                (status, status_reason, response_id, expected_revision),
+                WHERE response_id=? AND revision=?"""
+                + status_clause,
+                parameters,
             )
             if cursor.rowcount != 1:
                 raise ConcurrentResponseUpdate("response missing or revision is stale")
             self._audit(connection, event)
             row = connection.execute(
                 "SELECT * FROM responses WHERE response_id=?", (response_id,)
+            ).fetchone()
+        assert row is not None
+        return self._response_from_row(row)
+
+    def claim_queued_response(self, response: ResponseRecord) -> ResponseRecord:
+        """CAS-claim a queued row only when the submitted provenance still matches."""
+        with self.transaction() as connection:
+            cursor = connection.execute(
+                """UPDATE responses SET status=?, status_reason=NULL, revision=revision+1
+                WHERE response_id=? AND owner_id=? AND task_id=? AND task_version=?
+                AND blob_id=? AND sha256=? AND size_bytes=? AND revision=? AND status=?""",
+                (
+                    ResponseStatus.RUNNING,
+                    response.response_id,
+                    response.owner_id,
+                    response.task_id,
+                    response.task_version,
+                    response.blob.blob_id,
+                    response.blob.sha256,
+                    response.blob.size_bytes,
+                    response.revision,
+                    ResponseStatus.QUEUED,
+                ),
+            )
+            if cursor.rowcount != 1:
+                raise ConcurrentResponseUpdate("response provenance or revision is stale")
+            self._audit(
+                connection,
+                AuditEvent(
+                    event_id=uuid.uuid4().hex,
+                    actor_id="system-pipeline",
+                    action="pipeline_started",
+                    object_id=response.response_id,
+                    recorded_at=datetime.now().astimezone(),
+                ),
+            )
+            row = connection.execute(
+                "SELECT * FROM responses WHERE response_id=?", (response.response_id,)
             ).fetchone()
         assert row is not None
         return self._response_from_row(row)

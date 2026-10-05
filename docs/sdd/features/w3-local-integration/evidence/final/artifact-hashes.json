@@ -1,0 +1,106 @@
+{
+  "algorithm": "sha256",
+  "files": {
+    "ai-log-audit.json": {
+      "size": 4964,
+      "sha256": "3371ed53e64010d83eec0a6751849d20a987310ba45c1b54aca370e91a9b1219"
+    },
+    "ai-log-audit.py": {
+      "size": 3529,
+      "sha256": "23a11924fd20bc167f284531dba865e79a8ea5ca8aa63577ec442e5f18a6cc8b"
+    },
+    "browser/browser-qa-desktop-student-report.png": {
+      "size": 42863,
+      "sha256": "5c34409b7ad872eee257da8624e0e87e544ddb6a7d05ab23497bd5a39a1a2411"
+    },
+    "browser/browser-qa-desktop-teacher-review.png": {
+      "size": 64130,
+      "sha256": "6b305a3a5cc0c9a0c1e291d42d0b75eb2e8c57925650244a03dfe3acba02e07c"
+    },
+    "browser/browser-qa-mobile-student-upload.png": {
+      "size": 43906,
+      "sha256": "6fbf017044d5a18fbec3d629b9359f5eaeb1e10c3c9ed00917c2c3ac4038a49d"
+    },
+    "browser/browser-qa-mobile-teacher-detail.png": {
+      "size": 55213,
+      "sha256": "e87650491f2e2889cee9731d76e8205002c18169c453dcf64670f579a658d795"
+    },
+    "browser-result.json": {
+      "size": 1063,
+      "sha256": "aec1a0e5d9bf267b513f05ee4c34fb4647968c9213cd7bb3c2f2d41734ce2bf4"
+    },
+    "browser-stderr.log": {
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "cli-help.log": {
+      "size": 316,
+      "sha256": "606991b9ed05361e280f98e54dd50ce2a6217ac19a319964ed81f78231e9bec3"
+    },
+    "coverage-metrics.json": {
+      "size": 2267,
+      "sha256": "123494537e818d1b37fd1636bf820189ca35da68f757ac2a3f517f9025dbaf6d"
+    },
+    "coverage.json": {
+      "size": 385809,
+      "sha256": "8f8a7b746b831e94a5da1e7e9ffc6c14f6df39af50c31850e205fb4c038b6281"
+    },
+    "credential-pattern-review.py": {
+      "size": 1236,
+      "sha256": "8c10b7be17d4939abdf9d7d454a6870a856472be82745d08dae045f5da90e479"
+    },
+    "credential-patterns.json": {
+      "size": 222,
+      "sha256": "9072adef2c3bf6b92bc9feef66de5876e283d7c232bb51cae5355f1f36fff3d8"
+    },
+    "diff-check-attempt-01.log": {
+      "size": 862,
+      "sha256": "a6b96e6547e8c8af5e70a66e12ab3ec4d534e62cedde613ee2e183bbaae2b651"
+    },
+    "environment.json": {
+      "size": 921,
+      "sha256": "c81758c64807e92459a438ac70bdacc227065409a76c0cfcccbc195c38bd20da"
+    },
+    "forbidden-files.log": {
+      "size": 54,
+      "sha256": "5f6eb57964b808825a7652ff139d99d3acfeb983b05029c15a6fcd7d45c9c4b7"
+    },
+    "local-pipeline-smoke-attempt-01.log": {
+      "size": 516,
+      "sha256": "9f35d9a5843933a5b53121b825442c0cab8a530ab26ff409e7dda5fff27c5f3f"
+    },
+    "local-pipeline-smoke.log": {
+      "size": 716,
+      "sha256": "baadd48dda4d267620b4fe024bbee5b3389354e992ad5f7e5260435d81d5e549"
+    },
+    "local-pipeline-smoke.py": {
+      "size": 3663,
+      "sha256": "10fd3bad88bc7f3c2e5b98f409d68c070c1692ab21d3398160b7144c9a31bb17"
+    },
+    "md-links.log": {
+      "size": 1638,
+      "sha256": "19d7d1f0a3a0c9820d4ecc22a6ececa4455bfd4dbe51543eb534dc1fb36df9f4"
+    },
+    "pytest-artifact.log": {
+      "size": 5439,
+      "sha256": "e23b4f16587e631eadc1e1f4398b16a9a2b5b3a7cc8ad6250755873aba8a2c0d"
+    },
+    "pytest-default.log": {
+      "size": 1273,
+      "sha256": "3f131690e732f390fcf32e127290939f0140793da22c4a94fc11451c354480bd"
+    },
+    "ruff.log": {
+      "size": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "static-checks.json": {
+      "size": 2960,
+      "sha256": "7365efeeb706a44abe4ae739bf7d1893f8524b2bef4a5defd751025b02bb68e6"
+    },
+    "wheel-build.log": {
+      "size": 923,
+      "sha256": "0aa8d1c9ba77fcbdb20e04d1e0d10366f481375f6cfbdb46d90fd26959dd038d"
+    }
+  },
+  "self_excluded": "artifact-hashes.json"
+}

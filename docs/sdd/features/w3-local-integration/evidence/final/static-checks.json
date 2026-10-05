@@ -1,0 +1,78 @@
+{
+  "result": "PASS",
+  "date": "2026-10-02",
+  "product_source_revision": "ffb325cc5ba8127f8c76a137a53e15a3dc0599b0",
+  "evidence_head": "6ae8b4060f0fa189d7f9a18dbe63c41c214c412e",
+  "checks": [
+    {
+      "check": "ruff",
+      "command": "/tmp/aicefr-w3-venv/bin/ruff check src tests scripts > docs/sdd/features/w3-local-integration/evidence/final/ruff.log 2>&1",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "check": "markdown_links",
+      "command": "/tmp/aicefr-w3-venv/bin/python scripts/ci/check_md_links.py > docs/sdd/features/w3-local-integration/evidence/final/md-links.log 2>&1",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "check": "forbidden_files",
+      "command": "/tmp/aicefr-w3-venv/bin/python scripts/ci/check_forbidden_files.py > docs/sdd/features/w3-local-integration/evidence/final/forbidden-files.log 2>&1",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "check": "credential_patterns",
+      "command": "/tmp/aicefr-w3-venv/bin/python docs/sdd/features/w3-local-integration/evidence/final/credential-pattern-review.py > docs/sdd/features/w3-local-integration/evidence/final/credential-patterns.json",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "check": "compile",
+      "command": "PYTHONPATH=src PYTHONPYCACHEPREFIX=/tmp/aicefr-w3-final/pycache /tmp/aicefr-w3-venv/bin/python -m compileall -q src",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "check": "cli",
+      "command": "PYTHONPATH=src /tmp/aicefr-w3-venv/bin/python -m aicefr.local --help > docs/sdd/features/w3-local-integration/evidence/final/cli-help.log 2>&1",
+      "exit_code": 0,
+      "result": "PASS"
+    },
+    {
+      "check": "diff",
+      "command": "set -e\ngit diff --check 2b428ce\ngit diff --cached --check",
+      "exit_code": 0,
+      "result": "PASS",
+      "earlier_attempt": {
+        "check": "diff",
+        "command": "set -e\ngit diff --check 2b428ce HEAD\ngit diff --cached --check",
+        "exit_code": 2,
+        "result": "FAIL",
+        "reason": "New blank lines at EOF in initial W3 documents/amendments. Final documentation EOF normalized, canonical amendment text synchronized in Excel. No product source changed."
+      }
+    },
+    {
+      "check": "wheel_build",
+      "command": "/tmp/aicefr-w3-venv/bin/python -m pip wheel . --no-deps --no-build-isolation --wheel-dir /tmp/aicefr-w3-final/wheel",
+      "exit_code": 0,
+      "result": "PASS",
+      "evidence": "wheel-build.log",
+      "artifact": {
+        "filename": "aicefr-0.1.0-py3-none-any.whl",
+        "size": 79022,
+        "sha256": "247c680cf964c614d3955a115c3086b8da4485c327d8e1d469c52ce2d57846ef"
+      }
+    },
+    {
+      "check": "ai_log",
+      "command": "/tmp/aicefr-w3-venv/bin/python /tmp/aicefr-w3-final-audit.py",
+      "exit_code": 0,
+      "result": "PASS",
+      "evidence": "ai-log-audit.json"
+    }
+  ],
+  "remote_ci": "NOT_RUN",
+  "deployment": "NOT_RUN"
+}
