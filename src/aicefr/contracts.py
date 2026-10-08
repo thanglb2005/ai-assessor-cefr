@@ -50,6 +50,7 @@ class ConsentRecord(_Frozen):
     consent_version: str = Field(min_length=1)
     state: ConsentState
     recorded_at: datetime
+    research_allowed: bool = False
 
 
 class SessionRecord(_Frozen):
@@ -98,6 +99,9 @@ class ReasonCode(StrEnum):
     # M05 — Scoring
     OUT_OF_DISTRIBUTION = "OUT_OF_DISTRIBUTION"
     SCORE_NEAR_BOUNDARY = "SCORE_NEAR_BOUNDARY"
+    SCORE_AGGREGATED = "SCORE_AGGREGATED"
+    PIPELINE_INTERRUPTED = "PIPELINE_INTERRUPTED"
+    MANUAL_REVIEW_REQUESTED = "MANUAL_REVIEW_REQUESTED"
     MODEL_VERSION_MISSING = "MODEL_VERSION_MISSING"
     MODEL_ARTIFACT_INVALID = "MODEL_ARTIFACT_INVALID"
 
@@ -194,6 +198,7 @@ class ResponseRecord(_Frozen):
     status_reason: ReasonCode | None = None
     revision: int = Field(default=1, ge=1)
     created_at: datetime
+    audio_available: bool = True
 
 
 class AuditEvent(_Frozen):
@@ -380,6 +385,7 @@ class ReviewCandidate(_Frozen):
     revision: int = Field(default=1, ge=1)
     created_at: datetime
     updated_at: datetime
+    claimed_by: str | None = None
 
     @field_validator("source_versions")
     @classmethod

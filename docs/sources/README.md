@@ -1,5 +1,7 @@
 # Nguồn tài liệu của đề tài
 
+Cập nhật lưu trữ 08/10/2026: thư mục tham chiếu cũ đã được xóa theo yêu cầu; source, tài liệu và dữ liệu local được giữ tại `../ai-assessor-cefr-runtime/backups/ai-assessor-cefr-thamchie-before-cleanup-2026-10-08` (không gồm `.venv`). Các đường dẫn/lệnh khảo sát cũ bên dưới là lịch sử; checksum và kết quả khảo sát không đổi.
+
 Dự án `ai-assessor-cefr` là sản phẩm chính thức do nhóm phát triển từ đầu theo SDD hiện hành. Thư mục này lưu đề cương, model provenance và hồ sơ kỹ thuật nội bộ do chính nhóm tạo trong quá trình hình thành đề tài. Hai đề cương DOCX được lưu nguyên bản dưới `original-documents/`; báo cáo fine-tune của Thắng nằm dưới `prior-project-reports/`. Mỗi tài liệu quan trọng có checksum để đối chiếu xuất xứ. Requirement, implementation và evidence của dự án được quản lý theo module và revision hiện hành.
 
 | ID | Tài liệu nguồn | Vai trò trong dự án | Trạng thái sử dụng |

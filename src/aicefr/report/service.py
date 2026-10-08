@@ -13,6 +13,7 @@ from aicefr.contracts import (
     Assessment,
     AssessmentStatus,
     FeatureSet,
+    ReasonCode,
     ReviewDecision,
     Transcript,
 )
@@ -183,6 +184,11 @@ class DiagnosticReportBuilder:
         issues = (*evidence.issues, *request_issues)
         assessment = report_input.assessment
         limitations = self._limitations(assessment.status, issues)
+        if ReasonCode.SCORE_AGGREGATED in assessment.reasons:
+            limitations += (
+                "Bài dài dùng tổng hợp các cửa sổ, chưa được validation CEFR; "
+                "phải có giảng viên duyệt trước khi sử dụng kết quả.",
+            )
         return DiagnosticReport(
             response_id=report_input.response_id,
             status=ReportStatus.PROVISIONAL,
@@ -193,6 +199,7 @@ class DiagnosticReportBuilder:
             interaction=assessment.interaction,
             reasons=assessment.reasons,
             comments=tuple(comments),
+            evidence_refs=tuple(evidence.valid.values()),
             evidence_issues=tuple(issues),
             limitations=limitations,
             source_versions=self._source_versions(report_input) | report_input.source_versions,
@@ -273,6 +280,17 @@ class DiagnosticReportBuilder:
     @staticmethod
     def _source_versions(report_input: ReportInput) -> dict[str, str]:
         values = {"assessment": report_input.assessment.provenance.model_version or "unavailable"}
+        provenance = report_input.assessment.provenance
+        for field in (
+            "model_sha256",
+            "band_map_version",
+            "calibration_version",
+            "unit_of_inference",
+            "feature_version",
+        ):
+            value = getattr(provenance, field)
+            if value is not None:
+                values[field] = value
         if report_input.transcript is not None:
             values["transcript"] = report_input.transcript.decode_config_version
             values["asr_engine"] = (

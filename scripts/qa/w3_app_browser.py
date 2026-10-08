@@ -24,10 +24,8 @@ import soundfile as sf
 from playwright.sync_api import BrowserContext, Page, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_MODEL = Path(
-    "/home/thanglvc/Documents/HCMUTE/TLCN/ai-assessor-cefr-thamchie/"
-    "src/aicefr/scoring/models/ridge_resp_v2.json"
-)
+MODEL_DIRECTORY = os.environ.get("AICEFR_MODEL_DIR")
+DEFAULT_MODEL = Path(MODEL_DIRECTORY) / "ridge_resp_v2.json" if MODEL_DIRECTORY else None
 
 
 def _write_audio(path: Path) -> bytes:
@@ -37,9 +35,7 @@ def _write_audio(path: Path) -> bytes:
     samples = np.zeros(count, dtype=np.float32)
     offset = int(count * 0.7)
     active = count - offset
-    samples[offset:] = 0.2 * np.sin(
-        np.arange(active, dtype=np.float32) * (2 * np.pi * 220 / rate)
-    )
+    samples[offset:] = 0.2 * np.sin(np.arange(active, dtype=np.float32) * (2 * np.pi * 220 / rate))
     sf.write(path, samples, rate, format="WAV", subtype="PCM_16")
     return path.read_bytes()
 
@@ -96,10 +92,20 @@ def _wait_ready(server: subprocess.Popen[str], base_url: str) -> None:
 
 def _attach_observers(context: BrowserContext, metrics: dict[str, object]) -> None:
     def observe_page(page: Page) -> None:
-        page.on("response", lambda response: metrics["http_statuses"].append(response.status)
-                if urlsplit(response.url).hostname in {"127.0.0.1", "localhost"} else None)
-        page.on("console", lambda message: metrics["console_errors"].append(message.type)
-                if message.type == "error" else None)
+        page.on(
+            "response",
+            lambda response: (
+                metrics["http_statuses"].append(response.status)
+                if urlsplit(response.url).hostname in {"127.0.0.1", "localhost"}
+                else None
+            ),
+        )
+        page.on(
+            "console",
+            lambda message: (
+                metrics["console_errors"].append(message.type) if message.type == "error" else None
+            ),
+        )
         page.on("requestfailed", lambda request: metrics["failed_requests"].append(request.method))
 
     context.on("page", observe_page)
@@ -377,9 +383,7 @@ def run(model_artifact: Path, evidence_dir: Path) -> dict[str, object]:
                 metrics["http_statuses"].append(revoked.status)
                 revoked.dispose()
 
-                mobile_student_context = browser.new_context(
-                    viewport={"width": 390, "height": 844}
-                )
+                mobile_student_context = browser.new_context(viewport={"width": 390, "height": 844})
                 _attach_observers(mobile_student_context, metrics)
                 mobile_student = mobile_student_context.new_page()
                 _login(mobile_student, base_url, "fixture-student", passwords["fixture-student"])
@@ -401,9 +405,7 @@ def run(model_artifact: Path, evidence_dir: Path) -> dict[str, object]:
                 viewport_checks += 1
                 mobile_student_context.close()
 
-                mobile_teacher_context = browser.new_context(
-                    viewport={"width": 390, "height": 844}
-                )
+                mobile_teacher_context = browser.new_context(viewport={"width": 390, "height": 844})
                 _attach_observers(mobile_teacher_context, metrics)
                 mobile_teacher = mobile_teacher_context.new_page()
                 _login(
@@ -471,7 +473,9 @@ def run(model_artifact: Path, evidence_dir: Path) -> dict[str, object]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run local W3 student/teacher browser QA")
-    parser.add_argument("--model-artifact", type=Path, default=DEFAULT_MODEL)
+    parser.add_argument(
+        "--model-artifact", type=Path, default=DEFAULT_MODEL, required=DEFAULT_MODEL is None
+    )
     parser.add_argument(
         "--evidence-dir",
         type=Path,

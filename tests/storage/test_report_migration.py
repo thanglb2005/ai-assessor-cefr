@@ -23,7 +23,7 @@ def test_schema_v2_migrates_to_v3_without_losing_existing_response(tmp_path):
     )
     assert store.connection.execute("PRAGMA user_version").fetchone()[0] == 2
     store._migrate()
-    assert store.connection.execute("PRAGMA user_version").fetchone()[0] == 3
+    assert store.connection.execute("PRAGMA user_version").fetchone()[0] == 4
     tables = {row[0] for row in store.connection.execute(
         "SELECT name FROM sqlite_master WHERE type='table'"
     )}

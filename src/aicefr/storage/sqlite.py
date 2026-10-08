@@ -6,7 +6,7 @@ import sqlite3
 import uuid
 from collections.abc import Iterator
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from aicefr.auth.service import AccountRecord
@@ -26,7 +26,7 @@ from aicefr.storage.paths import external_data_dir
 
 
 class SQLiteStore:
-    SCHEMA_VERSION = 3
+    SCHEMA_VERSION = 4
 
     def __init__(self, data_dir: Path | str) -> None:
         self.data_dir = external_data_dir(data_dir)
@@ -70,6 +70,9 @@ class SQLiteStore:
             if version == 2:
                 self._upgrade_v2_to_v3()
                 version = 3
+            if version == 3:
+                self._upgrade_v3_to_v4()
+                version = 4
             if version != self.SCHEMA_VERSION:
                 raise RuntimeError("unsupported SQLite schema version")
         except Exception:
@@ -166,6 +169,40 @@ class SQLiteStore:
             COMMIT;
         """)
 
+    def _upgrade_v3_to_v4(self) -> None:
+        self.connection.executescript("""
+            BEGIN IMMEDIATE;
+            ALTER TABLE accounts ADD COLUMN disabled INTEGER NOT NULL DEFAULT 0;
+            ALTER TABLE accounts ADD COLUMN failed_attempts INTEGER NOT NULL DEFAULT 0;
+            ALTER TABLE accounts ADD COLUMN locked_until TEXT;
+            ALTER TABLE consents ADD COLUMN research_allowed INTEGER NOT NULL DEFAULT 0;
+            ALTER TABLE responses ADD COLUMN audio_deleted_at TEXT;
+            ALTER TABLE review_candidates ADD COLUMN claimed_by TEXT;
+            UPDATE review_candidates SET claimed_by=(
+                SELECT actor_id FROM audit WHERE action='review_claimed'
+                AND object_id=review_candidates.response_id ORDER BY rowid DESC LIMIT 1
+            ) WHERE state='IN_REVIEW';
+            CREATE TABLE speaking_tasks (
+                task_id TEXT NOT NULL, task_version TEXT NOT NULL,
+                title TEXT NOT NULL, prompt_text TEXT NOT NULL,
+                min_seconds REAL NOT NULL, max_seconds REAL NOT NULL,
+                active INTEGER NOT NULL, revision INTEGER NOT NULL,
+                created_at TEXT NOT NULL,
+                PRIMARY KEY(task_id, task_version)
+            );
+            CREATE TABLE runtime_settings (
+                key TEXT PRIMARY KEY, payload TEXT NOT NULL,
+                revision INTEGER NOT NULL, version TEXT NOT NULL,
+                updated_by TEXT NOT NULL, updated_at TEXT NOT NULL
+            );
+            CREATE TABLE blob_deletions (
+                blob_id TEXT PRIMARY KEY, queued_at TEXT NOT NULL
+            );
+            CREATE INDEX responses_owner_created_idx ON responses(owner_id, created_at);
+            PRAGMA user_version=4;
+            COMMIT;
+        """)
+
     def _audit(self, connection: sqlite3.Connection, event: AuditEvent) -> None:
         connection.execute(
             "INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?)",
@@ -195,21 +232,45 @@ class SQLiteStore:
             revision=int(row[8]),
             created_at=datetime.fromisoformat(str(row[9])),
             status_reason=ReasonCode(str(row[10])) if row[10] is not None else None,
+            audio_available=row[11] is None,
         )
 
     def get_account(self, actor_id: str) -> AccountRecord | None:
         row = self.connection.execute(
-            "SELECT actor_id, role, password_hash FROM accounts WHERE actor_id=?", (actor_id,)
+            "SELECT actor_id, role, password_hash, disabled, failed_attempts, locked_until "
+            "FROM accounts WHERE actor_id=?",
+            (actor_id,),
         ).fetchone()
         if row is None:
             return None
-        return AccountRecord(Actor(actor_id=row[0], role=ActorRole(row[1])), row[2])
+        return AccountRecord(
+            Actor(actor_id=row[0], role=ActorRole(row[1])),
+            row[2],
+            bool(row[3]),
+            row[4],
+            datetime.fromisoformat(row[5]) if row[5] else None,
+        )
 
     def add_account(self, account: AccountRecord) -> None:
         with self.transaction() as connection:
             connection.execute(
-                "INSERT INTO accounts VALUES (?, ?, ?)",
+                "INSERT INTO accounts(actor_id, role, password_hash) VALUES (?, ?, ?)",
                 (account.actor.actor_id, account.actor.role, account.password_hash),
+            )
+
+    def record_login(self, actor_id: str, *, success: bool, now: datetime) -> None:
+        with self.transaction() as connection:
+            account = self.get_account(actor_id)
+            if account is None:
+                return
+            expired = account.locked_until is not None and now >= account.locked_until
+            attempts = 0 if success or expired else account.failed_attempts
+            if not success:
+                attempts += 1
+            locked = now + timedelta(minutes=15) if attempts >= 5 else None
+            connection.execute(
+                "UPDATE accounts SET failed_attempts=?, locked_until=? WHERE actor_id=?",
+                (attempts, locked.isoformat() if locked else None, actor_id),
             )
 
     def get_session(self, digest: str) -> SessionRecord | None:
@@ -261,6 +322,7 @@ class SQLiteStore:
             consent_version=row[1],
             state=ConsentState(row[2]),
             recorded_at=datetime.fromisoformat(row[3]),
+            research_allowed=bool(row[4]),
         )
 
     def put_consent(self, consent: ConsentRecord) -> None:
@@ -273,15 +335,18 @@ class SQLiteStore:
         )
         with self.transaction() as connection:
             connection.execute(
-                """INSERT INTO consents VALUES (?, ?, ?, ?)
+                """INSERT INTO consents (
+                participant_id, consent_version, state, recorded_at, research_allowed
+                ) VALUES (?, ?, ?, ?, ?)
                 ON CONFLICT(participant_id) DO UPDATE SET
                 consent_version=excluded.consent_version, state=excluded.state,
-                recorded_at=excluded.recorded_at""",
+                recorded_at=excluded.recorded_at, research_allowed=excluded.research_allowed""",
                 (
                     consent.participant_id,
                     consent.consent_version,
                     consent.state,
                     consent.recorded_at.isoformat(),
+                    int(consent.research_allowed),
                 ),
             )
             self._audit(connection, event)

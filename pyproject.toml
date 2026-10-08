@@ -30,6 +30,9 @@ dev = [
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+aicefr = ["api/static/*.js"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # Cho phép test import helper dùng chung (tests.features.fixtures, tests.asr.fixtures)

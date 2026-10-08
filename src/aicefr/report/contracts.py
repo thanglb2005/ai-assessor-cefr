@@ -98,6 +98,7 @@ class DiagnosticReport(_Frozen):
     interaction: Interaction
     reasons: tuple[ReasonCode, ...] = ()
     comments: tuple[DiagnosticComment, ...] = ()
+    evidence_refs: tuple[EvidenceRef, ...] = ()
     evidence_issues: tuple[EvidenceIssue, ...] = ()
     limitations: tuple[str, ...] = ()
     source_versions: dict[str, str] = Field(default_factory=dict)

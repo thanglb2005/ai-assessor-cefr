@@ -34,12 +34,18 @@ button {
 a { color: #0759a5; }
 :focus-visible { outline: 3px solid #1264a3; outline-offset: 2px; }
 form { margin: 1rem 0; }
+nav { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+audio { width: 100%; }
+input[type=checkbox] { display: inline; width: auto; min-height: auto; }
+section, li { margin-bottom: 1rem; }
 """
 
 
-def _document(title: str, body: str) -> str:
+def _document(title: str, body: str, *, refresh: bool = False) -> str:
+    refresh_tag = '<meta http-equiv="refresh" content="5">' if refresh else ""
     return f"""<!doctype html><html lang="vi"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">{refresh_tag}
 <title>{escape(title)}</title><link rel="stylesheet" href="/local.css"></head>
 <body><main><h1>{escape(title)}</h1>{body}</main></body></html>"""
 
@@ -53,21 +59,53 @@ def _demo_note(demo: bool) -> str:
     )
 
 
-def render_upload_form(error: str | None = None, *, demo: bool = False) -> str:
+def render_upload_form(
+    error: str | None = None,
+    *,
+    demo: bool = False,
+    tasks: list[dict] | None = None,
+    selected: dict | None = None,
+    consent_version: str = "",
+    recording_enabled: bool = False,
+    max_seconds: float = 180,
+    max_bytes: int = 20_000_000,
+) -> str:
     message = f'<p role="alert">{escape(error)}</p>' if error else ""
-    body = f"""{_demo_note(demo)}{message}
+    from aicefr.portal.templates import nav
+
+    selected = selected or {}
+    task_id = escape(selected.get("task_id", ""), quote=True)
+    task_version = escape(selected.get("task_version", ""), quote=True)
+    prompts = "".join(
+        f"<li>{escape(item['title'])} "
+        f"({escape(item['task_id'])}/{escape(item['task_version'])}): "
+        f"{escape(item['prompt_text'])}</li>"
+        for item in (tasks or [])
+    )
+    body = f"""{nav("student")}{_demo_note(demo)}{message}<ul>{prompts}</ul>
 <p>Kết quả là ước lượng phục vụ học tập và có thể cần giảng viên duyệt.</p>
 <p>Chỉ tiếp tục khi bạn đã đồng ý xử lý dữ liệu cho bài này.</p>
 <p>Có thể rút lại đồng ý tại <a href="/student/consent">trang đồng ý</a>.</p>
-<form method="post" action="/student/responses" enctype="multipart/form-data">
-<label for="task-id">Mã bài</label><input id="task-id" name="task_id" required>
+<form method="post" action="/student/responses" enctype="multipart/form-data" data-recorder
+data-recording-enabled="{str(recording_enabled).lower()}"
+data-max-seconds="{max_seconds}" data-max-bytes="{max_bytes}">
+<label for="task-id">Mã bài</label><input id="task-id" name="task_id" value="{task_id}" required>
 <label for="task-version">Phiên bản bài</label>
-<input id="task-version" name="task_version" required>
+<input id="task-version" name="task_version" value="{task_version}" required>
 <label for="consent-version">Phiên bản đồng ý</label>
-<input id="consent-version" name="consent_version" required>
+<input id="consent-version" name="consent_version"
+value="{escape(consent_version, quote=True)}" required>
 <label for="audio">Tệp âm thanh</label>
 <input id="audio" name="audio" type="file" accept="audio/*" required>
-<button type="submit">Nộp bài</button></form>{render_logout_form()}"""
+<section {"hidden" if not recording_enabled else ""} aria-label="Ghi âm trực tiếp">
+<button type="button" id="record-start">Bắt đầu ghi âm</button>
+<button type="button" id="record-stop" disabled>Dừng ghi âm</button>
+<audio id="record-preview" controls hidden></audio></section>
+<p id="record-notice" role="status" aria-live="polite">Ghi âm hoặc chọn tệp để nộp bài.</p>
+<progress id="upload-progress" max="100" value="0" hidden
+aria-label="Tiến trình gửi tệp"></progress>
+<button type="submit">Nộp bài</button></form>{render_logout_form()}
+<script src="/recorder.js" defer></script>"""
     return _document("Nộp bài nói", body)
 
 
@@ -82,11 +120,19 @@ def render_login(error: str | None = None, *, demo: bool = False) -> str:
     return _document("Đăng nhập", body)
 
 
-def render_consent(version: str, active: bool, demo: bool) -> str:
+def render_consent(
+    version: str, active: bool, demo: bool, *, research_allowed: bool = False
+) -> str:
+    from aicefr.portal.templates import nav
+
     state = "Bạn đã đồng ý phiên bản hiện tại." if active else "Bạn chưa đồng ý phiên bản hiện tại."
-    body = f"""{_demo_note(demo)}<p>{state}</p>
+    body = f"""{nav("student")}{_demo_note(demo)}<p>{state}</p>
 <p>Phiên bản nội dung: {escape(version)}. Bạn có thể rút lại đồng ý bất cứ lúc nào.</p>
-<form method="post" action="/student/consent/accept"><button type="submit">Đồng ý</button></form>
+<form method="post" action="/student/consent/accept">
+<label><input type="checkbox" name="research_allowed" value="true"
+{"checked" if research_allowed else ""}>
+Cho phép dùng số liệu tổng hợp đã bỏ ID tài khoản cho nghiên cứu (tùy chọn).</label>
+<button type="submit">Đồng ý</button></form>
 <form method="post" action="/student/consent/withdraw">
 <button type="submit">Rút lại đồng ý</button></form>
 <p><a href="/student/upload">Nộp bài</a></p>{render_logout_form()}"""
@@ -94,16 +140,20 @@ def render_consent(version: str, active: bool, demo: bool) -> str:
 
 
 def render_student_status(status: StudentStatus, *, demo: bool = False) -> str:
+    from aicefr.portal.templates import nav
+
     reason = f"<p>{escape(status.reason)}</p>" if status.reason else ""
     report_link = (
         f'<a href="/student/responses/{escape(status.response_id)}/report">Xem báo cáo</a>'
         if status.report_available
         else "<p>Báo cáo chưa sẵn sàng.</p>"
     )
-    body = f"""{_demo_note(demo)}<dl><dt>Mã bài nộp</dt>
+    body = f"""{nav("student")}{_demo_note(demo)}<dl><dt>Mã bài nộp</dt>
 <dd>{escape(status.response_id)}</dd><dt>Trạng thái</dt>
 <dd>{escape(status.status.value)}</dd></dl>{reason}{report_link}{render_logout_form()}"""
-    return _document("Trạng thái bài nộp", body)
+    return _document(
+        "Trạng thái bài nộp", body, refresh=status.status.value in {"QUEUED", "RUNNING"}
+    )
 
 
 def render_notice(title: str, message: str) -> str:
@@ -132,15 +182,48 @@ def render_report_content(report: DiagnosticReport) -> str:
             else ""
         )
         teacher_result = f"<p>Kết quả giảng viên: {escape(final_value)}</p>{reason}"
+    refs = {ref.evidence_id: ref for ref in report.evidence_refs}
+    comment_rows = []
+    for comment in report.comments:
+        reference = refs.get(comment.evidence_id)
+        seek = ""
+        if reference is not None and reference.start_s is not None:
+            seek = (
+                f'<button type="button" data-seek-second="{reference.start_s}">'
+                f"Nghe tại {reference.start_s:.2f}s</button>"
+            )
+        comment_rows.append(
+            f"<li>{escape(comment.criterion.value)}: {escape(comment.text)} "
+            f"<small>Evidence: {escape(comment.evidence_id)} · "
+            f"{escape(comment.source.value)}</small>{seek}</li>"
+        )
+    comments = "".join(comment_rows)
+    limitations = "".join(f"<li>{escape(item)}</li>" for item in report.limitations)
+    reasons = ", ".join(escape(reason.value) for reason in report.reasons) or "Không có"
+    provenance = "".join(
+        f"<dt>{escape(key)}</dt><dd>{escape(str(value))}</dd>"
+        for key, value in sorted(report.source_versions.items())
+    )
+    issues = "".join(
+        f"<li>{escape(issue.evidence_id)}: {escape(issue.reason)}</li>"
+        for issue in report.evidence_issues
+    )
     return f"""<section aria-labelledby="report-heading">
 <h2 id="report-heading">Báo cáo chẩn đoán</h2>
 <p>{verification}</p><p>{overall_label}: {escape(overall)}</p>{teacher_result}
-<p>Interaction: insufficient_evidence</p><h3>Coverage</h3><ul>{coverage}</ul></section>"""
+<p>Interaction: insufficient_evidence</p><h3>Coverage</h3><ul>{coverage}</ul>
+<h3>Nhận xét có evidence</h3><details><summary>{len(report.comments)} nhận xét</summary>
+<ul>{comments}</ul></details><p>Lý do: {reasons}</p>
+<h3>Giới hạn kết quả</h3><ul>{limitations}</ul>
+<details><summary>Phiên bản và evidence</summary>
+<dl>{provenance}</dl><ul>{issues}</ul></details></section>"""
 
 
 def render_report(report: DiagnosticReport, *, demo: bool = False) -> str:
-    body = _demo_note(demo) + render_report_content(report) + render_logout_form()
-    return _document("Báo cáo chẩn đoán", body)
+    from aicefr.portal.templates import nav
+
+    body = nav("student") + _demo_note(demo) + render_report_content(report) + render_logout_form()
+    return _document("Báo cáo chẩn đoán", body + '<script src="/report.js" defer></script>')
 
 
 def _coverage_row(criterion: str, coverage: float | None) -> str:
@@ -149,16 +232,24 @@ def _coverage_row(criterion: str, coverage: float | None) -> str:
 
 
 def render_review_queue(candidates: tuple[ReviewCandidate, ...], *, demo: bool = False) -> str:
+    from aicefr.portal.templates import nav
+
     rows = "".join(_review_row(candidate) for candidate in candidates)
     if not rows:
         rows = "<li>Không có bài cần duyệt.</li>"
-    body = f"{_demo_note(demo)}<ul>{rows}</ul>{render_logout_form()}"
+    body = f"{nav('teacher')}{_demo_note(demo)}<ul>{rows}</ul>{render_logout_form()}"
     return _document("Hàng đợi giảng viên", body)
 
 
 def render_review_detail(
-    candidate: ReviewCandidate, report: DiagnosticReport | None, *, demo: bool = False
+    candidate: ReviewCandidate,
+    report: DiagnosticReport | None,
+    *,
+    demo: bool = False,
+    audio_available: bool = True,
 ) -> str:
+    from aicefr.portal.templates import nav
+
     report_html = (
         render_report_content(report) if report is not None else "<p>Báo cáo chưa sẵn sàng.</p>"
     )
@@ -175,12 +266,45 @@ def render_review_detail(
 <option value="B1">B1</option><option value="B2">B2</option></select>
 <label for="reason">Lý do</label><textarea id="reason" name="reason"></textarea>
 <button type="submit">Lưu quyết định</button></form>"""
+    else:
+        path_id = quote(candidate.response_id, safe="")
+        action_form = (
+            f'<form method="post" action="/teacher/reviews/{path_id}/reopen">'
+            f'<input type="hidden" name="expected_revision" value="{candidate.revision}">'
+            '<label>Lý do mở lại<textarea name="reason" required maxlength="1000">'
+            "</textarea></label>"
+            "<button>Mở lại để hiệu chỉnh</button></form>"
+        )
     path_id = quote(candidate.response_id, safe="")
-    body = f"""{_demo_note(demo)}<p>Trạng thái: {escape(candidate.state.value)}</p>
+    audio_html = (
+        f'<audio controls preload="none" src="/teacher/reviews/{path_id}/audio"></audio>'
+        f'<p><a href="/teacher/reviews/{path_id}/audio">Nghe audio</a></p>'
+        if audio_available
+        else "<p>Audio đã được xóa theo retention.</p>"
+    )
+    claim = ""
+    if candidate.state.value in {"PENDING", "IN_REVIEW"}:
+        from datetime import UTC, datetime
+
+        from aicefr.review.service import claim_expired
+
+        action = (
+            "claim"
+            if candidate.state.value == "PENDING" or claim_expired(candidate, datetime.now(UTC))
+            else "release"
+        )
+        label = "Nhận xử lý" if action == "claim" else "Trả lại hàng đợi"
+        claim = (
+            f'<form method="post" action="/teacher/reviews/{path_id}/{action}">'
+            f'<input type="hidden" name="expected_revision" value="{candidate.revision}">'
+            f"<button>{label}</button></form>"
+        )
+    body = f"""{nav("teacher")}{_demo_note(demo)}<p>Trạng thái: {escape(candidate.state.value)}</p>
+<p>Người nhận: {escape(candidate.claimed_by or "Chưa có")}</p>{claim}
 <p>Revision: {candidate.revision}</p>{report_html}
-<p><a href="/teacher/reviews/{path_id}/audio">Nghe audio</a></p>{action_form}
+{audio_html}{action_form}
 <p><a href="/teacher/reviews">Quay lại hàng đợi</a></p>{render_logout_form()}"""
-    return _document("Duyệt bài", body)
+    return _document("Duyệt bài", body + '<script src="/report.js" defer></script>')
 
 
 def _review_row(candidate: ReviewCandidate) -> str:

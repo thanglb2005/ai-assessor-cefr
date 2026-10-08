@@ -8,11 +8,14 @@ from __future__ import annotations
 
 import ipaddress
 import json
+import re
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from email.parser import BytesParser
 from email.policy import default
 from http import HTTPStatus
+from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
@@ -33,6 +36,7 @@ from aicefr.api.templates import (
 )
 from aicefr.auth.service import AuthorizationError, AuthService, ConsentService, ResourceNotFound
 from aicefr.contracts import ActorRole, ConsentState
+from aicefr.limits import RateLimiter
 from aicefr.report.contracts import DiagnosticReport
 from aicefr.report.service import ReportNotFound, UnverifiedReviewDecision
 from aicefr.review.service import (
@@ -72,7 +76,11 @@ class StudentTeacherApp:
     _SECURITY_HEADERS = (
         ("Cache-Control", "no-store"),
         ("X-Content-Type-Options", "nosniff"),
-        ("Content-Security-Policy", "default-src 'self'; base-uri 'none'; frame-ancestors 'none'"),
+        (
+            "Content-Security-Policy",
+            "default-src 'self'; media-src 'self' blob:; "
+            "base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+        ),
     )
 
     def __init__(
@@ -88,6 +96,8 @@ class StudentTeacherApp:
         consent_version: str = "local-v1",
         demo: bool = False,
         max_request_bytes: int = 10 * 1024 * 1024,
+        portal: Any | None = None,
+        metrics: Any | None = None,
     ) -> None:
         if max_request_bytes <= 0:
             raise ValueError("max_request_bytes must be positive")
@@ -101,6 +111,9 @@ class StudentTeacherApp:
         self._consent_version = consent_version
         self._demo = demo
         self._max_request_bytes = max_request_bytes
+        self._portal = portal
+        self._metrics = metrics
+        self._limiter = RateLimiter()
 
     def __call__(self, environ: dict[str, Any], start_response: StartResponse) -> list[bytes]:
         try:
@@ -128,9 +141,12 @@ class StudentTeacherApp:
             response = self._controlled_error(
                 environ, HTTPStatus.INTERNAL_SERVER_ERROR, "REQUEST_FAILED"
             )
+        if self._metrics is not None:
+            self._metrics.record(str(environ.get("PATH_INFO", "")), response.status.value)
         headers = [
             ("Content-Type", response.content_type),
             ("Content-Length", str(len(response.body))),
+            ("X-Request-ID", uuid.uuid4().hex),
             *self._SECURITY_HEADERS,
             *response.headers,
         ]
@@ -155,6 +171,12 @@ class StudentTeacherApp:
             "CONSENT_VERSION_STALE": (
                 "Nội dung đồng ý đã thay đổi. Hãy đọc và xác nhận phiên bản hiện tại."
             ),
+            "RATE_LIMITED": "Bạn thao tác quá nhiều lần. Hãy đợi một phút rồi thử lại.",
+            "STALE_REVISION": "Dữ liệu đã thay đổi. Hãy tải lại trang trước khi lưu.",
+            "REPORT_NOT_READY": "Báo cáo chưa sẵn sàng. Hãy đợi xử lý bài và tải lại trang.",
+            "STALE_OR_FINAL_REVIEW": (
+                "Bài đã thay đổi hoặc có người khác nhận duyệt. Hãy tải lại hàng đợi."
+            ),
         }
         return cls._html(
             status,
@@ -166,6 +188,10 @@ class StudentTeacherApp:
     def _dispatch(self, environ: dict[str, Any]) -> WebResponse:
         method = str(environ.get("REQUEST_METHOD", "GET")).upper()
         path = str(environ.get("PATH_INFO", "/"))
+        if self._portal is not None:
+            portal_response = self._portal.dispatch(self, environ)
+            if portal_response is not None:
+                return portal_response
         if path == "/" and method == "GET":
             return WebResponse(
                 HTTPStatus.SEE_OTHER, "text/plain; charset=utf-8", b"", (("Location", "/login"),)
@@ -181,6 +207,12 @@ class StudentTeacherApp:
                 "text/css; charset=utf-8",
                 LOCAL_CSS.encode("utf-8"),
                 (("Cache-Control", "public, max-age=300"),),
+            )
+        if path in {"/recorder.js", "/report.js"} and method == "GET":
+            return WebResponse(
+                HTTPStatus.OK,
+                "text/javascript; charset=utf-8",
+                (Path(__file__).parent / "static" / path.removeprefix("/")).read_bytes(),
             )
         if path == "/logout" and method == "POST":
             self._require_origin(environ)
@@ -206,7 +238,13 @@ class StudentTeacherApp:
                 and record.consent_version == self._consent_version
             )
             return self._html(
-                HTTPStatus.OK, render_consent(self._consent_version, active, self._demo)
+                HTTPStatus.OK,
+                render_consent(
+                    self._consent_version,
+                    active,
+                    self._demo,
+                    research_allowed=bool(record and record.research_allowed),
+                ),
             )
         if path in {"/student/consent/accept", "/student/consent/withdraw"} and method == "POST":
             token = self._session_token(environ, unsafe=True)
@@ -218,7 +256,28 @@ class StudentTeacherApp:
             if actor is None or self._consents is None:
                 raise HttpInputError(HTTPStatus.UNAUTHORIZED, "SESSION_REQUIRED")
             if path.endswith("accept"):
-                self._consents.activate(actor, self._consent_version)
+                values = (
+                    self._request_values(environ)
+                    if environ.get("CONTENT_LENGTH") not in {None, "", "0"}
+                    else {}
+                )
+                if set(values) - {"research_allowed"}:
+                    raise HttpInputError(HTTPStatus.BAD_REQUEST, "INVALID_REQUEST")
+                research = values.get("research_allowed", False)
+                if not isinstance(research, (bool, str)) or research not in (
+                    False,
+                    True,
+                    "true",
+                    "false",
+                    "on",
+                    "off",
+                ):
+                    raise HttpInputError(HTTPStatus.BAD_REQUEST, "INVALID_REQUEST")
+                self._consents.activate(
+                    actor,
+                    self._consent_version,
+                    research_allowed=research in (True, "true", "on"),
+                )
             else:
                 self._consents.withdraw(actor)
             return WebResponse(
@@ -230,7 +289,31 @@ class StudentTeacherApp:
         if method == "GET" and path == "/student/upload":
             if self._auth is not None:
                 self._resolve_cookie_actor(environ, ActorRole.STUDENT)
-            return self._html(HTTPStatus.OK, render_upload_form(demo=self._demo))
+            tasks = (
+                self._portal.service.task_list(self._session_token(environ)) if self._portal else []
+            )
+            try:
+                selected = parse_qs(str(environ.get("QUERY_STRING", "")), max_num_fields=10)
+            except ValueError as error:
+                raise HttpInputError(HTTPStatus.BAD_REQUEST, "INVALID_REQUEST") from error
+            from aicefr.audio.recordings import recording_available
+
+            qc = self._portal.control.pipeline._qc_config if self._portal else None
+            enabled = bool(
+                qc and {"webm", "mp4"}.issubset(qc.accepted_formats) and recording_available()
+            )
+            return self._html(
+                HTTPStatus.OK,
+                render_upload_form(
+                    demo=self._demo,
+                    tasks=tasks,
+                    selected={key: values[0] for key, values in selected.items()},
+                    consent_version=self._consent_version,
+                    recording_enabled=enabled,
+                    max_seconds=qc.max_duration_s if qc else 180,
+                    max_bytes=qc.max_input_bytes if qc else self._max_request_bytes,
+                ),
+            )
         if method == "POST" and path == "/api/student/responses":
             return self._submit(environ, browser=False)
         if method == "POST" and path == "/student/responses":
@@ -269,19 +352,31 @@ class StudentTeacherApp:
         ):
             raise HttpInputError(HTTPStatus.NOT_FOUND, "RESOURCE_UNAVAILABLE")
         self._auth.resolve(
-            self._session_token(environ), allowed_roles=frozenset({ActorRole.TEACHER})
+            self._session_token(environ),
+            allowed_roles=frozenset({ActorRole.TEACHER, ActorRole.ADMIN}),
         )
         candidate = self._reviews.get(response_id)
         if candidate is None:
             raise HttpInputError(HTTPStatus.NOT_FOUND, "RESOURCE_UNAVAILABLE")
         report = self._reports.get(response_id)
-        return self._html(HTTPStatus.OK, render_review_detail(candidate, report, demo=self._demo))
+        record = self._responses.metadata.get_response(response_id) if self._responses else None
+        return self._html(
+            HTTPStatus.OK,
+            render_review_detail(
+                candidate,
+                report,
+                demo=self._demo,
+                audio_available=record.audio_available if record else self._responses is None,
+            ),
+        )
 
     def _login(self, environ: dict[str, Any]) -> WebResponse:
         self._require_origin(environ)
         if self._auth is None:
             raise HttpInputError(HTTPStatus.NOT_FOUND, "ROUTE_NOT_FOUND")
         values = self._request_values(environ)
+        if not self._limiter.allow("login", str(environ.get("REMOTE_ADDR", "loopback")), limit=30):
+            raise HttpInputError(HTTPStatus.TOO_MANY_REQUESTS, "RATE_LIMITED")
         if set(values) != {"actor_id", "password"} or not all(
             isinstance(values[k], str) for k in values
         ):
@@ -299,7 +394,7 @@ class StudentTeacherApp:
             if actor.role is ActorRole.TEACHER
             else "/student/consent"
             if actor.role is ActorRole.STUDENT
-            else "/login"
+            else "/admin"
         )
         return WebResponse(
             HTTPStatus.SEE_OTHER,
@@ -355,13 +450,19 @@ class StudentTeacherApp:
         ):
             raise HttpInputError(HTTPStatus.NOT_FOUND, "RESOURCE_UNAVAILABLE")
         self._auth.resolve(
-            self._session_token(environ), allowed_roles=frozenset({ActorRole.TEACHER})
+            self._session_token(environ),
+            allowed_roles=frozenset({ActorRole.TEACHER, ActorRole.ADMIN}),
         )
         candidate = self._reviews.get(response_id)
         record = self._responses.metadata.get_response(response_id)
-        if candidate is None or record is None:
+        if candidate is None or record is None or not record.audio_available:
             raise HttpInputError(HTTPStatus.NOT_FOUND, "RESOURCE_UNAVAILABLE")
         data = self._responses.blobs.read(record.blob)
+        from aicefr.audio.recordings import recording_format
+
+        recording = recording_format(data)
+        if recording is not None:
+            return self._audio_response(environ, data, f"audio/{recording}")
         import io
 
         import soundfile as sf
@@ -381,10 +482,44 @@ class StudentTeacherApp:
         }.get(str(fmt))
         if mime is None:
             raise HttpInputError(HTTPStatus.NOT_FOUND, "RESOURCE_UNAVAILABLE")
-        return WebResponse(HTTPStatus.OK, mime, data, (("Content-Disposition", "inline"),))
+        return self._audio_response(environ, data, mime)
+
+    @staticmethod
+    def _audio_response(environ: dict[str, Any], data: bytes, mime: str) -> WebResponse:
+        headers = (("Accept-Ranges", "bytes"), ("Content-Disposition", "inline"))
+        requested = str(environ.get("HTTP_RANGE", ""))
+        if not requested:
+            return WebResponse(HTTPStatus.OK, mime, data, headers)
+        match = re.fullmatch(r"bytes=(\d*)-(\d*)", requested) if len(requested) <= 100 else None
+        size = len(data)
+        if match is not None and any(match.groups()):
+            first, last = match.groups()
+            if first:
+                start, end = int(first), min(int(last), size - 1) if last else size - 1
+            else:
+                start, end = max(0, size - int(last)), size - 1
+                if int(last) == 0:
+                    start = size
+            if 0 <= start <= end < size:
+                return WebResponse(
+                    HTTPStatus.PARTIAL_CONTENT,
+                    mime,
+                    data[start : end + 1],
+                    headers + (("Content-Range", f"bytes {start}-{end}/{size}"),),
+                )
+        return WebResponse(
+            HTTPStatus.REQUESTED_RANGE_NOT_SATISFIABLE,
+            mime,
+            b"",
+            headers + (("Content-Range", f"bytes */{size}"),),
+        )
 
     def _submit(self, environ: dict[str, Any], *, browser: bool) -> WebResponse:
         token = self._session_token(environ, unsafe=True)
+        if self._auth is not None:
+            actor = self._auth.resolve(token, allowed_roles=frozenset({ActorRole.STUDENT}))
+            if not self._limiter.allow("upload", actor.actor_id, limit=10):
+                raise HttpInputError(HTTPStatus.TOO_MANY_REQUESTS, "RATE_LIMITED")
         body = self._read_body(environ)
         request = self._multipart_submit_request(str(environ.get("CONTENT_TYPE", "")), body)
         if self._auth is not None and self._consents is not None:
@@ -456,7 +591,7 @@ class StudentTeacherApp:
 
     def _teacher_api_route(self, method: str, path: str, environ: dict[str, Any]) -> WebResponse:
         response_id, action = self._teacher_path(path, "/api/teacher/reviews/")
-        if method != "POST" or action not in {"claim", "decision"}:
+        if method != "POST" or action not in {"claim", "release", "decision"}:
             raise HttpInputError(HTTPStatus.NOT_FOUND, "ROUTE_NOT_FOUND")
         outcome = self._teacher_action(environ, response_id, action)
         payload = (
@@ -472,7 +607,7 @@ class StudentTeacherApp:
 
     def _teacher_form_route(self, method: str, path: str, environ: dict[str, Any]) -> WebResponse:
         response_id, action = self._teacher_path(path, "/teacher/reviews/")
-        if method != "POST" or action not in {"claim", "decision"}:
+        if method != "POST" or action not in {"claim", "release", "decision"}:
             raise HttpInputError(HTTPStatus.NOT_FOUND, "ROUTE_NOT_FOUND")
         self._teacher_action(environ, response_id, action)
         return WebResponse(
@@ -486,12 +621,12 @@ class StudentTeacherApp:
         assert self._review_api is not None
         token = self._session_token(environ, unsafe=True)
         values = self._request_values(environ)
-        if action == "claim":
+        if action in {"claim", "release"}:
             try:
                 expected_revision = int(values["expected_revision"])
             except (KeyError, TypeError, ValueError) as error:
                 raise HttpInputError(HTTPStatus.BAD_REQUEST, "INVALID_REQUEST") from error
-            return self._review_api.claim(token, response_id, expected_revision)
+            return getattr(self._review_api, action)(token, response_id, expected_revision)
         request = ReviewActionRequest(**self._decision_values(values))
         return self._review_api.decide(token, response_id, request)
 

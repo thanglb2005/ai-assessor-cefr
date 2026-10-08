@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+from datetime import datetime, timedelta
+
 from aicefr.auth.service import AccountRecord
 from aicefr.contracts import ConsentRecord, SessionRecord
 
@@ -19,6 +22,21 @@ class MemoryIdentityRepository:
         if account.actor.actor_id in self.accounts:
             raise ValueError("account already exists")
         self.accounts[account.actor.actor_id] = account
+
+    def record_login(self, actor_id: str, *, success: bool, now: datetime) -> None:
+        account = self.accounts[actor_id]
+        attempts = (
+            0
+            if success or (account.locked_until and now >= account.locked_until)
+            else (account.failed_attempts)
+        )
+        if not success:
+            attempts += 1
+        self.accounts[actor_id] = replace(
+            account,
+            failed_attempts=attempts,
+            locked_until=now + timedelta(minutes=15) if attempts >= 5 else None,
+        )
 
     def get_session(self, digest: str) -> SessionRecord | None:
         return self.sessions.get(digest)

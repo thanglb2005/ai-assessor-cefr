@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from threading import RLock
 from typing import Protocol
 
@@ -98,6 +98,10 @@ class ReviewRepository(Protocol):
         on_decision: Callable[[ReviewDecision], object] | None = None,
     ) -> ReviewOutcome: ...
 
+    def release(
+        self, *, actor: Actor, response_id: str, expected_revision: int, now: datetime
+    ) -> ReviewCandidate: ...
+
 
 def decision_shape(
     candidate: ReviewCandidate, request: ReviewActionRequest
@@ -174,13 +178,14 @@ class MemoryReviewRepository:
     ) -> ReviewCandidate:
         with self._lock:
             current = self._require_current(response_id, expected_revision)
-            if current.state is not ReviewState.PENDING:
+            if current.state is not ReviewState.PENDING and not claim_expired(current, now):
                 raise InvalidReviewTransition("only PENDING candidates can be claimed")
             updated = current.model_copy(
                 update={
                     "state": ReviewState.IN_REVIEW,
                     "revision": current.revision + 1,
                     "updated_at": now,
+                    "claimed_by": actor.actor_id,
                 }
             )
             event = AuditEvent(
@@ -192,6 +197,37 @@ class MemoryReviewRepository:
             )
             self._candidates[response_id] = updated
             self._audit.append(event)
+            return updated
+
+    def release(
+        self, *, actor: Actor, response_id: str, expected_revision: int, now: datetime
+    ) -> ReviewCandidate:
+        with self._lock:
+            current = self._require_current(response_id, expected_revision)
+            if current.state is not ReviewState.IN_REVIEW or (
+                current.claimed_by != actor.actor_id
+                and actor.role is not ActorRole.ADMIN
+                and not claim_expired(current, now)
+            ):
+                raise InvalidReviewTransition("review cannot be released by this actor")
+            updated = current.model_copy(
+                update={
+                    "state": ReviewState.PENDING,
+                    "claimed_by": None,
+                    "revision": current.revision + 1,
+                    "updated_at": now,
+                }
+            )
+            self._candidates[response_id] = updated
+            self._audit.append(
+                AuditEvent(
+                    event_id=uuid.uuid4().hex,
+                    actor_id=actor.actor_id,
+                    action="review_released",
+                    object_id=response_id,
+                    recorded_at=now,
+                )
+            )
             return updated
 
     def decide(
@@ -207,6 +243,8 @@ class MemoryReviewRepository:
             current = self._require_current(response_id, request.expected_revision)
             if current.state not in {ReviewState.PENDING, ReviewState.IN_REVIEW}:
                 raise InvalidReviewTransition("candidate is already final")
+            if current.claimed_by not in {None, actor.actor_id} and not claim_expired(current, now):
+                raise InvalidReviewTransition("review is claimed by another reviewer")
             new_state, final_band = decision_shape(current, request)
             audit = AuditEvent(
                 event_id=uuid.uuid4().hex,
@@ -256,6 +294,13 @@ class MemoryReviewRepository:
             raise StaleReview("candidate revision is stale")
         return current
 
+
+def claim_expired(candidate: ReviewCandidate, now: datetime) -> bool:
+    return candidate.state is ReviewState.IN_REVIEW and now >= candidate.updated_at + timedelta(
+        minutes=15
+    )
+
+
 class ReviewService:
     """M07 use cases. Only M08-authenticated teachers can mutate review state."""
 
@@ -297,7 +342,16 @@ class ReviewService:
             on_decision=callback,
         )
 
+    def release(self, actor: Actor, response_id: str, expected_revision: int) -> ReviewCandidate:
+        self._require_teacher(actor)
+        return self._repository.release(
+            actor=actor,
+            response_id=response_id,
+            expected_revision=expected_revision,
+            now=self._clock(),
+        )
+
     @staticmethod
     def _require_teacher(actor: Actor) -> None:
-        if actor.role is not ActorRole.TEACHER:
+        if actor.role not in {ActorRole.TEACHER, ActorRole.ADMIN}:
             raise AuthorizationError("access denied")

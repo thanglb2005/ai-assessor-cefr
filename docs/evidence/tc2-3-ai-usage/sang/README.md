@@ -116,3 +116,7 @@
    - Không đưa audio, transcript, model hay số liệu suy ra từ S&I vào repo public.
    - Prompt không chứa dữ liệu cá nhân.
 6. **AI log đối chiếu với Git:** mỗi dòng log có PR hoặc commit; tác giả commit chỉ ghi Sang.
+
+## Nhập vào workbook tuần — 08/10/2026
+
+Theo yêu cầu của Thắng, đã nhập đủ 55 bản ghi từ CSV này vào sheet `Sang` của [Prompt Log theo tuần](../README.md): W01 14 dòng, W02 17 dòng, W03 24 dòng. Ngày và prompt giữ nguyên; cột F chứa minh chứng cùng phiên bản/model, nội dung AI tạo và phần Sang hoàn thiện. CSV nguồn không sửa. Manifest ngoài Git `../ai-assessor-cefr-runtime/evidence/sang-csv-import-2026-10-08.json` lưu ánh xạ từng dòng và checksum.

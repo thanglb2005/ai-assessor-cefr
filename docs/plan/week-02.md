@@ -10,7 +10,7 @@ Cả ba người dùng [AGENTS.md](../../AGENTS.md) và **cùng một bản** [s
 - **Sang:** nhận review M03/M04/M05, ghi nguồn model/audio, kiểm tra các điều kiện đo lường và refusal path; tích hợp model phải có test và evidence trên revision hiện hành.
 - **Nguyên:** nhận review M01/M06, chuẩn bị M07 cho W3, đối chiếu use case/báo cáo W1 với flow hiện hành và phản hồi contract nhận từ M08/M05.
 
-**Sẵn sàng giao việc:** có thể chia việc đọc, góp ý và hoàn thiện SDD theo module ngay. Owner/task dưới đây vẫn là đề xuất cho đến khi nhóm xác nhận. Chưa giao prompt implement: 8/8 Status đang Phase 01 `DRAFT/PENDING`; trước mỗi prompt cần verdict Phase 01 → 03 → 04 → 05 của chủ dự án và baseline/fingerprint. Ghi mọi prompt AI vào [sheet đúng người](../evidence/tc2-3-ai-usage/AI%20Prompt%20Log.xlsx).
+**Sẵn sàng giao việc:** có thể chia việc đọc, góp ý và hoàn thiện SDD theo module ngay. Owner/task dưới đây vẫn là đề xuất cho đến khi nhóm xác nhận. Chưa giao prompt implement: 8/8 Status đang Phase 01 `DRAFT/PENDING`; trước mỗi prompt cần verdict Phase 01 → 03 → 04 → 05 của chủ dự án và baseline/fingerprint. Ghi mọi prompt AI vào [sheet đúng người trong file của tuần sử dụng](../evidence/tc2-3-ai-usage/README.md#ai-prompt-log-theo-tuan).
 
 ## Phân công đề xuất
 

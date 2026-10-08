@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import io
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 import soundfile as sf
@@ -93,6 +93,26 @@ def decode_and_measure(data: bytes, declared_extension: str, config: QCConfig) -
         return _reject(ReasonCode.QC_UNSUPPORTED_FORMAT, config)
 
     audio_sha256 = hashlib.sha256(data).hexdigest()
+    if declared in {AudioFormat.WEBM, AudioFormat.MP4}:
+        from aicefr.audio.recordings import RecordingDecodeError, recording_format, recording_wav
+
+        if recording_format(data) != declared.value:
+            return _reject(ReasonCode.QC_FORMAT_MISMATCH, config)
+        try:
+            wav = recording_wav(data, config)
+        except RecordingDecodeError as error:
+            return _reject(error.reason, config)
+        pcm_config = replace(
+            config,
+            accepted_formats=(AudioFormat.WAV_PCM,),
+            max_input_bytes=max(config.max_input_bytes, len(wav)),
+        )
+        result = decode_and_measure(wav, "wav", pcm_config)
+        if result.audio is not None:
+            result = DecodeResult(
+                audio=result.audio.model_copy(update={"audio_sha256": audio_sha256}), qc=result.qc
+            )
+        return result
     try:
         with sf.SoundFile(io.BytesIO(data)) as stream:
             actual = _detected_format(stream.format, stream.subtype)

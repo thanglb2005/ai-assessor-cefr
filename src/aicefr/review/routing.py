@@ -27,6 +27,8 @@ REVIEW_REASONS = frozenset(
         ReasonCode.FEATURE_VERSION_MISMATCH,
         ReasonCode.OUT_OF_DISTRIBUTION,
         ReasonCode.SCORE_NEAR_BOUNDARY,
+        ReasonCode.SCORE_AGGREGATED,
+        ReasonCode.MANUAL_REVIEW_REQUESTED,
         ReasonCode.MODEL_VERSION_MISSING,
         ReasonCode.MODEL_ARTIFACT_INVALID,
     }

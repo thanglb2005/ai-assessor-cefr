@@ -1,6 +1,6 @@
 # AI Usage Log — dự án ai-assessor-cefr
 
-Bốn bản ghi dưới đây là lịch sử dùng Codex lúc khởi tạo **repo dự án**. Từ sau bản ghi này, [AI Prompt Log.xlsx](AI%20Prompt%20Log.xlsx) là sổ prompt chính của ba thành viên, mỗi người một sheet; không ghi hai nhật ký thường nhật song song. Prompt Antigravity khi phát hành vẫn lưu nguyên văn trong `prompts/` của module và dẫn từ [Prompt Log](../../sdd/prompt-log.md).
+Bốn bản ghi dưới đây là lịch sử dùng Codex lúc khởi tạo **repo dự án**. Từ sau bản ghi này, [AI Prompt Log theo tuần](README.md#ai-prompt-log-theo-tuan) là sổ prompt chính của ba thành viên, mỗi người một sheet trong file của tuần tương ứng (thứ Hai–Chủ nhật); không ghi hai nhật ký thường nhật song song. Prompt Antigravity khi phát hành vẫn lưu nguyên văn trong `prompts/` của module và dẫn từ [Prompt Log](../../sdd/prompt-log.md).
 
 | ID / ngày | Công cụ | Yêu cầu của người dùng (tóm tắt) | AI tạo/đề xuất | Kiểm tra / phản hồi của người dùng | Minh chứng |
 | --- | --- | --- | --- | --- | --- |

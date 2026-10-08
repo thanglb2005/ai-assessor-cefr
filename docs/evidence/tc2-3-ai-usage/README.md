@@ -10,7 +10,7 @@ AI Usage Log, prompt gốc, mục đích dùng AI, file sinh ra, phần người
 
 | Artifact | Vai trò | Tình trạng |
 | --- | --- | --- |
-| [AI Prompt Log.xlsx](AI%20Prompt%20Log.xlsx) | Mỗi người ghi prompt vào sheet Thắng, Sang hoặc Nguyên; sheet Tổng hợp đếm theo người và công cụ AI | Đang cập nhật |
+| [AI Prompt Log theo tuần](#ai-prompt-log-theo-tuan) | Sáu workbook; mỗi file có sheet Thắng, Sang, Nguyên và Tổng hợp cho riêng tuần đó | W01–W04 đã tách; W05–W06 chuẩn bị trống, 08/10/2026 |
 | [AI Usage Log](ai-usage-log.md) | Bốn bản ghi Codex lúc khởi tạo; prompt mới ghi trong Excel | Lịch sử |
 | [AI Usage Log của Sang W1–W3](sang/README.md) ([CSV đầy đủ](sang/ai-usage-log-sang-W1-W3.csv)) | Bản xuất 55 dòng từ ba tab Sang trong Google Sheet, mỗi dòng có PR/commit; kèm 7 lỗi của AI đã phát hiện và sửa, quy trình kiểm soát đầu ra AI | Đủ W1–W3 (04/10/2026) |
 | [Prompt Log các module](../../sdd/prompt-log.md) | Log prompt theo module/feature và người thực hiện | Đọc trạng thái từng scope |
@@ -18,16 +18,55 @@ AI Usage Log, prompt gốc, mục đích dùng AI, file sinh ra, phần người
 | [W3 Review](../../sdd/features/w3-local-integration/reviews/review-01.md) | Findings từ actual diff, correction và independent checks | User verdict PENDING |
 | [AGENTS.md](../../../AGENTS.md) và [skill SDD chung](../../../.agents/skills/sdd-antigravity-orchestrator/SKILL.md) | Quy tắc/skill nhóm dùng từ bàn giao W2 | Đã lưu trong repo; không thay log prompt hay chứng minh file rule W1 |
 
+## AI Prompt Log theo tuần
+
+Mỗi tuần từ **thứ Hai đến Chủ nhật**. W01 bắt đầu ngày 14/09/2026 theo lịch dự án.
+Phân loại theo ngày ghi ở cột A; tên task có W2/W3 không làm thay đổi tuần của bản ghi.
+
+| File | Khoảng ngày | Thắng | Nguyên | Sang | Tổng prompt |
+| --- | --- | --- | --- | --- | --- |
+| [W01](AI%20Prompt%20Log%20-%20W01%20-%202026-09-14_2026-09-20.xlsx) | 14–20/09/2026 | 0 | 0 | 14 | 14 |
+| [W02](AI%20Prompt%20Log%20-%20W02%20-%202026-09-21_2026-09-27.xlsx) | 21–27/09/2026 | 4 | 0 | 17 | 21 |
+| [W03](AI%20Prompt%20Log%20-%20W03%20-%202026-09-28_2026-10-04.xlsx) | 28/09–04/10/2026 | 21 | 9 | 24 | 54 |
+| [W04](AI%20Prompt%20Log%20-%20W04%20-%202026-10-05_2026-10-11.xlsx) | 05–11/10/2026 | 20 | 0 | 0 | 20 |
+| [W05](AI%20Prompt%20Log%20-%20W05%20-%202026-10-12_2026-10-18.xlsx) | 12–18/10/2026 | 0 | 0 | 0 | 0 |
+| [W06](AI%20Prompt%20Log%20-%20W06%20-%202026-10-19_2026-10-25.xlsx) | 19–25/10/2026 | 0 | 0 | 0 | 0 |
+
+Số lượng tại thời điểm tách ngày 08/10/2026: giữ đủ **46 bản ghi gốc**, thêm một
+bản ghi cho yêu cầu tách file, tổng cộng **47**. Sheet `Tổng hợp` có công thức và
+giá trị hiển thị đã kiểm tra cho từng tuần; số liệu tiếp tục cập nhật khi có log mới.
+Sau đó chuẩn bị W05 và W06 trống theo yêu cầu; log cho lượt chuẩn bị được ghi tại
+W04, sheet Thắng, hàng 19 với ngày 08/10/2026. Tổng ở thời điểm chuẩn bị là **48 bản ghi**;
+hai file tuần 5–6 có đủ sheet, định dạng và công thức, chưa có bản ghi. Lượt rà soát
+thư mục ngày 08/10/2026 được ghi tại W04, hàng 20; tổng sau lượt rà soát là **49 bản ghi**.
+Lượt xóa tham chiếu cũ và cache pip theo yêu cầu được ghi tại W04, sheet Thắng, hàng 21; tổng sau lượt dọn là **50 bản ghi**. Minh chứng: [dọn thư mục](../cleanup-2026-10-08.md).
+
+Workbook nguồn bắt đầu có log từ 25/09/2026 nên tại thời điểm tách W01 và sheet Sang được giữ trống. Ngày 08/10/2026, theo yêu cầu của Thắng, đã nhập đủ **55 bản ghi** từ [CSV của Sang](sang/ai-usage-log-sang-W1-W3.csv): W01 14, W02 17, W03 24. Phân tuần theo ngày gốc, thứ Hai–Chủ nhật. CSV giữ nguyên; prompt và minh chứng được bảo toàn. Cột F kèm phiên bản/model, nội dung AI tạo và phần Sang sửa/hoàn thiện để giữ đủ thông tin trong mẫu sáu cột. Dòng 28/09 đã được CSV khử trùng, không nhập hai lần.
+
+Bản tổng hợp trước khi tách được sao lưu ngoài Git tại
+`../ai-assessor-cefr-runtime/backups/AI Prompt Log-before-week-split-2026-10-08.xlsx`.
+Manifest kiểm tra và ánh xạ hàng cũ → file/hàng mới ở
+`../ai-assessor-cefr-runtime/evidence/weekly-prompt-logs-2026-10-08.json`.
+Từ nay ghi tiếp vào file của tuần tương ứng.
+
 ## Quy ước ghi AI Prompt Log
 
-Mỗi prompt ghi một dòng trong sheet của người thực hiện: Thắng, Sang hoặc Nguyên. Điền ngày (cột A), tên người tạo (B), công cụ AI (C), công việc (D), prompt (E) và link minh chứng (F). Sheet `Tổng hợp` đếm các dòng có ngày trong phạm vi hàng 6–306 của từng sheet; thống kê công cụ cộng cả ba sheet.
+Mỗi prompt ghi một dòng trong sheet của người thực hiện: Thắng, Sang hoặc Nguyên, trong file của tuần tương ứng. Điền ngày (cột A), tên người tạo (B), công cụ AI (C), công việc (D), prompt (E) và link minh chứng (F). Sheet `Tổng hợp` đếm các dòng có ngày trong phạm vi hàng 6–306 của từng sheet trong cùng file; thống kê công cụ cộng cả ba sheet.
 
 Ba dòng mẫu `abc` đã được xóa nội dung ngày 25/09/2026 để không bị tính như prompt thật. Các bản ghi khởi tạo ngày 25/09 được giữ; lượt W3 02/10 ghi thêm user instruction, prompt gốc, amendments/corrections và xác nhận quyền audio vào sheet Thắng, với full text và file evidence. Tool column dùng `Codex` để summary formulas hiện có đếm đúng; executor `gpt-6-luna` và vai trò Codex review ghi trong activity/prompt. Không ghi giờ công hay hoạt động của Sang/Nguyên thay họ. Chỉ dùng số liệu sau khi mỗi dòng có prompt/evidence thật; templates chưa có ngày không được tính như prompt thực.
 
-Ngày 02/10/2026, Thắng xác nhận tám prompt Codex W2 `W2-P01–W2-P08` đã được sử dụng thực tế ngày **28/09/2026**. Các hàng 10–17 trong sheet Thắng đã bỏ nhãn `MẪU`/`CHƯA GỬI`, dùng tool `Codex` và điền ngày 28/09/2026; giữ nguyên nội dung prompt. Yêu cầu đính chính được ghi ở hàng 30 với ngày nhận yêu cầu 02/10/2026.
+Ngày 02/10/2026, Thắng xác nhận tám prompt Codex W2 `W2-P01–W2-P08` đã được sử dụng thực tế ngày **28/09/2026**. Các bản ghi đã bỏ nhãn `MẪU`/`CHƯA GỬI`, dùng tool `Codex` và điền ngày 28/09/2026; giữ nguyên nội dung prompt. Sau khi tách, chúng nằm ở sheet Thắng của W03, hàng 6–13; yêu cầu đính chính ngày 02/10/2026 ở hàng 26. Quy ước thứ Hai–Chủ nhật đặt ngày 28/09 vào W03 dù tên task là W2.
 
 ## Còn thiếu / cần xác minh
 
 Lượt W3 dùng Luna, không giả mạo prompt Antigravity. Link Jira cho local W3 Task IDs và tệp AI rules có nguồn gốc W1 chưa có để xác minh. Bộ rule/skill trong repo là bản dùng chung cho W2; authority override W3 ghi rõ tại Requirement, không thay log hay user acceptance.
 
 Khi có evidence mới, thêm dòng gồm: Evidence ID, nguồn/path hoặc URL, ngày, owner, Prompt/Task/AC nếu áp dụng, revision/checksum và trạng thái xác minh. Chỉ ghi số liệu và trạng thái PASS khi có phép đo cùng evidence tương ứng.
+
+Lượt khởi chạy repo Sang trên localhost:8002 ngày 08/10/2026 được ghi tại W04, sheet Thắng, hàng 22; tổng sau lượt khởi chạy là **51 bản ghi**. Evidence local ở `../ai-assessor-cefr-runtime/sang/verification.json` và `asr-smoke.json`.
+
+Sau khi nhập CSV Sang, tổng sau lượt nhập là **107 bản ghi** (55 dòng Sang và một log cho lượt nhập tại W04, sheet Thắng, hàng 23). Công thức và giá trị hiển thị của `Tổng hợp` đã được đối chiếu. W05–W06 tiếp tục trống. Bản sao lưu workbook trước khi nhập tại `../ai-assessor-cefr-runtime/backups/before-sang-csv-import-2026-10-08/`; manifest ánh xạ từng dòng CSV → file/hàng Excel tại `../ai-assessor-cefr-runtime/evidence/sang-csv-import-2026-10-08.json`.
+
+Lượt chuẩn bị commit/push ngày 08/10/2026 ghi tại W04, sheet Thắng, hàng 24; tổng sau lượt chuẩn bị **108 bản ghi**. Người dùng đã duyệt tên commit và cho phép commit/push sau lượt chuẩn bị.
+
+Lượt thực hiện commit/push theo xác nhận của Thắng ghi tại W04, sheet Thắng, hàng 25; tổng hiện tại **109 bản ghi**. Kết quả thực thi và commit remote lưu trong evidence local `pre-push-2026-10-08.json`.

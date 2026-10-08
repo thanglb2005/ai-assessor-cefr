@@ -56,6 +56,7 @@ class PipelineCoordinator:
         asr: AsrPort,
         extractor: FeatureExtractor,
         scorer: RidgeScorer,
+        long_response_windows: bool = False,
     ) -> None:
         self._responses = responses
         self._reports = reports
@@ -64,6 +65,7 @@ class PipelineCoordinator:
         self._asr = asr
         self._extractor = extractor
         self._scorer = scorer
+        self._long_response_windows = long_response_windows
 
     def enqueue(self, response: ResponseRecord) -> None:
         if response.status is not ResponseStatus.QUEUED:
@@ -116,15 +118,32 @@ class PipelineCoordinator:
                 raise RuntimeError("ASR result missing")
             features = self._extractor.extract(transcript, result.audio)
             assessment = self._scorer.score(features, transcript)
+            window_versions = {}
+            artifact = getattr(self._scorer, "_artifact", None)
+            if (
+                self._long_response_windows
+                and transcript.status is AsrStatus.OK
+                and artifact is not None
+                and "total_dur" in artifact.feature_order
+                and result.audio.duration_s
+                > artifact.feature_hi[artifact.feature_order.index("total_dur")]
+            ):
+                from aicefr.scoring.windows import score_windows
+
+                assessment, window_versions = score_windows(
+                    result.audio, transcript, self._extractor, self._scorer
+                )
             if transcript.status is not AsrStatus.OK:
                 reasons = tuple(dict.fromkeys((*transcript.reasons, *assessment.reasons)))
-                assessment = assessment.model_copy(update={
-                    "status": AssessmentStatus.NOT_EVALUATED,
-                    "overall_score": None,
-                    "overall_band": None,
-                    "reasons": reasons or (ReasonCode.ASR_FAILED,),
-                    "teacher_verified": False,
-                })
+                assessment = assessment.model_copy(
+                    update={
+                        "status": AssessmentStatus.NOT_EVALUATED,
+                        "overall_score": None,
+                        "overall_band": None,
+                        "reasons": reasons or (ReasonCode.ASR_FAILED,),
+                        "teacher_verified": False,
+                    }
+                )
             needs_review = assessment.status is not AssessmentStatus.ESTIMATED
             final_reason = (
                 transcript.reasons[0]
@@ -134,6 +153,10 @@ class PipelineCoordinator:
             report_input = self._report_input(
                 response.response_id, result.audio.duration_s, assessment, transcript, features
             )
+            if window_versions:
+                report_input = report_input.model_copy(
+                    update={"source_versions": report_input.source_versions | window_versions}
+                )
             self._persist_final(
                 response,
                 current,
@@ -212,9 +235,7 @@ class PipelineCoordinator:
         )
 
     @staticmethod
-    def _qc_candidate(
-        assessment: Assessment, revision: int, qc_version: str
-    ) -> ReviewCandidate:
+    def _qc_candidate(assessment: Assessment, revision: int, qc_version: str) -> ReviewCandidate:
         now = datetime.now(UTC)
         return ReviewCandidate(
             response_id=assessment.response_id,
@@ -251,43 +272,49 @@ class PipelineCoordinator:
                 ):
                     continue
                 evidence_id = f"word:{index}"
-                refs.append(EvidenceRef(
-                    evidence_id=evidence_id,
-                    response_id=response_id,
-                    source=EvidenceSource.TRANSCRIPT,
-                    source_version=transcript.decode_config_version,
-                    criterion=Criterion.FLUENCY,
-                    start_s=word.start_s,
-                    end_s=word.end_s,
-                    word_index=index,
-                ))
-                requests.append(CommentRequest(
-                    criterion=Criterion.FLUENCY,
-                    template=CommentTemplate.WORD_TIMING_OBSERVED,
-                    evidence_id=evidence_id,
-                ))
+                refs.append(
+                    EvidenceRef(
+                        evidence_id=evidence_id,
+                        response_id=response_id,
+                        source=EvidenceSource.TRANSCRIPT,
+                        source_version=transcript.decode_config_version,
+                        criterion=Criterion.FLUENCY,
+                        start_s=word.start_s,
+                        end_s=word.end_s,
+                        word_index=index,
+                    )
+                )
+                requests.append(
+                    CommentRequest(
+                        criterion=Criterion.FLUENCY,
+                        template=CommentTemplate.WORD_TIMING_OBSERVED,
+                        evidence_id=evidence_id,
+                    )
+                )
             feature_criteria = {
-                name: row.criterion
-                for row in assessment.criteria
-                for name in row.features
+                name: row.criterion for row in assessment.criteria for name in row.features
             }
             for value in features.values:
                 criterion = feature_criteria.get(value.name)
                 if criterion is None or value.value is None or not math.isfinite(value.value):
                     continue
                 evidence_id = f"feature:{value.name}:{value.value.hex()}"
-                refs.append(EvidenceRef(
-                    evidence_id=evidence_id,
-                    response_id=response_id,
-                    source=EvidenceSource.FEATURE_SET,
-                    source_version=features.feature_version,
-                    criterion=criterion,
-                ))
-                requests.append(CommentRequest(
-                    criterion=criterion,
-                    template=CommentTemplate.FEATURE_VALUE_AVAILABLE,
-                    evidence_id=evidence_id,
-                ))
+                refs.append(
+                    EvidenceRef(
+                        evidence_id=evidence_id,
+                        response_id=response_id,
+                        source=EvidenceSource.FEATURE_SET,
+                        source_version=features.feature_version,
+                        criterion=criterion,
+                    )
+                )
+                requests.append(
+                    CommentRequest(
+                        criterion=criterion,
+                        template=CommentTemplate.FEATURE_VALUE_AVAILABLE,
+                        evidence_id=evidence_id,
+                    )
+                )
         return ReportInput(
             response_id=response_id,
             audio_duration_s=duration_s,
@@ -301,6 +328,10 @@ class PipelineCoordinator:
 
     @staticmethod
     def _container_extension(data: bytes) -> str:
+        from aicefr.audio.recordings import recording_format
+        recording = recording_format(data)
+        if recording is not None:
+            return recording
         try:
             with sf.SoundFile(io.BytesIO(data)) as handle:
                 fmt, subtype = handle.format.upper(), handle.subtype.upper()
@@ -317,16 +348,13 @@ class PipelineCoordinator:
         return "unsupported"
 
     @staticmethod
-    def _not_evaluated(
-        response_id: str, reasons: tuple[ReasonCode, ...]
-    ) -> Assessment:
+    def _not_evaluated(response_id: str, reasons: tuple[ReasonCode, ...]) -> Assessment:
         safe_reasons = reasons or (ReasonCode.QC_MEASUREMENT_MISSING,)
         return Assessment(
             response_id=response_id,
             status=AssessmentStatus.NOT_EVALUATED,
             criteria=tuple(
-                CriterionCoverage(criterion=item, reasons=safe_reasons)
-                for item in Criterion
+                CriterionCoverage(criterion=item, reasons=safe_reasons) for item in Criterion
             ),
             interaction=Interaction(),
             reasons=safe_reasons,

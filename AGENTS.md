@@ -20,7 +20,7 @@ W1 (14–18/09/2026) **DONE theo chủ dự án**; minh chứng lịch sử vẫ
 
 ## Minh chứng, dữ liệu và chất lượng
 
-- Mỗi người ghi **mọi lần dùng AI** vào sheet mang tên mình trong `docs/evidence/tc2-3-ai-usage/AI Prompt Log.xlsx`: ngày, người, công cụ, công việc, prompt, link minh chứng. Sheet `Tổng hợp` cộng cả ba sheet. Prompt triển khai còn phải có bản file/log tại module. `docs/evidence/` là hồ sơ nộp theo rubric, dẫn về bằng chứng gốc trong module; tránh nhân bản file và claim.
+- Mỗi người ghi **mọi lần dùng AI** vào sheet mang tên mình trong workbook của tuần tương ứng tại `docs/evidence/tc2-3-ai-usage/`, theo mẫu `AI Prompt Log - Wxx - YYYY-MM-DD_YYYY-MM-DD.xlsx`: ngày, người, công cụ, công việc, prompt, link minh chứng. Tuần tính từ thứ Hai đến Chủ nhật và xếp theo ngày sử dụng AI, không theo tên task/module. Xem [danh sách file tuần](docs/evidence/tc2-3-ai-usage/README.md). Sheet `Tổng hợp` trong từng file cộng cả ba sheet của tuần đó. Prompt triển khai còn phải có bản file/log tại module. `docs/evidence/` là hồ sơ nộp theo rubric, dẫn về bằng chứng gốc trong module; tránh nhân bản file và claim.
 - Chỉ dùng số liệu đo được trên **repo dự án** và revision ghi rõ. Kiểm thử, coverage, ASR/model version, consent và nguồn audio phải có evidence truy cập được. Ghi `NOT_RUN`/`NOT_EVALUATED` khi chưa có phép đo. Dữ liệu kiểm thử do nhóm tạo được gọi là `fixture` hoặc `test data`; kết quả CEFR thực nghiệm phải dẫn tới bộ dữ liệu và phép đo tương ứng.
 - Bản nháp sản phẩm dùng 5 tiêu chí Range, Accuracy, Fluency, Coherence, Phonology; chỉ hiển thị overall score/band và coverage/evidence của từng tiêu chí. `Interaction=null` với `insufficient_evidence` cho bài độc thoại. Overall không được trình bày thành năm điểm tiêu chí. Mọi thay đổi rubric/band mapping phải quay về SDD M05 và được duyệt.
 - Không commit secret, audio hoặc dữ liệu cá nhân thật, model weights không có quyền phân phối. Tuân thủ `.gitignore`; manifest ghi nơi giữ bằng chứng bị hạn chế truy cập. Không push, deploy, gửi dữ liệu ra dịch vụ ngoài hoặc thay đổi production nếu chưa có quyền rõ từ chủ dự án.
@@ -30,7 +30,7 @@ W1 (14–18/09/2026) **DONE theo chủ dự án**; minh chứng lịch sử vẫ
 - `ai-assessor-cefr` là dự án chính thức do nhóm phát triển từ đầu theo SDD để phục vụ đồ án và báo cáo.
 - Trong tài liệu, prompt và báo cáo, dùng các tên `dự án`, `repo dự án`, `mã nguồn dự án`, `implementation hiện tại` hoặc `revision hiện hành`.
 - Tránh các cụm `dựng lại`, `viết lại`, `làm lại`, `bản dựng mới`, `repo mới`, `source mới` và cách diễn đạt khiến dự án bị hiểu là clone hoặc bản sao của một source khác.
-- `../ai-assessor-cefr-thamchie` là hồ sơ kỹ thuật nội bộ do chính nhóm phát triển trong giai đoạn hình thành đề tài. Chỉ dẫn tới hồ sơ này qua `docs/sources/` khi cần giải thích provenance, quyết định kỹ thuật hoặc tính khả thi.
+- `../ai-assessor-cefr-runtime/backups/ai-assessor-cefr-thamchie-before-cleanup-2026-10-08` lưu hồ sơ kỹ thuật nội bộ do chính nhóm phát triển trong giai đoạn hình thành đề tài. Chỉ dẫn tới hồ sơ này qua `docs/sources/` khi cần giải thích provenance, quyết định kỹ thuật hoặc tính khả thi.
 - Gọi dữ liệu do nhóm chuẩn bị để kiểm thử là `fixture` hoặc `dữ liệu kiểm thử do nhóm tạo`. Mọi số liệu báo cáo phải có lệnh chạy, revision và evidence tương ứng.
 
 ## Bắt đầu W2

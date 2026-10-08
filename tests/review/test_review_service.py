@@ -72,7 +72,7 @@ class InMemoryMetadata:
                 state TEXT NOT NULL,
                 revision INTEGER NOT NULL,
                 created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                updated_at TEXT NOT NULL, claimed_by TEXT
             );
             CREATE TABLE review_decisions (
                 decision_id TEXT PRIMARY KEY,

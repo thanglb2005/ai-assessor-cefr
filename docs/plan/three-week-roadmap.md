@@ -70,7 +70,7 @@ Bộ hồ sơ nộp được tập hợp tại [docs/evidence/](../evidence/READ
 | Báo cáo, sơ đồ lớp và use case tuần 1 | Thắng, Sang, Nguyên theo phân công được cung cấp | DONE — 14–18/09 | docs/design/week-01/, docs/reports/week-01/ |
 | Bảng phân công ba người cho phần còn lại | Thắng tổng hợp; Sang/Nguyên xác nhận | Đề xuất W2–W3 | [week-02.md](week-02.md) và [week-03.md](week-03.md) |
 | SRS/SDD cấp module, ma trận FR → AC → test | Owner từng module | Chốt trước khi code module ở W2 | docs/sdd/modules/ |
-| Nhật ký prompt AI và sổ/báo cáo tiến độ repo dự án | Cả ba ghi sheet riêng; Thắng tổng hợp | Cập nhật khi có hoạt động thật | [AI Prompt Log.xlsx](../evidence/tc2-3-ai-usage/AI%20Prompt%20Log.xlsx) và docs/reports/ |
+| Nhật ký prompt AI và sổ/báo cáo tiến độ repo dự án | Cả ba ghi sheet riêng; Thắng tổng hợp | Cập nhật khi có hoạt động thật | [AI Prompt Log theo tuần](../evidence/tc2-3-ai-usage/README.md#ai-prompt-log-theo-tuan) và docs/reports/ |
 | Test plan, test case, test result, coverage và defect log | Owner từng module; Thắng tổng hợp CI | W2–W3 | evidence/ của từng module và test code |
 | CI chạy được, build/run guide, demo | Thắng CI; Sang/Nguyên xác minh chuyên môn | W3 | Repo dự án và evidence tương ứng |
 

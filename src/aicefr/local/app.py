@@ -9,7 +9,6 @@ from typing import Any
 
 from aicefr.api.review import ReviewApi
 from aicefr.api.student import (
-    AllowlistedTaskAccess,
     StudentApi,
     StudentService,
     UploadPolicy,
@@ -19,6 +18,13 @@ from aicefr.asr.service import AsrService, ModelUnavailableError
 from aicefr.auth.service import AuthService, ConsentService
 from aicefr.contracts import ActorRole
 from aicefr.features.extractor import FeatureExtractor
+from aicefr.observability import Metrics
+from aicefr.portal.contracts import TaskRecord
+from aicefr.portal.control import RuntimeControl
+from aicefr.portal.data import DataControl
+from aicefr.portal.router import PortalRouter
+from aicefr.portal.service import PortalService
+from aicefr.portal.tasks import TaskRepository
 from aicefr.review.service import ReviewService
 from aicefr.review.sqlite import SQLiteReviewRepository
 from aicefr.scoring.scorer import RidgeScorer
@@ -34,8 +40,14 @@ class LocalRuntime:
     auth: AuthService
     consents: ConsentService
     responses: ResponseService
+    portal: PortalService
+    control: RuntimeControl
+    data: DataControl
+    worker: Any | None = None
 
     def close(self) -> None:
+        if self.worker is not None:
+            self.worker.close()
         self.store.close()
 
 
@@ -110,16 +122,54 @@ def create_runtime(
         reject_clipping_ratio=float(config["qc"]["reject_clipping_ratio"]),
     )
     store = SQLiteStore(data_dir)
+    worker = None
     try:
+        stored_qc = store.connection.execute(
+            "SELECT payload FROM runtime_settings WHERE key='qc_config'"
+        ).fetchone()
+        if stored_qc:
+            qc = QCConfig(**json.loads(stored_qc[0]))
         blobs = BlobStore(store.data_dir, max_bytes=qc.max_input_bytes)
         consents = ConsentService(store)
         auth = AuthService(store, SQLiteSessionRepository(store))
         responses = ResponseService(store, blobs, consents)
+        if config.get("recover_interrupted", False):
+            from aicefr.contracts import ReasonCode, ResponseStatus
+
+            for row in store.connection.execute(
+                "SELECT * FROM responses WHERE status=?", (ResponseStatus.RUNNING,)
+            ).fetchall():
+                interrupted = store._response_from_row(row)
+                responses.transition_status(
+                    response_id=interrupted.response_id,
+                    expected_revision=interrupted.revision,
+                    status=ResponseStatus.FAILED,
+                    actor_id="system-startup",
+                    action="pipeline_interrupted",
+                    reason=ReasonCode.PIPELINE_INTERRUPTED,
+                )
         report_repository = SQLiteReportRepository(store)
         reports = ReportService(report_repository, decision_verifier=SQLiteReviewRepository(store))
         review_repository = SQLiteReviewRepository(store)
         reviews = ReviewService(review_repository, report_sink=reports)
         if pipeline is None:
+            stored_model = store.connection.execute(
+                "SELECT payload FROM runtime_settings WHERE key='active_model'"
+            ).fetchone()
+            if stored_model and scorer is None:
+                from re import fullmatch
+
+                from aicefr.scoring.artifact import default_artifact_path
+
+                model_name = json.loads(stored_model[0])["name"]
+                if not fullmatch(r"[A-Za-z0-9_-]{1,80}", model_name):
+                    raise ValueError("invalid persisted model name")
+                directory = (
+                    Path(config["model_artifact"])
+                    if config.get("model_artifact")
+                    else default_artifact_path()
+                ).parent
+                scorer = RidgeScorer.load(directory / f"{model_name}.json")
             scorer_instance = scorer or RidgeScorer.load(
                 Path(config["model_artifact"]) if config.get("model_artifact") else None
             )
@@ -184,7 +234,30 @@ def create_runtime(
                 asr=asr,
                 extractor=extractor,
                 scorer=scorer_instance,
+                long_response_windows=bool(config.get("long_response_windows", False)),
             )
+        tasks = TaskRepository(store)
+        for item in config["tasks"]:
+            tasks.seed(TaskRecord(**{"title": str(item["task_id"]), **item}))
+        portal = PortalService(auth, store, tasks)
+        control = RuntimeControl(portal, pipeline, config)
+        data = DataControl(portal, blobs)
+        metrics = Metrics()
+        worker = None
+        starter = pipeline
+        if config.get("async_pipeline", False):
+            if asr_engine is not None or vad_engine is not None or scorer is not None:
+                raise ValueError("async mode creates its own real model adapters")
+            from aicefr.local.worker import BackgroundPipeline
+
+            worker_config = {**config, "async_pipeline": False, "recover_interrupted": False}
+            worker = BackgroundPipeline(
+                store,
+                lambda: create_runtime(data_dir, config=worker_config),
+                capacity=int(config.get("queue_capacity", 8)),
+            )
+            starter = worker
+            control.worker = worker
         student = StudentService(
             auth,
             responses,
@@ -193,12 +266,8 @@ def create_runtime(
                 allowed_media_types=frozenset(config["allowed_media_types"]),
                 max_bytes=qc.max_input_bytes,
             ),
-            AllowlistedTaskAccess(
-                frozenset(
-                    (str(item["task_id"]), str(item["task_version"])) for item in config["tasks"]
-                )
-            ),
-            pipeline,
+            tasks,
+            starter,
         )
         app = StudentTeacherApp(
             StudentApi(student),
@@ -211,9 +280,13 @@ def create_runtime(
             demo=bool(config.get("demo", False)),
             consent_version=str(config.get("consent_version", "local-v1")),
             max_request_bytes=qc.max_input_bytes + 1024 * 1024,
+            portal=PortalRouter(portal, control, data, metrics),
+            metrics=metrics,
         )
-        return LocalRuntime(app, store, auth, consents, responses)
+        return LocalRuntime(app, store, auth, consents, responses, portal, control, data, worker)
     except Exception:
+        if worker is not None:
+            worker.close()
         store.close()
         raise
 

@@ -28,7 +28,12 @@ class ReviewApi:
         actor = self._teacher(session_token)
         return self._service.decide(actor, response_id, request)
 
+    def release(
+        self, session_token: str, response_id: str, expected_revision: int
+    ) -> ReviewCandidate:
+        return self._service.release(self._teacher(session_token), response_id, expected_revision)
+
     def _teacher(self, session_token: str):
         return self._auth.resolve(
-            session_token, allowed_roles=frozenset({ActorRole.TEACHER})
+            session_token, allowed_roles=frozenset({ActorRole.TEACHER, ActorRole.ADMIN})
         )

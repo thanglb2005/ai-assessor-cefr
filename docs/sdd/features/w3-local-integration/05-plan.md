@@ -15,4 +15,4 @@ Integration branch: feat/W3-local-integration. Three independent Git worktrees u
 
 ## Quality and evidence
 
-Raw reports per lane under evidence/; include base/head, tests/exit, skipped, coverage, file list, source references and limitations. Root owns SDD, AI Prompt Log.xlsx and review records. Agent evidence is input, not approval. Review every human-written change and rerun required checks; update context/roadmap only with actual evidence. Frozen W2 specs remain unchanged. Retention/real-data governance and unavailable actual ASR smoke remain explicitly pending.
+Raw reports per lane under evidence/; include base/head, tests/exit, skipped, coverage, file list, source references and limitations. Root owns SDD, weekly AI Prompt Log workbooks and review records. Agent evidence is input, not approval. Review every human-written change and rerun required checks; update context/roadmap only with actual evidence. Frozen W2 specs remain unchanged. Retention/real-data governance and unavailable actual ASR smoke remain explicitly pending.

@@ -12,6 +12,8 @@ class AudioFormat(StrEnum):
     FLAC = "flac"
     OGG_VORBIS = "ogg"
     MP3 = "mp3"
+    WEBM = "webm"
+    MP4 = "mp4"
 
 
 @dataclass(frozen=True, slots=True)

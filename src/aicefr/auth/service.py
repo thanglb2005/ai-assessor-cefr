@@ -30,11 +30,15 @@ class ResourceNotFound(AuthorizationError):
 class AccountRecord:
     actor: Actor
     password_hash: str = field(repr=False)
+    disabled: bool = False
+    failed_attempts: int = 0
+    locked_until: datetime | None = None
 
 
 class AccountRepository(Protocol):
     def get_account(self, actor_id: str) -> AccountRecord | None: ...
     def add_account(self, account: AccountRecord) -> None: ...
+    def record_login(self, actor_id: str, *, success: bool, now: datetime) -> None: ...
 
 
 class SessionRepository(Protocol):
@@ -81,10 +85,16 @@ class AuthService:
             salt_len=16,
             type=Type.ID,
         )
+        self._dummy_hash = self._hasher.hash(secrets.token_urlsafe(24))
 
     def bootstrap_fixture_account(self, actor_id: str, role: ActorRole, password: str) -> Actor:
         """Provision a synthetic account explicitly; no public signup or role claim."""
-        if not actor_id.startswith("fixture-") or not password:
+        if (
+            not actor_id.startswith("fixture-")
+            or len(actor_id) > 80
+            or any(not (c.isalnum() or c in "-_") for c in actor_id)
+            or not password
+        ):
             raise ValueError("fixture account required")
         actor = Actor(actor_id=actor_id, role=role)
         self._accounts.add_account(AccountRecord(actor, self._hasher.hash(password)))
@@ -92,15 +102,22 @@ class AuthService:
 
     def login(self, actor_id: str, password: str) -> str:
         account = self._accounts.get_account(actor_id)
-        if account is None:
-            raise AuthorizationError("invalid credentials")
+        now = self._clock()
         try:
-            valid = self._hasher.verify(account.password_hash, password)
+            valid = self._hasher.verify(
+                account.password_hash if account is not None else self._dummy_hash, password
+            )
         except (InvalidHashError, VerificationError):
-            raise AuthorizationError("invalid credentials") from None
+            valid = False
+        if (
+            account is None
+            or account.disabled
+            or (account.locked_until is not None and now < account.locked_until)
+        ):
+            raise AuthorizationError("invalid credentials")
+        self._accounts.record_login(actor_id, success=valid, now=now)
         if not valid:
             raise AuthorizationError("invalid credentials")
-        now = self._clock()
         token = secrets.token_urlsafe(32)
         self._sessions.put_session(
             SessionRecord(
@@ -131,6 +148,9 @@ class AuthService:
         now = self._clock()
         if session is None or now >= session.idle_expires_at or now >= session.absolute_expires_at:
             raise AuthorizationError("session unavailable")
+        account = self._accounts.get_account(session.actor_id)
+        if account is None or account.disabled or account.actor.role != session.role:
+            raise AuthorizationError("session unavailable")
         if allowed_roles is not None and session.role not in allowed_roles:
             raise AuthorizationError("access denied")
         actor = Actor(actor_id=session.actor_id, role=session.role)
@@ -152,7 +172,9 @@ class ConsentService:
         self._consents = consents
         self._clock = clock
 
-    def activate(self, actor: Actor, consent_version: str) -> ConsentRecord:
+    def activate(
+        self, actor: Actor, consent_version: str, *, research_allowed: bool = False
+    ) -> ConsentRecord:
         if actor.role != ActorRole.STUDENT:
             raise AuthorizationError("access denied")
         record = ConsentRecord(
@@ -160,6 +182,7 @@ class ConsentService:
             consent_version=consent_version,
             state=ConsentState.ACTIVE,
             recorded_at=self._clock(),
+            research_allowed=research_allowed,
         )
         self._consents.put_consent(record)
         return record
@@ -174,7 +197,11 @@ class ConsentService:
         if actor.role != ActorRole.STUDENT or current is None:
             raise AuthorizationError("consent unavailable")
         record = current.model_copy(
-            update={"state": ConsentState.WITHDRAWN, "recorded_at": self._clock()}
+            update={
+                "state": ConsentState.WITHDRAWN,
+                "recorded_at": self._clock(),
+                "research_allowed": False,
+            }
         )
         self._consents.put_consent(record)
         return record

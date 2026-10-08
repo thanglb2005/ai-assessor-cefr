@@ -10,6 +10,7 @@ from datetime import datetime
 
 from aicefr.contracts import (
     Actor,
+    ActorRole,
     AssessmentStatus,
     AuditEvent,
     Band,
@@ -24,6 +25,7 @@ from aicefr.review.service import (
     ReviewNotFound,
     ReviewOutcome,
     StaleReview,
+    claim_expired,
     decision_shape,
 )
 from aicefr.storage.sqlite import SQLiteStore
@@ -48,8 +50,8 @@ class SQLiteReviewRepository:
                 connection.execute(
                     """INSERT INTO review_candidates (
                     response_id, response_revision, assessment_status, proposed_band,
-                    reasons_json, source_versions_json, state, revision, created_at, updated_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    reasons_json, source_versions_json, state, revision, created_at, updated_at,
+                    claimed_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                     (
                         candidate.response_id,
                         candidate.response_revision,
@@ -61,6 +63,7 @@ class SQLiteReviewRepository:
                         candidate.revision,
                         candidate.created_at.isoformat(),
                         candidate.updated_at.isoformat(),
+                        candidate.claimed_by,
                     ),
                 )
             except sqlite3.IntegrityError as error:
@@ -86,8 +89,14 @@ class SQLiteReviewRepository:
     def list_audit(self) -> tuple[AuditEvent, ...]:
         rows = self._store.connection.execute(
             """SELECT * FROM audit
-            WHERE action IN (?, ?, ?, ?) ORDER BY rowid""",
-            ("review_claimed", "review_approve", "review_override", "review_reject"),
+            WHERE action IN (?, ?, ?, ?, ?) ORDER BY rowid""",
+            (
+                "review_claimed",
+                "review_released",
+                "review_approve",
+                "review_override",
+                "review_reject",
+            ),
         ).fetchall()
         return tuple(
             AuditEvent(
@@ -141,11 +150,12 @@ class SQLiteReviewRepository:
         with self._store.transaction() as connection:
             current = self._require_current(connection, response_id, expected_revision)
             self._require_response_revision(connection, current)
-            if current.state is not ReviewState.PENDING:
+            if current.state is not ReviewState.PENDING and not claim_expired(current, now):
                 raise InvalidReviewTransition("only PENDING candidates can be claimed")
             updated = current.model_copy(
                 update={
                     "state": ReviewState.IN_REVIEW,
+                    "claimed_by": actor.actor_id,
                     "revision": current.revision + 1,
                     "updated_at": now,
                 }
@@ -157,6 +167,39 @@ class SQLiteReviewRepository:
                     event_id=uuid.uuid4().hex,
                     actor_id=actor.actor_id,
                     action="review_claimed",
+                    object_id=response_id,
+                    recorded_at=now,
+                ),
+            )
+        return updated
+
+    def release(
+        self, *, actor: Actor, response_id: str, expected_revision: int, now: datetime
+    ) -> ReviewCandidate:
+        with self._store.transaction() as connection:
+            current = self._require_current(connection, response_id, expected_revision)
+            self._require_response_revision(connection, current)
+            if current.state is not ReviewState.IN_REVIEW or (
+                current.claimed_by != actor.actor_id
+                and actor.role is not ActorRole.ADMIN
+                and not claim_expired(current, now)
+            ):
+                raise InvalidReviewTransition("only the claimant or administrator can release")
+            updated = current.model_copy(
+                update={
+                    "state": ReviewState.PENDING,
+                    "claimed_by": None,
+                    "revision": current.revision + 1,
+                    "updated_at": now,
+                }
+            )
+            self._update_candidate(connection, current, updated)
+            self._store.record_audit(
+                connection,
+                AuditEvent(
+                    event_id=uuid.uuid4().hex,
+                    actor_id=actor.actor_id,
+                    action="review_released",
                     object_id=response_id,
                     recorded_at=now,
                 ),
@@ -177,6 +220,12 @@ class SQLiteReviewRepository:
             self._require_response_revision(connection, current)
             if current.state not in {ReviewState.PENDING, ReviewState.IN_REVIEW}:
                 raise InvalidReviewTransition("candidate is already final")
+            if (
+                current.claimed_by is not None
+                and current.claimed_by != actor.actor_id
+                and not claim_expired(current, now)
+            ):
+                raise InvalidReviewTransition("candidate is claimed by another reviewer")
             new_state, final_band = decision_shape(current, request)
             audit = AuditEvent(
                 event_id=uuid.uuid4().hex,
@@ -249,6 +298,7 @@ class SQLiteReviewRepository:
             revision=int(row[7]),
             created_at=datetime.fromisoformat(str(row[8])),
             updated_at=datetime.fromisoformat(str(row[9])),
+            claimed_by=str(row[10]) if row[10] is not None else None,
         )
 
     @staticmethod
@@ -283,12 +333,13 @@ class SQLiteReviewRepository:
         updated: ReviewCandidate,
     ) -> None:
         cursor = connection.execute(
-            """UPDATE review_candidates SET state=?, revision=?, updated_at=?
+            """UPDATE review_candidates SET state=?, revision=?, updated_at=?, claimed_by=?
             WHERE response_id=? AND revision=?""",
             (
                 updated.state,
                 updated.revision,
                 updated.updated_at.isoformat(),
+                updated.claimed_by,
                 current.response_id,
                 current.revision,
             ),
